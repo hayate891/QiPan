@@ -6,7 +6,7 @@ Boshi is a long way from v1.0.
 As with all great apps, though, we have humble beginnings.
 
 ### Chapter 1: Humble Beginnings (v0.5 earlybird)
-- [ ] Rendering a goban
+- [x] Rendering a goban
 - [ ] Stones (placement, captures, ko)
 - [ ] Move tree
 - [ ] Sound effects
