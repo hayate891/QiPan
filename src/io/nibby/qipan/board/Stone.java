@@ -67,7 +67,7 @@ public class Stone {
     }
 
     public void nudge(int xDiff, int yDiff, BoardMetrics metrics) {
-        double margin = metrics.stoneSize / 12;
+        double margin = metrics.stoneSize / 20;
         fuzzyX = Math.random() * margin * xDiff;
         fuzzyY = Math.random() * margin * yDiff;
     }

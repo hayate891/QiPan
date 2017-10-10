@@ -3,6 +3,7 @@ package io.nibby.qipan.game;
 import io.nibby.qipan.board.BoardMetrics;
 import io.nibby.qipan.board.Stone;
 import io.nibby.qipan.board.StoneStyle;
+import io.nibby.qipan.sound.Sound;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,28 +42,44 @@ public class Game {
      *                    'false' for helper stonse, 'true' for a significant game move.
      * @param metrics Sizing information to calculate stone setWobble and placement offset.
      */
-    public void placeStone(int x, int y, int color, boolean newPosition, BoardMetrics metrics) {
+    public void placeStone(int x, int y, int color, boolean newPosition, BoardMetrics metrics, Sound.ActionCallback callback) {
         //TODO temporary code
         Stone stone = new Stone(color, x, y);
         stone.setWobble((Math.random() + 0.1d) * StoneStyle.CERAMIC.wobbleMargin());
         stone.onPlace(metrics);
         stones[x + y * getBoardWidth()] = stone;
+        boolean bigCollision = false;
+        boolean snap = false;
 
+        // Nudge effect
         Stone[] adjacent = getAdjacentStones(x, y, false);
         for(Stone s : adjacent) {
-            s.setWobble((Math.random() + 0.1d) * StoneStyle.CERAMIC.wobbleMargin() / 2);
-            s.nudge(s.getX() - x, s.getY() - y, metrics);
+            if (Math.abs(s.getY() - y) == 1 || (int) (Math.random() * 3) == 1) {
+                double wobble = (Math.abs(s.getY() - y) == 1)
+                        ? StoneStyle.CERAMIC.wobbleMargin()
+                        : (Math.random() + 0.1d) * StoneStyle.CERAMIC.wobbleMargin() / 2;
+                if (Math.abs(s.getY() - y) == 1) {
+                    stone.setWobble(StoneStyle.CERAMIC.wobbleMargin());
+                    snap = true;
+                }
+                s.setWobble(wobble);
+                s.nudge(s.getX() - x, s.getY() - y, metrics);
 
-            if ((int) (Math.random() * 5) < 2) {
-                Stone[] adjacent2 = getAdjacentStones(s.getX(), s.getY(), false);
-                for (Stone ss : adjacent2) {
-                    if (ss.equals(stone) || ss.equals(s))
-                        continue;
-                    ss.setWobble((Math.random() + 0.1d) * StoneStyle.CERAMIC.wobbleMargin() / 2);
-                    ss.nudge(s.getX() - x, s.getY() - y, metrics);
+                if ((int) (Math.random() * 5) < 2) {
+                    Stone[] adjacent2 = getAdjacentStones(s.getX(), s.getY(), false);
+                    if (adjacent2.length >= 2)
+                        bigCollision = true;
+                    for (Stone ss : adjacent2) {
+                        if (ss.equals(stone) || ss.equals(s))
+                            continue;
+                        ss.setWobble((Math.random() + 0.1d) * StoneStyle.CERAMIC.wobbleMargin() / 2);
+                        ss.nudge(s.getX() - x, s.getY() - y, metrics);
+                    }
                 }
             }
         }
+
+        Sound.playMove(color, adjacent.length, snap, bigCollision, callback::performAction);
     }
 
     public Stone[] getAdjacentStones(int x, int y, boolean sameColorOnly) {

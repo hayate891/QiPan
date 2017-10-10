@@ -27,9 +27,11 @@ public class GameReviewController extends AbstractGameController {
 
         // TODO temporary
         if (button.equals(MouseButton.PRIMARY) && x >= 0 && y >= 0) {
-            game.placeStone(x, y, nextColor, true, container.metrics);
-            nextColor = nextColor == Stone.BLACK ? Stone.WHITE : Stone.BLACK;
-            container.render();
+            game.placeStone(x, y, nextColor, true, container.metrics, () -> {
+                // Only invoked when the appropriate sound timing
+                container.render();
+                nextColor = nextColor == Stone.BLACK ? Stone.WHITE : Stone.BLACK;
+            });
         }
     }
 
