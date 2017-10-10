@@ -1,11 +1,14 @@
 package io.nibby.qipan.board;
 
 import io.nibby.qipan.game.Game;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 /*
     This is the canvas component that renders the board position.
@@ -35,8 +38,8 @@ public class BoardCanvas extends Canvas {
         g = getGraphicsContext2D();
 
         //TODO temporary
-        texture = new Image(BoardStyle.PLAIN.getTextureResource());
-        markerColor = BoardStyle.PLAIN.getMarkerColor();
+        texture = new Image(BoardStyle.KAYA.getTextureResource());
+        markerColor = BoardStyle.KAYA.getMarkerColor();
     }
 
     public void render() {
@@ -113,13 +116,19 @@ public class BoardCanvas extends Canvas {
         // Board stones
         Game game = container.game;
         Stone[] stones = game.getStones();
+        boolean hasWobble = false;
         for (int i = 0; i < stones.length; i++) {
             if (stones[i] == null)
                 continue;
-
-            int x = i % game.getBoardWidth();
-            int y = i / game.getBoardWidth();
+            if (stones[i].shouldWobble()) {
+                hasWobble = true;
+                stones[i].wobble();
+            }
             stones[i].render(g, container.metrics);
+        }
+
+        if (hasWobble) {
+            new Timeline(new KeyFrame(Duration.millis(20), e -> render())).play();
         }
     }
 }
