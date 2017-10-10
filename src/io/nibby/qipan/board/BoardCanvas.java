@@ -1,5 +1,6 @@
 package io.nibby.qipan.board;
 
+import io.nibby.qipan.game.Game;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.DropShadow;
@@ -14,7 +15,6 @@ public class BoardCanvas extends Canvas {
     private static final DropShadow TEXTURE_SHADOW = new DropShadow();
     private static final Color TEXTURE_SHADOW_COLOR = Color.color(0.25d, 0.25d, 0.25d, 0.25d);
     private static final int TEXTURE_SHADOW_MARGIN = 10;
-    private static final Color LINE_COLOR = Color.color(158d / 255d, 103d / 255d, 35d / 255d);
 
     static {
         // TODO may be temporary
@@ -26,6 +26,7 @@ public class BoardCanvas extends Canvas {
 
     private BoardContainer container;
     private Image texture;
+    private Color markerColor;
     private GraphicsContext g;
 
     public BoardCanvas(BoardContainer container) {
@@ -34,18 +35,20 @@ public class BoardCanvas extends Canvas {
         g = getGraphicsContext2D();
 
         //TODO temporary
-        texture = new Image(BoardBackground.KAYA.getResource());
+        texture = new Image(BoardStyle.PLAIN.getTextureResource());
+        markerColor = BoardStyle.PLAIN.getMarkerColor();
     }
 
     public void render() {
-        double gridSize = container.gridSize;
-        int boardWidth = container.boardWidth;
-        int boardHeight = container.boardHeight;
-        double offsetX = container.offsetX;
-        double offsetY = container.offsetY;
-        double gridOffsetX = container.gridOffsetX;
-        double gridOffsetY = container.gridOffsetY;
-        double gap = container.gap;
+        BoardMetrics metrics = container.metrics;
+        double gridSize = metrics.gridSize;
+        int boardWidth = metrics.boardWidth;
+        int boardHeight = metrics.boardHeight;
+        double offsetX = metrics.offsetX;
+        double offsetY = metrics.offsetY;
+        double gridOffsetX = metrics.gridOffsetX;
+        double gridOffsetY = metrics.gridOffsetY;
+        double gap = metrics.gap;
 
         g.clearRect(0, 0, getWidth(), getHeight());
         if (texture != null) {
@@ -62,19 +65,19 @@ public class BoardCanvas extends Canvas {
             g.drawImage(texture, x, y, width, height);
         }
 
-        g.setFill(LINE_COLOR);
-        g.setStroke(LINE_COLOR);
+        g.setFill(markerColor);
+        g.setStroke(markerColor);
 
         // Board lines
         for (int x = 0; x < boardWidth; x++) {
-            g.strokeLine(getDrawX(x),offsetY + gridOffsetY, getDrawX(x), getDrawY(boardHeight - 1));
+            g.strokeLine(metrics.getGridX(x),offsetY + gridOffsetY, metrics.getGridX(x), metrics.getGridY(boardHeight - 1));
         }
 
         for (int y = 0; y < boardHeight; y++) {
-            g.strokeLine(offsetX + gridOffsetX, getDrawY(y), getDrawX(boardWidth - 1), getDrawY(y));
+            g.strokeLine(offsetX + gridOffsetX, metrics.getGridY(y), metrics.getGridX(boardWidth - 1), metrics.getGridY(y));
         }
 
-        // Board dots
+        // Board star points
         double dotSize = gridSize / 6;
         int centerDot = (boardWidth % 2 == 1) ? (boardWidth - 1) / 2 : -1;
 
@@ -83,8 +86,8 @@ public class BoardCanvas extends Canvas {
             double grid = gridSize - gap;
 
             if (centerDot != -1)
-                g.fillOval(getDrawX(centerDot) - dotSize / 2,
-                        getDrawY(centerDot) - dotSize / 2, dotSize, dotSize);
+                g.fillOval(metrics.getGridX(centerDot) - dotSize / 2,
+                        metrics.getGridY(centerDot) - dotSize / 2, dotSize, dotSize);
 
             g.fillOval(gridOffsetX + offsetX + corner * grid - dotSize / 2,
                     gridOffsetY + offsetY + corner * grid - dotSize / 2, dotSize, dotSize);
@@ -106,13 +109,17 @@ public class BoardCanvas extends Canvas {
                         gridOffsetY + offsetY + centerDot * grid - dotSize / 2, dotSize, dotSize);
             }
         }
-    }
 
-    private double getDrawX(int x) {
-        return container.gridOffsetX + container.offsetX + x * (container.gridSize - container.gap);
-    }
+        // Board stones
+        Game game = container.game;
+        Stone[] stones = game.getStones();
+        for (int i = 0; i < stones.length; i++) {
+            if (stones[i] == null)
+                continue;
 
-    private double getDrawY(int y) {
-        return container.gridOffsetY + container.offsetY + y * (container.gridSize - container.gap);
+            int x = i % game.getBoardWidth();
+            int y = i / game.getBoardWidth();
+            stones[i].render(g, container.metrics);
+        }
     }
 }

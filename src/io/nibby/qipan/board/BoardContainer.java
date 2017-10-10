@@ -1,5 +1,6 @@
 package io.nibby.qipan.board;
 
+import io.nibby.qipan.game.Game;
 import javafx.scene.Cursor;
 import javafx.scene.layout.Pane;
 
@@ -8,48 +9,21 @@ import javafx.scene.layout.Pane;
  */
 public class BoardContainer extends Pane {
 
-    // The sides to place the horizontal and vertical co-ordinates
-    public static final int LABEL_ORIENTATION_TOP_LEFT = 0;
-    public static final int LABEL_ORIENTATION_TOP_RIGHT = 1;
-    public static final int LABEL_ORIENTATION_BOTTOM_LEFT = 2;
-    public static final int LABEL_ORIENTATION_BOTTOM_RIGHT = 3;
-    public static final int LABEL_ORIENTATION_ALL = 4;
+    BoardMetrics metrics = new BoardMetrics();
+    Game game;
+    AbstractGameController boardController;
+    final BoardCanvas boardView;
+    final BoardInputCanvas boardInputView;
 
-    // The order from which the numerical vertical coordinate column begins
-    // ASCENDING = 1 -> 19 (on 19x19)
-    // DESCENDING = 19 -> 1 (on 19x19)
-    // Normally speaking, most western servers begin the y-coordinate at 1 from top to bottom.
-    public static final int LABEL_Y_ASCENDING = 0;
-    public static final int LABEL_Y_DESCENDING = 1;
+    public BoardContainer(Game game, AbstractGameController controller) {
+        setGame(game);
+        metrics.recalculate(this);
 
-    // Other metrics...
-    protected double stoneSize, stoneGap;
-    protected double offsetX, offsetY;
-    protected double gridOffsetX, gridOffsetY;
-    protected double gap;
-
-    protected double drawWidth, drawHeight;
-    protected double minSize;
-    protected double gridSize;
-    protected int labelOrientation = LABEL_ORIENTATION_TOP_RIGHT;
-    protected int labelYOrder = LABEL_Y_ASCENDING;
-    protected boolean drawLabels = false;
-
-    protected int boardWidth;
-    protected int boardHeight;
-
-    protected BoardCanvas boardView;
-    protected BoardInputCanvas boardInputView;
-    protected BoardController boardController;
-
-    public BoardContainer(int bWidth, int bHeight, BoardController controller) {
-        this.boardWidth = bWidth;
-        this.boardHeight = bHeight;
-        calculateMetrics();
-
+        this.boardController = controller;
         boardView = new BoardCanvas(this);
         boardInputView = new BoardInputCanvas(this);
         getChildren().addAll(boardView, boardInputView);
+        this.boardController.onAdd(this);
         boardInputView.toFront();
         setCursor(Cursor.HAND);
 
@@ -61,27 +35,6 @@ public class BoardContainer extends Pane {
         });
     }
 
-    /*
-        Calculates the appropriate sizing for board elements.
-     */
-    private void calculateMetrics() {
-        double margin = (!drawLabels) ? 35 : (labelOrientation == LABEL_ORIENTATION_ALL) ? 65 : 50;
-        drawWidth = getWidth() - margin;
-        drawHeight = getHeight() - margin;
-        minSize = Math.min(drawWidth, drawHeight);
-        stoneSize = (minSize - 50) / Math.max(boardWidth, boardHeight);
-        stoneGap = stoneSize / 12d;
-        gridSize = stoneSize + stoneGap;
-
-        // TODO potentially want to shift these according to arrangement of nearby panes
-        offsetX = getWidth() / 2 - (boardWidth - 1) * gridSize / 2;
-        offsetY = getHeight() / 2 - (boardHeight - 1) * gridSize / 2;
-        gridOffsetX = drawLabels ? (labelOrientation == LABEL_ORIENTATION_ALL) ? 40 : 20 : 0;
-        gridOffsetY = drawLabels ? (labelOrientation == LABEL_ORIENTATION_ALL) ? 40 : 20 : 0;
-        gap = drawLabels ? stoneSize / stoneGap / 11 : 0;
-
-    }
-
     private void updateSize(double width, double height) {
         super.setPrefSize(width, height);
         boardView.setWidth(width);
@@ -89,7 +42,7 @@ public class BoardContainer extends Pane {
         boardInputView.setWidth(width);
         boardInputView.setHeight(height);
 
-        calculateMetrics();
+        metrics.recalculate(this);
         render();
     }
 
@@ -111,8 +64,16 @@ public class BoardContainer extends Pane {
         boardInputView.setHeight(h);
     }
 
-    private void render() {
+    void render() {
         boardView.render();
         boardInputView.render();
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+        metrics.recalculate(this);
+
+        if (boardView != null && boardInputView != null)
+            render();
     }
 }

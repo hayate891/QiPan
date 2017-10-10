@@ -1,7 +1,8 @@
 package io.nibby.qipan;
 
 import io.nibby.qipan.board.BoardContainer;
-import io.nibby.qipan.board.TestBoardController;
+import io.nibby.qipan.board.GameReviewController;
+import io.nibby.qipan.game.Game;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -16,8 +17,9 @@ public class QiPan extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Temporary
+        Game game = new Game(19, 19);
         BorderPane pane = new BorderPane();
-        BoardContainer container = new BoardContainer(19, 19, new TestBoardController());
+        BoardContainer container = new BoardContainer(game, new GameReviewController());
         pane.setCenter(container);
         Scene scene = new Scene(pane, 800, 600);
 
