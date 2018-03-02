@@ -28,7 +28,8 @@ public class BoardCanvas extends Canvas {
     }
 
     private BoardContainer container;
-    private Image texture;
+    private BoardStyle boardStyle;
+    private BoardBackgroundStyle backgroundStyle;
     private Color markerColor;
     private GraphicsContext g;
 
@@ -38,7 +39,9 @@ public class BoardCanvas extends Canvas {
         g = getGraphicsContext2D();
 
         //TODO temporary
-        texture = new Image(BoardStyle.KAYA.getTextureResource());
+        boardStyle = BoardStyle.KAYA;
+        backgroundStyle = BoardBackgroundStyle.TATAMI;
+
         markerColor = BoardStyle.KAYA.getMarkerColor();
     }
 
@@ -54,7 +57,10 @@ public class BoardCanvas extends Canvas {
         double gap = metrics.gap;
 
         g.clearRect(0, 0, getWidth(), getHeight());
-        if (texture != null) {
+        {
+            // Draw the backdrop
+            g.drawImage(backgroundStyle.getTexture(), 0, 0, getWidth(), getHeight());
+            // Draw the board
             double width = gridSize * boardWidth;
             double height = gridSize * boardHeight;
             double x = getWidth() / 2 - width / 2;
@@ -65,11 +71,11 @@ public class BoardCanvas extends Canvas {
             g.fillRect(x - TEXTURE_SHADOW_MARGIN, y - TEXTURE_SHADOW_MARGIN,
                     width + TEXTURE_SHADOW_MARGIN * 2, height + TEXTURE_SHADOW_MARGIN * 2);
             g.setEffect(null);
-            g.drawImage(texture, x, y, width, height);
-        }
+            g.drawImage(boardStyle.getTexture(), x, y, width, height);
 
-        g.setFill(markerColor);
-        g.setStroke(markerColor);
+            g.setFill(markerColor);
+            g.setStroke(markerColor);
+        }
 
         // Board lines
         for (int x = 0; x < boardWidth; x++) {

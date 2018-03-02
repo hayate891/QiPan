@@ -65,6 +65,7 @@ public class Game {
                 s.setWobble(wobble);
                 s.nudge(s.getX() - x, s.getY() - y, metrics);
 
+                // Collision detection
                 if ((int) (Math.random() * 5) < 2) {
                     Stone[] adjacent2 = getAdjacentStones(s.getX(), s.getY(), false);
                     if (adjacent2.length >= 2)
