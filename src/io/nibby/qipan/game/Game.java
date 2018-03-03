@@ -6,17 +6,24 @@ import io.nibby.qipan.board.StoneStyle;
 import io.nibby.qipan.sound.Sound;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
 
 public class Game {
 
     private int boardWidth, boardHeight;
     private Stone[] stones;
+    private MoveNode gameTree;
+    private MoveNode currentMove;
 
     public Game(int bWidth, int bHeight) {
         this.boardWidth = bWidth;
         this.boardHeight = bHeight;
         this.stones = new Stone[boardWidth * boardHeight];
+
+        gameTree = new MoveNode();
+        currentMove = gameTree;
     }
 
     public Stone[] getStones() {
@@ -32,46 +39,121 @@ public class Game {
     }
 
     // A data tuple for returning information related to stone placement.
-    public static class PlaceStoneResult {
+    public static class PlaceMoveResult {
 
         public static final int PLACE_OK = 0;
-        public static final int PLACE_ILLEGAL_KO = 1;
-        public static final int PLACE_ILLEGAL_COLLISION = 2;
-        public static final int PLACE_ILLEGAL_SUICIDAL = 3;
+        public static final int PLACE_SUICIDAL = 1;
+        public static final int PLACE_ILLEGAL_KO = 2;
+        public static final int PLACE_ILLEGAL_POSITION = 3;
         public static final int PLACE_INDETERMINATE = -1;
 
         public Stone[] wobbleStones;
         public int result;
+        public MoveNode node;
     }
 
     /**
-     * Places a single stone onto the go board.
-     * The style of the stone is determined here.
+     * Places a single stone onto the go board as an independent move.
      *
      * @param x x co-ordinate on the board.
      * @param y y co-ordinate on the board.
      * @param color Color of the stone.
-     * @param newPosition Whether or not a new node should be created for this action.
-     *                    'false' for helper stones, 'true' for a significant game move.
+     * @param style Stone styling option, used to determine the wobble margin.
      * @param metrics Sizing information to calculate stone setWobble and placement offset.
      */
-    public PlaceStoneResult placeStone(int x, int y, int color, boolean newPosition, BoardMetrics metrics, Sound.ActionCallback callback) {
-        //TODO temporary code
-        Stone stone = new Stone(color, x, y);
+    public PlaceMoveResult placeMove(int x, int y, int color, StoneStyle style, BoardMetrics metrics,
+                                     Sound.ActionCallback callback) {
+        PlaceMoveResult result = new PlaceMoveResult();
+        MoveNode resultNode = new MoveNode(currentMove);
+        /*
+            First check if the move is on the board and on an empty intersection.
+            Then check for illegal ko squares.
+         */
+        if (x < 0 || x >= boardWidth || y < 0 || y >= boardHeight) {
+            result.result = PlaceMoveResult.PLACE_ILLEGAL_POSITION;
+            return result;
+        }
+        if (stones[x + y * boardWidth] != null) {
+            result.result = PlaceMoveResult.PLACE_ILLEGAL_POSITION;
+            return result;
+        }
+
+        // TODO illegal ko check
+
+        // Create a hypothetical board position with the new move in place
+        Stone[] testPosition = Arrays.copyOf(stones, stones.length);
+        testPosition[x + y * boardWidth] = new Stone(color, x, y);
+
+        /*
+            Next, check the liberties of opponent's adjacent stones and check if there is a capture
+            upon playing this move.
+
+                TODO: The New Zealand ruleset does allow suicidal moves, so perhaps GameRules must be taken into consideration?
+         */
+        Stone[] adjacentStones = getAdjacentStones(testPosition, x, y, false);
+        List<Stone> lastChain = new ArrayList<>();
+        int captures = 0;
+
+        for (Stone adjacentStone : adjacentStones) {
+            List<Integer> visited = new ArrayList<>();
+            boolean isAlly = adjacentStone.getColor() == color;
+
+            // Not checking for suicide here
+            if (isAlly)
+                continue;
+
+            Object[] resultTuple = getChainProperties(testPosition, adjacentStone.getX(), adjacentStone.getY(), visited,
+                    adjacentStone.getColor());
+            int liberties = (int) resultTuple[0];
+            List<Stone> stoneChain = (List<Stone>) resultTuple[1];
+            if (liberties == 0) {
+                captures += stoneChain.size();
+                for (Stone stone : stoneChain) {
+                    int xx = stone.getX();
+                    int yy = stone.getY();
+                    testPosition[xx + yy * boardWidth] = null;
+                }
+                lastChain = stoneChain;
+            }
+        }
+
+        // There will be a capture of 1 stone upon playing this move
+        // Check if this is the illegal ko recapture
+        if (captures == 1) {
+            resultNode.lastKoX = lastChain.get(0).getX();
+            resultNode.lastKoY = lastChain.get(0).getY();
+        } else {
+            // Negative ko co-ordinates means no illegal ko square next turn
+            resultNode.lastKoX = -1;
+            resultNode.lastKoY = -1;
+        }
+
+        /*
+            Now we check if the current move is suicidal
+         */
+        Object[] selfChain = getChainProperties(testPosition, x, y, new ArrayList<Integer>(),
+                testPosition[x + y * boardWidth].getColor());
+        int selfLiberties = (int) selfChain[0];
+
+        // If this hypothetical move has no liberties, and has made no captures, it is a suicidal move
+        if (selfLiberties == 0 && captures == 0) {
+            //TODO account for New Zealand rules
+            result.result = PlaceMoveResult.PLACE_SUICIDAL;
+            return result;
+        }
+
+        //Wibbly wobbly
+        Stone stone = testPosition[x + y * boardWidth];
         stone.setWobble((Math.random() + 0.1d) * StoneStyle.CERAMIC.wobbleMargin());
         stone.onPlace(metrics);
         stones[x + y * getBoardWidth()] = stone;
-
-        //TODO again, temporary
-        PlaceStoneResult result = new PlaceStoneResult();
-        result.result = PlaceStoneResult.PLACE_OK;
 
         // Nudge effect
         boolean bigCollision = false;
         boolean snap = false;
         List<Stone> wobbles = new ArrayList<>();
         wobbles.add(stone);
-        Stone[] adjacent = getAdjacentStones(x, y, false);
+        Stone[] adjacent = getAdjacentStones(testPosition, x, y, false);
         for(Stone s : adjacent) {
             if (Math.abs(s.getY() - y) == 1 || (int) (Math.random() * 3) == 1) {
                 double wobble = (Math.abs(s.getY() - y) == 1)
@@ -87,7 +169,7 @@ public class Game {
 
                 // Collision detection
                 if ((int) (Math.random() * 5) < 2) {
-                    Stone[] adjacent2 = getAdjacentStones(s.getX(), s.getY(), false);
+                    Stone[] adjacent2 = getAdjacentStones(testPosition, s.getX(), s.getY(), false);
                     if (adjacent2.length >= 2)
                         bigCollision = true;
                     for (Stone ss : adjacent2) {
@@ -102,14 +184,101 @@ public class Game {
         }
         result.wobbleStones = wobbles.toArray(new Stone[wobbles.size()]);
         Sound.playMove(color, adjacent.length, snap, bigCollision, callback);
+
+        resultNode.stones = stones;
+        result.node = resultNode;
+        currentMove = resultNode;
+        this.stones = Arrays.copyOf(testPosition, testPosition.length);
+
         return result;
     }
 
-    public void evaluatePosition() {
+    /**
+     * Returns attributes pertaining to the adjacent stone chain.
+     *
+     * @param testPosition
+     * @param x
+     * @param y
+     * @param visited
+     * @param color
+     * @return
+     */
+    private Object[] getChainProperties(Stone[] testPosition, int x, int y, List<Integer> visited, int color) {
+        List<Stone> stoneChain = new ArrayList<>();
+        Stack<Stone> toVisit = new Stack<>();
+        int liberties = 0;
+        Stone currentStone = testPosition[x + y * boardWidth];
 
+        if (!visited.contains(x + y * boardWidth)) {
+            toVisit.push(currentStone);
+            stoneChain.add(currentStone);
+        }
+
+        while (toVisit.size() > 0) {
+            Stone visitor = toVisit.pop();
+
+            int px = visitor.getX();
+            int py = visitor.getY();
+
+            int left = py * boardWidth + px - 1;
+            int right = py * boardWidth + px + 1;
+            int up = (py - 1) * boardWidth + px;
+            int down = (py + 1) * boardWidth + px;
+
+            if (px > 0 && !visited.contains(left)) {
+                if (testPosition[left] == null)
+                    liberties++;
+                else if (testPosition[left].getColor() == color) {
+                    toVisit.add(testPosition[left]);
+                    stoneChain.add(testPosition[left]);
+                }
+
+                visited.add(left);
+            }
+
+            if (px < boardWidth - 1 && !visited.contains(right)) {
+                if (testPosition[right] == null)
+                    liberties++;
+                else if (testPosition[right].getColor() == color) {
+                    toVisit.add(testPosition[right]);
+                    stoneChain.add(testPosition[right]);
+                }
+            }
+
+            if (py > 0 && !visited.contains(up)) {
+                if (testPosition[up] == null)
+                    liberties++;
+                else if (testPosition[up].getColor() == color) {
+                    toVisit.add(testPosition[up]);
+                    stoneChain.add(testPosition[up]);
+                }
+
+                visited.add(up);
+            }
+
+            if (py < boardHeight - 1 && !visited.contains(down)) {
+                if (testPosition[down] == null)
+                    liberties++;
+                else if (testPosition[down].getColor() == color) {
+                    toVisit.add(testPosition[down]);
+                    stoneChain.add(testPosition[down]);
+                }
+
+                visited.add(down);
+            }
+        }
+
+        return new Object[] {
+            liberties,  // int
+            stoneChain  // List<Stone>
+        };
     }
 
     public Stone[] getAdjacentStones(int x, int y, boolean sameColorOnly) {
+        return getAdjacentStones(this.stones, x, y, sameColorOnly);
+    }
+
+    public Stone[] getAdjacentStones(Stone[] stones, int x, int y, boolean sameColorOnly) {
         List<Stone> result = new ArrayList<>();
         Stone origin = stones[x + y * boardWidth];
         // left
@@ -133,5 +302,4 @@ public class Game {
 
         return result.toArray(new Stone[result.size()]);
     }
-
 }
