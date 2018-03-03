@@ -9,11 +9,15 @@ import javafx.scene.layout.Pane;
  */
 public class BoardContainer extends Pane {
 
-    BoardMetrics metrics = new BoardMetrics();
-    Game game;
-    AbstractGameController boardController;
-    final BoardCanvas boardView;
-    final BoardInputCanvas boardInputView;
+    private BoardMetrics metrics = new BoardMetrics();
+    private Game game;
+    private AbstractGameController boardController;
+    private final BoardCanvas boardView;
+    private final BoardInputCanvas boardInputView;
+
+    private BoardStyle boardStyle = BoardStyle.KAYA;
+    private BoardBackgroundStyle boardBgStyle = BoardBackgroundStyle.TATAMI;
+    private StoneStyle stoneStyle = StoneStyle.CERAMIC;
 
     public BoardContainer(Game game, AbstractGameController controller) {
         setGame(game);
@@ -75,5 +79,49 @@ public class BoardContainer extends Pane {
 
         if (boardView != null && boardInputView != null)
             render();
+    }
+
+    public BoardStyle getBoardStyle() {
+        return boardStyle;
+    }
+
+    public void setBoardStyle(BoardStyle boardStyle) {
+        this.boardStyle = boardStyle;
+    }
+
+    public BoardBackgroundStyle getBoardBgStyle() {
+        return boardBgStyle;
+    }
+
+    public void setBoardBgStyle(BoardBackgroundStyle boardBgStyle) {
+        this.boardBgStyle = boardBgStyle;
+    }
+
+    public StoneStyle getStoneStyle() {
+        return stoneStyle;
+    }
+
+    public void setStoneStyle(StoneStyle stoneStyle) {
+        this.stoneStyle = stoneStyle;
+    }
+
+    public BoardMetrics getMetrics() {
+        return metrics;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public AbstractGameController getBoardController() {
+        return boardController;
+    }
+
+    public BoardCanvas getBoardView() {
+        return boardView;
+    }
+
+    public BoardInputCanvas getBoardInputView() {
+        return boardInputView;
     }
 }

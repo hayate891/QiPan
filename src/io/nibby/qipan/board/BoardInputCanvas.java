@@ -46,7 +46,7 @@ public class BoardInputCanvas extends Canvas {
 
     public BoardInputCanvas(BoardContainer container) {
         this.container = container;
-        this.controller = container.boardController;
+        this.controller = container.getBoardController();
         setFocusTraversable(true);
         g = getGraphicsContext2D();
 
@@ -69,9 +69,9 @@ public class BoardInputCanvas extends Canvas {
 
                 if (!stone.shouldWobble()) {
                     wobbleStones.remove(i);
-                    container.boardView.render();
+                    container.getBoardView().render();
                 } else {
-                    stone.render(g, container.metrics);
+                    stone.render(g, container.getMetrics(), container.getStoneStyle());
                     i++;
                 }
             }
@@ -79,14 +79,13 @@ public class BoardInputCanvas extends Canvas {
             new Timeline(new KeyFrame(Duration.millis(20), e -> {
                 render();
             })).play();
-        } else
-            container.boardView.render();
+        }
 
         // TODO implement later
     }
 
     private void updateMousePosition(MouseEvent evt) {
-        BoardMetrics metrics = container.metrics;
+        BoardMetrics metrics = container.getMetrics();
         double offsetX = metrics.offsetX;
         double offsetY = metrics.offsetY;
         double gridOffsetX = metrics.gridOffsetX;

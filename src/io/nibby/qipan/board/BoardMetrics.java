@@ -33,7 +33,7 @@ public class BoardMetrics {
 
     public void recalculate(BoardContainer container) {
         double margin = (!drawLabels) ? 35 : (labelOrientation == LABEL_ORIENTATION_ALL) ? 65 : 50;
-        Game game = container.game;
+        Game game = container.getGame();
         this.boardWidth = game.getBoardWidth();
         this.boardHeight = game.getBoardHeight();
         drawWidth = container.getWidth() - margin;

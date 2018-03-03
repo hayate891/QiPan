@@ -16,10 +16,10 @@ public abstract class AbstractGameController {
     Game game;
 
     protected void onAdd(BoardContainer container) {
-        this.boardView = container.boardView;
-        this.boardInputView = container.boardInputView;
+        this.boardView = container.getBoardView();
+        this.boardInputView = container.getBoardInputView();
         this.container = container;
-        game = container.game;
+        game = container.getGame();
     }
 
     public void mouseMoved(int x, int y, int oldX, int oldY) {
@@ -43,9 +43,9 @@ public abstract class AbstractGameController {
     }
 
     public Game.PlaceStoneResult placeStone(int x, int y, int playerColor, boolean newPosition, Sound.ActionCallback callback) {
-        Game.PlaceStoneResult result = game.placeStone(x, y, playerColor, newPosition, container.metrics, callback);
+        Game.PlaceStoneResult result = game.placeStone(x, y, playerColor, newPosition, container.getMetrics(), callback);
         for (Stone stone : result.wobbleStones)
-            container.boardInputView.addWobbleStone(stone);
+            container.getBoardInputView().addWobbleStone(stone);
         return result;
     }
 

@@ -76,10 +76,8 @@ public class Stone {
         return color;
     }
 
-    public void render(GraphicsContext g, BoardMetrics metrics) {
-        // TODO temporary style, change later
-        StoneStyle style = StoneStyle.CERAMIC;
-        style.render(g, this, metrics);
+    public void render(GraphicsContext g, BoardMetrics metrics, StoneStyle stoneStyle) {
+        stoneStyle.render(g, this, metrics);
     }
 
     public int getX() {

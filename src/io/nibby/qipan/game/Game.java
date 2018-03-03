@@ -37,6 +37,7 @@ public class Game {
         public static final int PLACE_OK = 0;
         public static final int PLACE_ILLEGAL_KO = 1;
         public static final int PLACE_ILLEGAL_COLLISION = 2;
+        public static final int PLACE_ILLEGAL_SUICIDAL = 3;
         public static final int PLACE_INDETERMINATE = -1;
 
         public Stone[] wobbleStones;
@@ -102,6 +103,10 @@ public class Game {
         result.wobbleStones = wobbles.toArray(new Stone[wobbles.size()]);
         Sound.playMove(color, adjacent.length, snap, bigCollision, callback);
         return result;
+    }
+
+    public void evaluatePosition() {
+
     }
 
     public Stone[] getAdjacentStones(int x, int y, boolean sameColorOnly) {

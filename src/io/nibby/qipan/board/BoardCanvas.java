@@ -16,7 +16,7 @@ public class BoardCanvas extends Canvas {
     private static final int TEXTURE_SHADOW_MARGIN = 10;
 
     static {
-        // TODO may be temporary
+        // TODO may be temporary, need to scale it with board size
         TEXTURE_SHADOW.setRadius(15);
         TEXTURE_SHADOW.setOffsetX(10);
         TEXTURE_SHADOW.setOffsetY(10);
@@ -34,15 +34,13 @@ public class BoardCanvas extends Canvas {
         setFocusTraversable(true);
         g = getGraphicsContext2D();
 
-        //TODO temporary
-        boardStyle = BoardStyle.KAYA;
-        backgroundStyle = BoardBackgroundStyle.TATAMI;
-
-        markerColor = BoardStyle.KAYA.getMarkerColor();
+        boardStyle = container.getBoardStyle();
+        backgroundStyle = container.getBoardBgStyle();
+        markerColor = boardStyle.getMarkerColor();
     }
 
     public void render() {
-        BoardMetrics metrics = container.metrics;
+        BoardMetrics metrics = container.getMetrics();
         double gridSize = metrics.gridSize;
         int boardWidth = metrics.boardWidth;
         int boardHeight = metrics.boardHeight;
@@ -118,7 +116,7 @@ public class BoardCanvas extends Canvas {
         }
 
         // Board stones
-        Game game = container.game;
+        Game game = container.getGame();
         Stone[] stones = game.getStones();
         for (Stone stone : stones) {
             if (stone == null)
@@ -126,7 +124,7 @@ public class BoardCanvas extends Canvas {
             if (stone.shouldWobble())
                 continue;
 
-            stone.render(g, container.metrics);
+            stone.render(g, container.getMetrics(), container.getStoneStyle());
         }
     }
 }
