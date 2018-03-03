@@ -147,7 +147,7 @@ public class Game {
 
         //Wibbly wobbly
         Stone stone = testPosition[x + y * boardWidth];
-        stone.setWobble((Math.random() + 0.1d) * StoneStyle.CERAMIC.wobbleMargin());
+        stone.setWobble((Math.random() + 0.1d) * style.wobbleMargin());
         stone.onPlace(metrics);
         stones[x + y * getBoardWidth()] = stone;
 
@@ -160,10 +160,10 @@ public class Game {
         for(Stone s : adjacent) {
             if (Math.abs(s.getY() - y) == 1 || (int) (Math.random() * 3) == 1) {
                 double wobble = (Math.abs(s.getY() - y) == 1)
-                        ? StoneStyle.CERAMIC.wobbleMargin()
-                        : (Math.random() + 0.1d) * StoneStyle.CERAMIC.wobbleMargin() / 2;
+                        ? style.wobbleMargin()
+                        : (Math.random() + 0.1d) * style.wobbleMargin() / 2;
                 if (Math.abs(s.getY() - y) == 1) {
-                    stone.setWobble(StoneStyle.CERAMIC.wobbleMargin());
+                    stone.setWobble(style.wobbleMargin());
                     snap = true;
                 }
                 s.setWobble(wobble);
@@ -178,7 +178,7 @@ public class Game {
                     for (Stone ss : adjacent2) {
                         if (ss.equals(stone) || ss.equals(s))
                             continue;
-                        ss.setWobble((Math.random() + 0.1d) * StoneStyle.CERAMIC.wobbleMargin() / 2);
+                        ss.setWobble((Math.random() + 0.1d) * style.wobbleMargin() / 2);
                         ss.nudge(s.getX() - x, s.getY() - y, metrics);
                         wobbles.add(ss);
                     }
@@ -190,6 +190,7 @@ public class Game {
 
         resultNode.stones = stones;
         result.node = resultNode;
+        currentMove.addChild(resultNode);
         currentMove = resultNode;
         this.stones = Arrays.copyOf(testPosition, testPosition.length);
 
@@ -199,18 +200,18 @@ public class Game {
     /**
      * Returns attributes pertaining to the adjacent stone chain.
      *
-     * @param testPosition
-     * @param x
-     * @param y
-     * @param visited
-     * @param color
-     * @return
+     * @param board The board position to evaluate
+     * @param x x position of the origin
+     * @param y y position of the origin
+     * @param visited A list of already visited points
+     * @param color The color of the stone to check, black or white.
+     * @return An object tuple of size 2: liberty as integer, and an array of Stones in the chain.
      */
-    private Object[] getChainProperties(Stone[] testPosition, int x, int y, List<Integer> visited, int color) {
+    private Object[] getChainProperties(Stone[] board, int x, int y, List<Integer> visited, int color) {
         List<Stone> stoneChain = new ArrayList<>();
         Stack<Stone> toVisit = new Stack<>();
         int liberties = 0;
-        Stone currentStone = testPosition[x + y * boardWidth];
+        Stone currentStone = board[x + y * boardWidth];
 
         if (!visited.contains(x + y * boardWidth)) {
             toVisit.push(currentStone);
@@ -229,42 +230,42 @@ public class Game {
             int down = (py + 1) * boardWidth + px;
 
             if (px > 0 && !visited.contains(left)) {
-                if (testPosition[left] == null)
+                if (board[left] == null)
                     liberties++;
-                else if (testPosition[left].getColor() == color) {
-                    toVisit.add(testPosition[left]);
-                    stoneChain.add(testPosition[left]);
+                else if (board[left].getColor() == color) {
+                    toVisit.add(board[left]);
+                    stoneChain.add(board[left]);
                 }
 
                 visited.add(left);
             }
 
             if (px < boardWidth - 1 && !visited.contains(right)) {
-                if (testPosition[right] == null)
+                if (board[right] == null)
                     liberties++;
-                else if (testPosition[right].getColor() == color) {
-                    toVisit.add(testPosition[right]);
-                    stoneChain.add(testPosition[right]);
+                else if (board[right].getColor() == color) {
+                    toVisit.add(board[right]);
+                    stoneChain.add(board[right]);
                 }
             }
 
             if (py > 0 && !visited.contains(up)) {
-                if (testPosition[up] == null)
+                if (board[up] == null)
                     liberties++;
-                else if (testPosition[up].getColor() == color) {
-                    toVisit.add(testPosition[up]);
-                    stoneChain.add(testPosition[up]);
+                else if (board[up].getColor() == color) {
+                    toVisit.add(board[up]);
+                    stoneChain.add(board[up]);
                 }
 
                 visited.add(up);
             }
 
             if (py < boardHeight - 1 && !visited.contains(down)) {
-                if (testPosition[down] == null)
+                if (board[down] == null)
                     liberties++;
-                else if (testPosition[down].getColor() == color) {
-                    toVisit.add(testPosition[down]);
-                    stoneChain.add(testPosition[down]);
+                else if (board[down].getColor() == color) {
+                    toVisit.add(board[down]);
+                    stoneChain.add(board[down]);
                 }
 
                 visited.add(down);
