@@ -1,13 +1,22 @@
 package io.nibby.qipan.board;
 
+import io.nibby.qipan.game.Game;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.util.Duration;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /*
-    This is the canvas component that handles input/draws stone placement hint.
+    This is the canvas component that handles input/draws stone placement hints
+    as well as stone wobbles.
+
     It is kept separate from the position canvas to avoid redrawing the entire board
     on each input repaint.
  */
@@ -24,6 +33,7 @@ public class BoardInputCanvas extends Canvas {
     public static final int HINT_ANNOTATION_LETTERS = 8;
     public static final int HINT_ANNOTATION_DIM_STONE = 9;
 
+    private List<Stone> wobbleStones = new ArrayList<>();
     private BoardContainer container;
     private AbstractGameController controller;
     private GraphicsContext g;
@@ -50,6 +60,28 @@ public class BoardInputCanvas extends Canvas {
     }
 
     void render() {
+        g.clearRect(0, 0, getWidth(), getHeight());
+        // Wobbling stones are drawn here with a 20ms refresh timer
+        if (wobbleStones.size() > 0) {
+            for (int i = 0; i < wobbleStones.size();) {
+                Stone stone = wobbleStones.get(i);
+                stone.wobble();
+
+                if (!stone.shouldWobble()) {
+                    wobbleStones.remove(i);
+                    container.boardView.render();
+                } else {
+                    stone.render(g, container.metrics);
+                    i++;
+                }
+            }
+
+            new Timeline(new KeyFrame(Duration.millis(20), e -> {
+                render();
+            })).play();
+        } else
+            container.boardView.render();
+
         // TODO implement later
     }
 
@@ -124,5 +156,13 @@ public class BoardInputCanvas extends Canvas {
         requestFocus();
         controller.keyReleased(evt.getCode());
         render();
+    }
+
+    protected void addWobbleStone(Stone stone) {
+        wobbleStones.add(stone);
+    }
+
+    protected boolean isWobbleStone(Stone stone) {
+        return wobbleStones.contains(stone);
     }
 }

@@ -93,4 +93,5 @@ public class Stone {
     public boolean shouldWobble() {
         return wobble > 0d;
     }
+
 }

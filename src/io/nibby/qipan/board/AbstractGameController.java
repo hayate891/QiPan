@@ -1,6 +1,7 @@
 package io.nibby.qipan.board;
 
 import io.nibby.qipan.game.Game;
+import io.nibby.qipan.sound.Sound;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 
@@ -39,6 +40,13 @@ public abstract class AbstractGameController {
 
     public void mouseScrolled(double notch) {
 
+    }
+
+    public Game.PlaceStoneResult placeStone(int x, int y, int playerColor, boolean newPosition, Sound.ActionCallback callback) {
+        Game.PlaceStoneResult result = game.placeStone(x, y, playerColor, newPosition, container.metrics, callback);
+        for (Stone stone : result.wobbleStones)
+            container.boardInputView.addWobbleStone(stone);
+        return result;
     }
 
     public void keyPressed(KeyCode key) {

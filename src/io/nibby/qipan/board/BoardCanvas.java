@@ -1,14 +1,10 @@
 package io.nibby.qipan.board;
 
 import io.nibby.qipan.game.Game;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import javafx.util.Duration;
 
 /*
     This is the canvas component that renders the board position.
@@ -79,11 +75,13 @@ public class BoardCanvas extends Canvas {
 
         // Board lines
         for (int x = 0; x < boardWidth; x++) {
-            g.strokeLine(metrics.getGridX(x),offsetY + gridOffsetY, metrics.getGridX(x), metrics.getGridY(boardHeight - 1));
+            g.strokeLine(metrics.getGridX(x),offsetY + gridOffsetY, metrics.getGridX(x),
+                    metrics.getGridY(boardHeight - 1));
         }
 
         for (int y = 0; y < boardHeight; y++) {
-            g.strokeLine(offsetX + gridOffsetX, metrics.getGridY(y), metrics.getGridX(boardWidth - 1), metrics.getGridY(y));
+            g.strokeLine(offsetX + gridOffsetX, metrics.getGridY(y),
+                    metrics.getGridX(boardWidth - 1), metrics.getGridY(y));
         }
 
         // Board star points
@@ -122,19 +120,13 @@ public class BoardCanvas extends Canvas {
         // Board stones
         Game game = container.game;
         Stone[] stones = game.getStones();
-        boolean hasWobble = false;
-        for (int i = 0; i < stones.length; i++) {
-            if (stones[i] == null)
+        for (Stone stone : stones) {
+            if (stone == null)
                 continue;
-            if (stones[i].shouldWobble()) {
-                hasWobble = true;
-                stones[i].wobble();
-            }
-            stones[i].render(g, container.metrics);
-        }
+            if (stone.shouldWobble())
+                continue;
 
-        if (hasWobble) {
-            new Timeline(new KeyFrame(Duration.millis(20), e -> render())).play();
+            stone.render(g, container.metrics);
         }
     }
 }

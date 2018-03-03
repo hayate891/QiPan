@@ -31,6 +31,18 @@ public class Game {
         return boardHeight;
     }
 
+    // A data tuple for returning information related to stone placement.
+    public static class PlaceStoneResult {
+
+        public static final int PLACE_OK = 0;
+        public static final int PLACE_ILLEGAL_KO = 1;
+        public static final int PLACE_ILLEGAL_COLLISION = 2;
+        public static final int PLACE_INDETERMINATE = -1;
+
+        public Stone[] wobbleStones;
+        public int result;
+    }
+
     /**
      * Places a single stone onto the go board.
      * The style of the stone is determined here.
@@ -39,19 +51,25 @@ public class Game {
      * @param y y co-ordinate on the board.
      * @param color Color of the stone.
      * @param newPosition Whether or not a new node should be created for this action.
-     *                    'false' for helper stonse, 'true' for a significant game move.
+     *                    'false' for helper stones, 'true' for a significant game move.
      * @param metrics Sizing information to calculate stone setWobble and placement offset.
      */
-    public void placeStone(int x, int y, int color, boolean newPosition, BoardMetrics metrics, Sound.ActionCallback callback) {
+    public PlaceStoneResult placeStone(int x, int y, int color, boolean newPosition, BoardMetrics metrics, Sound.ActionCallback callback) {
         //TODO temporary code
         Stone stone = new Stone(color, x, y);
         stone.setWobble((Math.random() + 0.1d) * StoneStyle.CERAMIC.wobbleMargin());
         stone.onPlace(metrics);
         stones[x + y * getBoardWidth()] = stone;
-        boolean bigCollision = false;
-        boolean snap = false;
+
+        //TODO again, temporary
+        PlaceStoneResult result = new PlaceStoneResult();
+        result.result = PlaceStoneResult.PLACE_OK;
 
         // Nudge effect
+        boolean bigCollision = false;
+        boolean snap = false;
+        List<Stone> wobbles = new ArrayList<>();
+        wobbles.add(stone);
         Stone[] adjacent = getAdjacentStones(x, y, false);
         for(Stone s : adjacent) {
             if (Math.abs(s.getY() - y) == 1 || (int) (Math.random() * 3) == 1) {
@@ -64,6 +82,7 @@ public class Game {
                 }
                 s.setWobble(wobble);
                 s.nudge(s.getX() - x, s.getY() - y, metrics);
+                wobbles.add(s);
 
                 // Collision detection
                 if ((int) (Math.random() * 5) < 2) {
@@ -75,12 +94,14 @@ public class Game {
                             continue;
                         ss.setWobble((Math.random() + 0.1d) * StoneStyle.CERAMIC.wobbleMargin() / 2);
                         ss.nudge(s.getX() - x, s.getY() - y, metrics);
+                        wobbles.add(ss);
                     }
                 }
             }
         }
-
-        Sound.playMove(color, adjacent.length, snap, bigCollision, callback::performAction);
+        result.wobbleStones = wobbles.toArray(new Stone[wobbles.size()]);
+        Sound.playMove(color, adjacent.length, snap, bigCollision, callback);
+        return result;
     }
 
     public Stone[] getAdjacentStones(int x, int y, boolean sameColorOnly) {
@@ -107,4 +128,5 @@ public class Game {
 
         return result.toArray(new Stone[result.size()]);
     }
+
 }
