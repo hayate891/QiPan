@@ -78,7 +78,10 @@ public class Game {
             return result;
         }
 
-        // TODO illegal ko check
+        if (x == currentMove.lastKoX && y == currentMove.lastKoY) {
+            result.result = PlaceMoveResult.PLACE_ILLEGAL_KO;
+            return result;
+        }
 
         // Create a hypothetical board position with the new move in place
         Stone[] testPosition = Arrays.copyOf(stones, stones.length);
