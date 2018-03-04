@@ -1,6 +1,5 @@
-package io.nibby.qipan.board;
+package io.nibby.qipan.ui.board;
 
-import io.nibby.qipan.game.Game;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.canvas.Canvas;

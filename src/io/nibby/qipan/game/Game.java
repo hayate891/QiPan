@@ -1,8 +1,8 @@
 package io.nibby.qipan.game;
 
-import io.nibby.qipan.board.BoardMetrics;
-import io.nibby.qipan.board.Stone;
-import io.nibby.qipan.board.StoneStyle;
+import io.nibby.qipan.ui.board.BoardMetrics;
+import io.nibby.qipan.ui.board.Stone;
+import io.nibby.qipan.ui.board.StoneStyle;
 import io.nibby.qipan.sound.Sound;
 
 import java.util.ArrayList;

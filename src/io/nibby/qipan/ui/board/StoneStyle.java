@@ -1,4 +1,4 @@
-package io.nibby.qipan.board;
+package io.nibby.qipan.ui.board;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlurType;
@@ -8,8 +8,8 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
 
-import static io.nibby.qipan.board.Stone.BLACK;
-import static io.nibby.qipan.board.Stone.WHITE;
+import static io.nibby.qipan.ui.board.Stone.BLACK;
+import static io.nibby.qipan.ui.board.Stone.WHITE;
 
 public enum StoneStyle {
 

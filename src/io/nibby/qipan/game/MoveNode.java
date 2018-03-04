@@ -1,6 +1,6 @@
 package io.nibby.qipan.game;
 
-import io.nibby.qipan.board.Stone;
+import io.nibby.qipan.ui.board.Stone;
 
 import java.util.ArrayList;
 import java.util.List;

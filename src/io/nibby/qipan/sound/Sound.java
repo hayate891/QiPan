@@ -1,10 +1,8 @@
 package io.nibby.qipan.sound;
 
-import io.nibby.qipan.board.Stone;
 import javafx.scene.media.AudioClip;
 
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

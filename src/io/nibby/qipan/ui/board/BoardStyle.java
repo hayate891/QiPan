@@ -1,4 +1,4 @@
-package io.nibby.qipan.board;
+package io.nibby.qipan.ui.board;
 
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;

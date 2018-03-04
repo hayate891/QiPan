@@ -1,4 +1,4 @@
-package io.nibby.qipan.board;
+package io.nibby.qipan.ui.board;
 
 import io.nibby.qipan.game.Game;
 import io.nibby.qipan.sound.Sound;

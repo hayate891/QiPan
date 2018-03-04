@@ -1,7 +1,7 @@
 package io.nibby.qipan;
 
-import io.nibby.qipan.board.BoardContainer;
-import io.nibby.qipan.board.GameReviewController;
+import io.nibby.qipan.ui.board.BoardContainer;
+import io.nibby.qipan.ui.board.GameReviewController;
 import io.nibby.qipan.game.Game;
 import javafx.application.Application;
 import javafx.scene.Scene;
