@@ -1,5 +1,6 @@
 package io.nibby.qipan;
 
+import io.nibby.qipan.game.GameRules;
 import io.nibby.qipan.ui.board.BoardContainer;
 import io.nibby.qipan.ui.board.GameReviewController;
 import io.nibby.qipan.game.Game;
@@ -17,7 +18,7 @@ public class QiPan extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         // Temporary
-        Game game = new Game(19, 19);
+        Game game = new Game(19, 19, GameRules.CHINESE);
         BorderPane pane = new BorderPane();
         BoardContainer container = new BoardContainer(game, new GameReviewController());
         pane.setCenter(container);

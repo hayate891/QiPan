@@ -13,13 +13,15 @@ import java.util.Stack;
 public class Game {
 
     private int boardWidth, boardHeight;
+    private GameRules rules;
     private Stone[] stones;
     private MoveNode gameTree;
     private MoveNode currentMove;
 
-    public Game(int bWidth, int bHeight) {
+    public Game(int bWidth, int bHeight, GameRules rules) {
         this.boardWidth = bWidth;
         this.boardHeight = bHeight;
+        this.rules = rules;
         this.stones = new Stone[boardWidth * boardHeight];
 
         gameTree = new MoveNode();
@@ -73,12 +75,12 @@ public class Game {
             result.result = PlaceMoveResult.PLACE_ILLEGAL_POSITION;
             return result;
         }
-        if (stones[x + y * boardWidth] != null) {
+        if (stones[x + y * boardWidth] != null && !rules.allowCollision(stones, x, y, color)) {
             result.result = PlaceMoveResult.PLACE_ILLEGAL_POSITION;
             return result;
         }
 
-        if (x == currentMove.lastKoX && y == currentMove.lastKoY) {
+        if (x == currentMove.lastKoX && y == currentMove.lastKoY && !rules.allowKoRecapture(stones, x, y, color)) {
             result.result = PlaceMoveResult.PLACE_ILLEGAL_KO;
             return result;
         }
