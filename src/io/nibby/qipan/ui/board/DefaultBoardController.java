@@ -1,12 +1,13 @@
 package io.nibby.qipan.ui.board;
 
+import io.nibby.qipan.game.MoveNode;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 
 /*
     The standard (default) controller used to edit game data.
  */
-public class GameReviewController extends AbstractGameController {
+public class DefaultBoardController extends AbstractGameController {
 
     private int nextColor = Stone.BLACK;
 
@@ -28,8 +29,7 @@ public class GameReviewController extends AbstractGameController {
         // TODO temporary
         if (button.equals(MouseButton.PRIMARY) && x >= 0 && y >= 0) {
             placeMove(x, y, nextColor, () -> {
-                container.render();
-                nextColor = nextColor == Stone.BLACK ? Stone.WHITE : Stone.BLACK;
+                nextColor = game.getCurrentMove().nextColor;
             });
         }
     }
@@ -47,6 +47,19 @@ public class GameReviewController extends AbstractGameController {
     @Override
     public void keyPressed(KeyCode key) {
         super.keyPressed(key);
+
+        // TODO Make these configurable
+        if (key.equals(KeyCode.LEFT)) {
+            MoveNode move = game.getCurrentMove();
+            if (move.getParent() != null)
+                game.setCurrentMove(move.getParent());
+        }
+
+        if (key.equals(KeyCode.RIGHT)) {
+            MoveNode move = game.getCurrentMove();
+            if (!move.getChildren().isEmpty())
+                game.setCurrentMove(move.getChildren().get(0));
+        }
     }
 
     @Override

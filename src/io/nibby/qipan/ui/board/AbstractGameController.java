@@ -12,10 +12,10 @@ public abstract class AbstractGameController {
 
     BoardCanvas boardView;
     BoardInputCanvas boardInputView;
-    BoardContainer container;
+    BoardUI container;
     Game game;
 
-    protected void onAdd(BoardContainer container) {
+    protected void onAdd(BoardUI container) {
         this.boardView = container.getBoardView();
         this.boardInputView = container.getBoardInputView();
         this.container = container;

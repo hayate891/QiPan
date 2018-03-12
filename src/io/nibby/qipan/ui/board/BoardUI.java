@@ -1,13 +1,15 @@
 package io.nibby.qipan.ui.board;
 
 import io.nibby.qipan.game.Game;
+import io.nibby.qipan.game.GameListener;
+import io.nibby.qipan.game.MoveNode;
 import javafx.scene.Cursor;
 import javafx.scene.layout.Pane;
 
 /*
     A container to organize BoardCanvas + BoardInputCanvas.
  */
-public class BoardContainer extends Pane {
+public class BoardUI extends Pane implements GameListener {
 
     private BoardMetrics metrics = new BoardMetrics();
     private Game game;
@@ -19,7 +21,7 @@ public class BoardContainer extends Pane {
     private BoardBackgroundStyle boardBgStyle = BoardBackgroundStyle.TATAMI;
     private StoneStyle stoneStyle = StoneStyle.CERAMIC;
 
-    public BoardContainer(Game game, AbstractGameController controller) {
+    public BoardUI(Game game, AbstractGameController controller) {
         setGame(game);
         metrics.recalculate(this);
 
@@ -75,6 +77,7 @@ public class BoardContainer extends Pane {
 
     public void setGame(Game game) {
         this.game = game;
+        this.game.addListener(this);
         metrics.recalculate(this);
 
         if (boardView != null && boardInputView != null)
@@ -123,5 +126,15 @@ public class BoardContainer extends Pane {
 
     public BoardInputCanvas getBoardInputView() {
         return boardInputView;
+    }
+
+    @Override
+    public void movePlayed(Stone[] board, int x, int y, int color) {
+        render();
+    }
+
+    @Override
+    public void currentMoveChanged(MoveNode currentMove) {
+        render();
     }
 }

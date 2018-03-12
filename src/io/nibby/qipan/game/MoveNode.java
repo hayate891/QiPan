@@ -21,6 +21,7 @@ public class MoveNode {
     public int lastKoX;        // Where the last illegal ko co-ordinate is
     public int lastKoY;
     public String comment;
+    public int nextColor;      // The player to make the next move
 
     public Stone[] lastCapture; // Opponent stones captured by the last move
 
@@ -48,4 +49,51 @@ public class MoveNode {
             this.children.add(child);
     }
 
+    public MoveNode getParent() {
+        return parent;
+    }
+
+    public List<MoveNode> getChildren() {
+        return children;
+    }
+
+    public int getMoveNumber() {
+        return moveNumber;
+    }
+
+    public int getMoveX() {
+        return moveX;
+    }
+
+    public int getMoveY() {
+        return moveY;
+    }
+
+    public Stone[] getStones() {
+        return stones;
+    }
+
+    public int getWhitePrisoners() {
+        return whitePrisoners;
+    }
+
+    public int getBlackPrisoners() {
+        return blackPrisoners;
+    }
+
+    public int getLastKoX() {
+        return lastKoX;
+    }
+
+    public int getLastKoY() {
+        return lastKoY;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public Stone[] getLastCapture() {
+        return lastCapture;
+    }
 }

@@ -23,13 +23,13 @@ public class BoardCanvas extends Canvas {
         TEXTURE_SHADOW.setColor(Color.color(0d, 0d, 0d, 0.5d));
     }
 
-    private BoardContainer container;
+    private BoardUI container;
     private BoardStyle boardStyle;
     private BoardBackgroundStyle backgroundStyle;
     private Color markerColor;
     private GraphicsContext g;
 
-    public BoardCanvas(BoardContainer container) {
+    public BoardCanvas(BoardUI container) {
         this.container = container;
         setFocusTraversable(true);
         g = getGraphicsContext2D();

@@ -33,7 +33,7 @@ public class BoardInputCanvas extends Canvas {
     public static final int HINT_ANNOTATION_DIM_STONE = 9;
 
     private List<Stone> wobbleStones = new ArrayList<>();
-    private BoardContainer container;
+    private BoardUI container;
     private AbstractGameController controller;
     private GraphicsContext g;
 
@@ -43,7 +43,7 @@ public class BoardInputCanvas extends Canvas {
     private int lastMouseY = -1;
     private int cursorHint = HINT_NULL;
 
-    public BoardInputCanvas(BoardContainer container) {
+    public BoardInputCanvas(BoardUI container) {
         this.container = container;
         this.controller = container.getBoardController();
         setFocusTraversable(true);

@@ -12,9 +12,9 @@ import java.util.Stack;
 
 public class Game {
 
+    private final List<GameListener> listeners = new ArrayList<>();
     private int boardWidth, boardHeight;
     private GameRules rules;
-    private Stone[] stones;
     private MoveNode gameTree;
     private MoveNode currentMove;
 
@@ -22,14 +22,15 @@ public class Game {
         this.boardWidth = bWidth;
         this.boardHeight = bHeight;
         this.rules = rules;
-        this.stones = new Stone[boardWidth * boardHeight];
 
         gameTree = new MoveNode();
+        gameTree.stones = new Stone[boardWidth * boardHeight];
+        gameTree.nextColor = Stone.BLACK;
         currentMove = gameTree;
     }
 
     public Stone[] getStones() {
-        return stones;
+        return currentMove.getStones();
     }
 
     public int getBoardWidth() {
@@ -75,22 +76,22 @@ public class Game {
             result.result = PlaceMoveResult.PLACE_ILLEGAL_POSITION;
             return result;
         }
-        if (stones[x + y * boardWidth] != null && !rules.allowCollision(stones, x, y, color)) {
+        if (currentMove.stones[x + y * boardWidth] != null && !rules.allowCollision(currentMove.stones, x, y, color)) {
             result.result = PlaceMoveResult.PLACE_ILLEGAL_POSITION;
             return result;
         }
 
-        if (x == currentMove.lastKoX && y == currentMove.lastKoY && !rules.allowKoRecapture(stones, x, y, color)) {
+        if (x == currentMove.lastKoX && y == currentMove.lastKoY && !rules.allowKoRecapture(currentMove.stones, x, y, color)) {
             result.result = PlaceMoveResult.PLACE_ILLEGAL_KO;
             return result;
         }
 
         // Create a hypothetical board position with the new move in place
-        Stone[] testPosition = Arrays.copyOf(stones, stones.length);
+        Stone[] testPosition = Arrays.copyOf(currentMove.stones, currentMove.stones.length);
         testPosition[x + y * boardWidth] = new Stone(color, x, y);
 
         /*
-            Next, check the liberties of opponent's adjacent stones and check if there is a capture
+            Next, check the liberties of opponent's adjacent currentMove.stones and check if there is a capture
             upon playing this move.
 
                 TODO: The New Zealand ruleset does allow suicidal moves, so perhaps GameRules must be taken into consideration?
@@ -142,59 +143,68 @@ public class Game {
 
         // If this hypothetical move has no liberties, and has made no captures, it is a suicidal move
         if (selfLiberties == 0 && captures == 0) {
-            //TODO account for New Zealand rules
-            result.result = PlaceMoveResult.PLACE_SUICIDAL;
-            return result;
+            if (rules.allowSuicide(testPosition, x, y, color))
+                rules.processSuicide(testPosition, (Stone[]) selfChain[1]);
+            else {
+                result.result = PlaceMoveResult.PLACE_SUICIDAL;
+                return result;
+            }
         }
 
         //Wibbly wobbly
         Stone stone = testPosition[x + y * boardWidth];
-        stone.setWobble((Math.random() + 0.1d) * style.wobbleMargin());
-        stone.onPlace(metrics);
-        stones[x + y * getBoardWidth()] = stone;
+        if (!rules.allowSuicide(testPosition, x, y, color)) {
+            stone.setWobble((Math.random() + 0.1d) * style.wobbleMargin());
+            stone.onPlace(metrics);
+            currentMove.stones[x + y * getBoardWidth()] = stone;
 
-        // Nudge effect
-        boolean bigCollision = false;
-        boolean snap = false;
-        List<Stone> wobbles = new ArrayList<>();
-        wobbles.add(stone);
-        Stone[] adjacent = getAdjacentStones(testPosition, x, y, false);
-        for(Stone s : adjacent) {
-            if (Math.abs(s.getY() - y) == 1 || (int) (Math.random() * 3) == 1) {
-                double wobble = (Math.abs(s.getY() - y) == 1)
-                        ? style.wobbleMargin()
-                        : (Math.random() + 0.1d) * style.wobbleMargin() / 2;
-                if (Math.abs(s.getY() - y) == 1) {
-                    stone.setWobble(style.wobbleMargin());
-                    snap = true;
-                }
-                s.setWobble(wobble);
-                s.nudge(s.getX() - x, s.getY() - y, metrics);
-                wobbles.add(s);
+            // Nudge effect
+            boolean bigCollision = false;
+            boolean snap = false;
+            List<Stone> wobbles = new ArrayList<>();
+            wobbles.add(stone);
+            Stone[] adjacent = getAdjacentStones(testPosition, x, y, false);
+            for (Stone s : adjacent) {
+                if (Math.abs(s.getY() - y) == 1 || (int) (Math.random() * 3) == 1) {
+                    double wobble = (Math.abs(s.getY() - y) == 1)
+                            ? style.wobbleMargin()
+                            : (Math.random() + 0.1d) * style.wobbleMargin() / 2;
+                    if (Math.abs(s.getY() - y) == 1) {
+                        stone.setWobble(style.wobbleMargin());
+                        snap = true;
+                    }
+                    s.setWobble(wobble);
+                    s.nudge(s.getX() - x, s.getY() - y, metrics);
+                    wobbles.add(s);
 
-                // Collision detection
-                if ((int) (Math.random() * 5) < 2) {
-                    Stone[] adjacent2 = getAdjacentStones(testPosition, s.getX(), s.getY(), false);
-                    if (adjacent2.length >= 2)
-                        bigCollision = true;
-                    for (Stone ss : adjacent2) {
-                        if (ss.equals(stone) || ss.equals(s))
-                            continue;
-                        ss.setWobble((Math.random() + 0.1d) * style.wobbleMargin() / 2);
-                        ss.nudge(s.getX() - x, s.getY() - y, metrics);
-                        wobbles.add(ss);
+                    // Collision detection
+                    if ((int) (Math.random() * 5) < 2) {
+                        Stone[] adjacent2 = getAdjacentStones(testPosition, s.getX(), s.getY(), false);
+                        if (adjacent2.length >= 2)
+                            bigCollision = true;
+                        for (Stone ss : adjacent2) {
+                            if (ss.equals(stone) || ss.equals(s))
+                                continue;
+                            ss.setWobble((Math.random() + 0.1d) * style.wobbleMargin() / 2);
+                            ss.nudge(s.getX() - x, s.getY() - y, metrics);
+                            wobbles.add(ss);
+                        }
                     }
                 }
             }
+            result.wobbleStones = wobbles.toArray(new Stone[wobbles.size()]);
+            Sound.playMove(color, adjacent.length, snap, bigCollision, callback);
         }
-        result.wobbleStones = wobbles.toArray(new Stone[wobbles.size()]);
-        Sound.playMove(color, adjacent.length, snap, bigCollision, callback);
 
-        resultNode.stones = stones;
+        //TODO a sound when suicidal?
+
+        resultNode.stones = currentMove.stones;
         result.node = resultNode;
+        resultNode.nextColor = currentMove.nextColor == Stone.BLACK ? Stone.WHITE : Stone.BLACK;
         currentMove.addChild(resultNode);
-        currentMove = resultNode;
-        this.stones = Arrays.copyOf(testPosition, testPosition.length);
+        this.currentMove.stones = Arrays.copyOf(testPosition, testPosition.length);
+        setCurrentMove(resultNode);
+        fireMovePlayedEvent(x, y, color);
 
         return result;
     }
@@ -281,7 +291,7 @@ public class Game {
     }
 
     public Stone[] getAdjacentStones(int x, int y, boolean sameColorOnly) {
-        return getAdjacentStones(this.stones, x, y, sameColorOnly);
+        return getAdjacentStones(this.currentMove.stones, x, y, sameColorOnly);
     }
 
     public Stone[] getAdjacentStones(Stone[] stones, int x, int y, boolean sameColorOnly) {
@@ -307,5 +317,32 @@ public class Game {
                     i++;
 
         return result.toArray(new Stone[result.size()]);
+    }
+
+    public MoveNode getCurrentMove() {
+        return currentMove;
+    }
+
+    public void setCurrentMove(MoveNode currentMove) {
+        this.currentMove = currentMove;
+        fireCurrentMoveChangedEvent(this.currentMove);
+    }
+
+    private void fireMovePlayedEvent(int x, int y, int color) {
+        for (GameListener l : listeners)
+            l.movePlayed(currentMove.stones, x, y, color);
+    }
+
+    private void fireCurrentMoveChangedEvent(MoveNode newMove) {
+        for (GameListener l : listeners)
+            l.currentMoveChanged(newMove);
+    }
+
+    public void addListener(GameListener l) {
+        listeners.add(l);
+    }
+
+    public void removeMoveListener(GameListener l) {
+        listeners.remove(l);
     }
 }

@@ -1,9 +1,10 @@
 package io.nibby.qipan;
 
 import io.nibby.qipan.game.GameRules;
-import io.nibby.qipan.ui.board.BoardContainer;
-import io.nibby.qipan.ui.board.GameReviewController;
+import io.nibby.qipan.ui.board.BoardUI;
+import io.nibby.qipan.ui.board.DefaultBoardController;
 import io.nibby.qipan.game.Game;
+import io.nibby.qipan.ui.tree.GameTreeUI;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -20,9 +21,15 @@ public class QiPan extends Application {
         // Temporary
         Game game = new Game(19, 19, GameRules.CHINESE);
         BorderPane pane = new BorderPane();
-        BoardContainer container = new BoardContainer(game, new GameReviewController());
+        BoardUI container = new BoardUI(game, new DefaultBoardController());
         pane.setCenter(container);
-        Scene scene = new Scene(pane, 800, 600);
+
+        GameTreeUI tree = new GameTreeUI(game);
+        BorderPane sidepane = new BorderPane();
+        sidepane.setCenter(tree);
+        pane.setRight(sidepane);
+
+        Scene scene = new Scene(pane, 900, 600);
 
         primaryStage.setTitle(TITLE);
         primaryStage.setScene(scene);

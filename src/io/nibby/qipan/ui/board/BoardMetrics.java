@@ -31,7 +31,7 @@ public class BoardMetrics {
     int labelOrientation = LABEL_ORIENTATION_TOP_RIGHT;
     int labelYOrder = LABEL_Y_ASCENDING;
 
-    public void recalculate(BoardContainer container) {
+    public void recalculate(BoardUI container) {
         double margin = (!drawLabels) ? 35 : (labelOrientation == LABEL_ORIENTATION_ALL) ? 65 : 50;
         Game game = container.getGame();
         this.boardWidth = game.getBoardWidth();
