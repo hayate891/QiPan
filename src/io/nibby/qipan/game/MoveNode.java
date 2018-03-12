@@ -96,4 +96,8 @@ public class MoveNode {
     public Stone[] getLastCapture() {
         return lastCapture;
     }
+
+    public boolean hasChildren() {
+        return getChildren().size() > 0;
+    }
 }

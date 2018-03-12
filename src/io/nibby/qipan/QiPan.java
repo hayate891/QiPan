@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 public class QiPan extends Application {
 
     public static final String NAME = "QiPan";
-    public static final String VERSION = "v0.1";
+    public static final String VERSION = "v0.1.1";
     public static final String TITLE = NAME + " " + VERSION;
 
     @Override
@@ -27,7 +27,7 @@ public class QiPan extends Application {
         GameTreeUI tree = new GameTreeUI(game);
         BorderPane sidepane = new BorderPane();
         sidepane.setCenter(tree);
-        pane.setRight(sidepane);
+//        pane.setRight(sidepane);
 
         Scene scene = new Scene(pane, 900, 600);
 

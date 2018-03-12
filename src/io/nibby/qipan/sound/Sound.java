@@ -150,7 +150,8 @@ public class Sound {
                 playRandom(Type.STONE_PLACE_SNAP);
             else if (nearby == 1)
                 playRandom(Type.STONE_PLACE_ADJACENT);
-            callback.performAction();
+            if (callback != null)
+                callback.performAction();
 
             if (nearby > 0) {
                 if (!bigCollision) {

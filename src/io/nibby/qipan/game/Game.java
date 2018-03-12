@@ -23,8 +23,10 @@ public class Game {
         this.boardHeight = bHeight;
         this.rules = rules;
 
+        // Create the root node
         gameTree = new MoveNode();
         gameTree.stones = new Stone[boardWidth * boardHeight];
+        gameTree.moveNumber = 0;
         gameTree.nextColor = Stone.BLACK;
         currentMove = gameTree;
     }
@@ -39,6 +41,14 @@ public class Game {
 
     public int getBoardHeight() {
         return boardHeight;
+    }
+
+    /**
+     *
+     * @return The root node of the game tree
+     */
+    public MoveNode getGameTree() {
+        return gameTree;
     }
 
     // A data tuple for returning information related to stone placement.
@@ -156,7 +166,7 @@ public class Game {
         if (!rules.allowSuicide(testPosition, x, y, color)) {
             stone.setWobble((Math.random() + 0.1d) * style.wobbleMargin());
             stone.onPlace(metrics);
-            currentMove.stones[x + y * getBoardWidth()] = stone;
+            testPosition[x + y * getBoardWidth()] = stone;
 
             // Nudge effect
             boolean bigCollision = false;
@@ -198,11 +208,11 @@ public class Game {
 
         //TODO a sound when suicidal?
 
-        resultNode.stones = currentMove.stones;
+        resultNode.stones = Arrays.copyOf(testPosition, testPosition.length);
         result.node = resultNode;
-        resultNode.nextColor = currentMove.nextColor == Stone.BLACK ? Stone.WHITE : Stone.BLACK;
+        resultNode.nextColor = color == Stone.BLACK ? Stone.WHITE : Stone.BLACK;
+        resultNode.moveNumber = currentMove.moveNumber + 1;
         currentMove.addChild(resultNode);
-        this.currentMove.stones = Arrays.copyOf(testPosition, testPosition.length);
         setCurrentMove(resultNode);
         fireMovePlayedEvent(x, y, color);
 
@@ -248,7 +258,6 @@ public class Game {
                     toVisit.add(board[left]);
                     stoneChain.add(board[left]);
                 }
-
                 visited.add(left);
             }
 

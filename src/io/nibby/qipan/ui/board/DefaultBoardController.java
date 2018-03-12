@@ -9,8 +9,6 @@ import javafx.scene.input.MouseButton;
  */
 public class DefaultBoardController extends AbstractGameController {
 
-    private int nextColor = Stone.BLACK;
-
     @Override
     public void mouseMoved(int x, int y, int oldX, int oldY) {
         super.mouseMoved(x, y, oldX, oldY);
@@ -28,9 +26,7 @@ public class DefaultBoardController extends AbstractGameController {
 
         // TODO temporary
         if (button.equals(MouseButton.PRIMARY) && x >= 0 && y >= 0) {
-            placeMove(x, y, nextColor, () -> {
-                nextColor = game.getCurrentMove().nextColor;
-            });
+            placeMove(x, y, game.getCurrentMove().nextColor, null);
         }
     }
 
