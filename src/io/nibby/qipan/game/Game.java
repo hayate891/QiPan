@@ -22,7 +22,6 @@ public class Game {
         this.boardWidth = bWidth;
         this.boardHeight = bHeight;
         this.rules = rules;
-
         // Create the root node
         gameTree = new MoveNode();
         gameTree.stones = new Stone[boardWidth * boardHeight];
@@ -90,16 +89,13 @@ public class Game {
             result.result = PlaceMoveResult.PLACE_ILLEGAL_POSITION;
             return result;
         }
-
         if (x == currentMove.lastKoX && y == currentMove.lastKoY && !rules.allowKoRecapture(currentMove.stones, x, y, color)) {
             result.result = PlaceMoveResult.PLACE_ILLEGAL_KO;
             return result;
         }
-
         // Create a hypothetical board position with the new move in place
         Stone[] testPosition = Arrays.copyOf(currentMove.stones, currentMove.stones.length);
         testPosition[x + y * boardWidth] = new Stone(color, x, y);
-
         /*
             Next, check the liberties of opponent's adjacent currentMove.stones and check if there is a capture
             upon playing this move.
@@ -143,14 +139,12 @@ public class Game {
             resultNode.lastKoX = -1;
             resultNode.lastKoY = -1;
         }
-
         /*
             Now we check if the current move is suicidal
          */
         Object[] selfChain = getChainProperties(testPosition, x, y, new ArrayList<Integer>(),
                 testPosition[x + y * boardWidth].getColor());
         int selfLiberties = (int) selfChain[0];
-
         // If this hypothetical move has no liberties, and has made no captures, it is a suicidal move
         if (selfLiberties == 0 && captures == 0) {
             if (rules.allowSuicide(testPosition, x, y, color))
@@ -167,7 +161,6 @@ public class Game {
             stone.setWobble((Math.random() + 0.1d) * style.wobbleMargin());
             stone.onPlace(metrics);
             testPosition[x + y * getBoardWidth()] = stone;
-
             // Nudge effect
             boolean bigCollision = false;
             boolean snap = false;
@@ -186,7 +179,6 @@ public class Game {
                     s.setWobble(wobble);
                     s.nudge(s.getX() - x, s.getY() - y, metrics);
                     wobbles.add(s);
-
                     // Collision detection
                     if ((int) (Math.random() * 5) < 2) {
                         Stone[] adjacent2 = getAdjacentStones(testPosition, s.getX(), s.getY(), false);
@@ -205,9 +197,7 @@ public class Game {
             result.wobbleStones = wobbles.toArray(new Stone[wobbles.size()]);
             Sound.playMove(color, adjacent.length, snap, bigCollision, callback);
         }
-
         //TODO a sound when suicidal?
-
         resultNode.stones = Arrays.copyOf(testPosition, testPosition.length);
         result.node = resultNode;
         resultNode.nextColor = color == Stone.BLACK ? Stone.WHITE : Stone.BLACK;
@@ -234,7 +224,6 @@ public class Game {
         Stack<Stone> toVisit = new Stack<>();
         int liberties = 0;
         Stone currentStone = board[x + y * boardWidth];
-
         if (!visited.contains(x + y * boardWidth)) {
             toVisit.push(currentStone);
             stoneChain.add(currentStone);
@@ -242,10 +231,8 @@ public class Game {
 
         while (toVisit.size() > 0) {
             Stone visitor = toVisit.pop();
-
             int px = visitor.getX();
             int py = visitor.getY();
-
             int left = py * boardWidth + px - 1;
             int right = py * boardWidth + px + 1;
             int up = (py - 1) * boardWidth + px;
@@ -260,7 +247,6 @@ public class Game {
                 }
                 visited.add(left);
             }
-
             if (px < boardWidth - 1 && !visited.contains(right)) {
                 if (board[right] == null)
                     liberties++;
@@ -269,7 +255,6 @@ public class Game {
                     stoneChain.add(board[right]);
                 }
             }
-
             if (py > 0 && !visited.contains(up)) {
                 if (board[up] == null)
                     liberties++;
@@ -277,10 +262,8 @@ public class Game {
                     toVisit.add(board[up]);
                     stoneChain.add(board[up]);
                 }
-
                 visited.add(up);
             }
-
             if (py < boardHeight - 1 && !visited.contains(down)) {
                 if (board[down] == null)
                     liberties++;
@@ -288,7 +271,6 @@ public class Game {
                     toVisit.add(board[down]);
                     stoneChain.add(board[down]);
                 }
-
                 visited.add(down);
             }
         }

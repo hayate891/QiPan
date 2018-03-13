@@ -137,13 +137,6 @@ public class Sound {
 
     public static void playMove(int color, int nearby, boolean snap, boolean bigCollision, ActionCallback callback) {
         new Thread(() -> {
-//            playRandom(color == Stone.BLACK ? Type.STONE_RUSTLE_BLACK : Type.STONE_RUSTLE_WHITE);
-//            try {
-//                Thread.sleep(1000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-
             if (nearby == 0 && !bigCollision)
                 playRandom(Type.STONE_PLACE_SINGLE);
             else if (snap)
@@ -166,7 +159,6 @@ public class Sound {
                 } else {
                     playRandom(Type.STONE_COLLISION_WOBBLE_BIG);
                 }
-
             }
         }).start();
     }

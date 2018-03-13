@@ -65,7 +65,6 @@ public class GameTreeUI extends BorderPane implements GameListener {
         Updates the tree data
      */
     private void update() {
-
         render();
     }
 
@@ -102,7 +101,6 @@ public class GameTreeUI extends BorderPane implements GameListener {
 
         double xPos = ITEM_X_OFFSET + column * itemWidth;
         double yPos = ITEM_Y_OFFSET + node.moveNumber * itemHeight;
-
         MoveNodeItem item = new MoveNodeItem(this, parentItem, xPos, yPos, node);
         item.setDisplayColumn(column);
         itemData.putIfAbsent(node.getMoveNumber(), new ArrayList<>());
