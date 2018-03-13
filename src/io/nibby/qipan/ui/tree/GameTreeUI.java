@@ -30,14 +30,14 @@ public class GameTreeUI extends BorderPane implements GameListener {
     private double yScroll = 0d;
 
     // Sizing properties (calculated in updateNodeItemData())
-    private int maxColumns = 1;
+    private int maxRows = 1;
     private int maxMoves = 1;
 
     public GameTreeUI(Game game) {
         this.game = game;
         this.game.addListener(this);
         this.currentMove = game.getCurrentMove();
-        this.setPrefWidth(300);
+        this.setPrefHeight(120);
 
         canvas = new GameTreeCanvas(this);
         container = new CanvasContainer(canvas);
@@ -68,7 +68,7 @@ public class GameTreeUI extends BorderPane implements GameListener {
      */
     private void updateNodeItemData() {
         itemData.clear();
-        maxColumns = 1;
+        maxRows = 1;
         maxMoves = 1;
         indexMoveNode(game.getGameTree(), null,  0, 0);
         updateComponents();
@@ -77,11 +77,10 @@ public class GameTreeUI extends BorderPane implements GameListener {
 
     private void updateComponents() {
         // Calculate sizing
-        double treeWidth = 2 * DRAW_X_MARGIN + maxColumns * MoveNodeItem.DISPLAY_WIDTH;
-        double treeHeight = 2 * DRAW_Y_MARGIN + maxMoves * MoveNodeItem.DISPLAY_HEIGHT;
+        double treeWidth = 2 * DRAW_X_MARGIN + maxMoves * MoveNodeItem.DISPLAY_WIDTH;
+        double treeHeight = 2 * DRAW_Y_MARGIN + maxRows * MoveNodeItem.DISPLAY_HEIGHT;
         double componentWidth = getWidth();
         double componentHeight = getHeight();
-
         // Adjust scrollbar properties depending on component sizing
         boolean vScrollable = componentHeight < treeHeight;
         vScroll.setVisible(vScrollable);
@@ -90,7 +89,6 @@ public class GameTreeUI extends BorderPane implements GameListener {
             vScroll.setMax(treeHeight);
             vScroll.setVisibleAmount(componentHeight);
         }
-
         boolean hScrollable = componentWidth < treeWidth;
         hScroll.setVisible(hScrollable);
         hScroll.setManaged(hScrollable);
@@ -111,27 +109,27 @@ public class GameTreeUI extends BorderPane implements GameListener {
      */
     private static final int DRAW_X_MARGIN = 10;
     private static final int DRAW_Y_MARGIN = 10;
-    private void indexMoveNode(MoveNode node, MoveNodeItem parentItem, int column, int chainCounter) {
+    private void indexMoveNode(MoveNode node, MoveNodeItem parentItem, int row, int chainCounter) {
         // Resolve node position collision
         List<MoveNodeItem> itemList = itemData.getOrDefault(node.getMoveNumber(), new ArrayList<>());
         for (MoveNodeItem item : itemList)
-            if (item.getDisplayColumn() == column)
-                column++;
+            if (item.getDisplayColumn() == row)
+                row++;
 
-        if (maxColumns < column)
-            maxColumns = column;
+        if (maxRows < row)
+            maxRows = row;
         if (maxMoves < node.getMoveNumber())
             maxMoves = node.getMoveNumber();
 
-        double xPos = DRAW_X_MARGIN + column * MoveNodeItem.DISPLAY_WIDTH;
-        double yPos = DRAW_Y_MARGIN + node.moveNumber * MoveNodeItem.DISPLAY_HEIGHT;
+        double xPos = DRAW_X_MARGIN + node.moveNumber * MoveNodeItem.DISPLAY_WIDTH;
+        double yPos = DRAW_Y_MARGIN + row * MoveNodeItem.DISPLAY_HEIGHT;
         MoveNodeItem item = new MoveNodeItem(this, parentItem, xPos, yPos, node);
         itemData.putIfAbsent(node.getMoveNumber(), new ArrayList<>());
         itemList = itemData.get(node.getMoveNumber());
         itemList.add(item);
         if (node.hasChildren()) {
             for (MoveNode child : node.getChildren()) {
-                indexMoveNode(child, item, node.getChildren().indexOf(child) == 0 ? column : ++column, chainCounter + 1);
+                indexMoveNode(child, item, node.getChildren().indexOf(child) == 0 ? row : ++row, chainCounter + 1);
             }
         }
     }

@@ -27,9 +27,9 @@ public class QiPan extends Application {
         GameTreeUI tree = new GameTreeUI(game);
         BorderPane sidepane = new BorderPane();
         sidepane.setCenter(tree);
-        pane.setRight(sidepane);
+        pane.setBottom(sidepane);
 
-        Scene scene = new Scene(pane, 900, 600);
+        Scene scene = new Scene(pane, 800, 600);
 
         primaryStage.setTitle(TITLE);
         primaryStage.setScene(scene);
