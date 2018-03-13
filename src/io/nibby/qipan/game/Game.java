@@ -24,9 +24,9 @@ public class Game {
         this.rules = rules;
         // Create the root node
         gameTree = new MoveNode();
-        gameTree.stones = new Stone[boardWidth * boardHeight];
-        gameTree.moveNumber = 0;
-        gameTree.nextColor = Stone.BLACK;
+        gameTree.setStones(new Stone[boardWidth * boardHeight]);
+        gameTree.setMoveNumber(0);
+        gameTree.setNextColor(Stone.BLACK);
         setCurrentMove(gameTree);
     }
 
@@ -85,16 +85,16 @@ public class Game {
             result.result = PlaceMoveResult.PLACE_ILLEGAL_POSITION;
             return result;
         }
-        if (currentMove.stones[x + y * boardWidth] != null && !rules.allowCollision(currentMove.stones, x, y, color)) {
+        if (currentMove.getStones()[x + y * boardWidth] != null && !rules.allowCollision(currentMove.getStones(), x, y, color)) {
             result.result = PlaceMoveResult.PLACE_ILLEGAL_POSITION;
             return result;
         }
-        if (x == currentMove.lastKoX && y == currentMove.lastKoY && !rules.allowKoRecapture(currentMove.stones, x, y, color)) {
+        if (x == currentMove.getLastKoX() && y == currentMove.getLastKoY() && !rules.allowKoRecapture(currentMove.getStones(), x, y, color)) {
             result.result = PlaceMoveResult.PLACE_ILLEGAL_KO;
             return result;
         }
         // Create a hypothetical board position with the new move in place
-        Stone[] testPosition = Arrays.copyOf(currentMove.stones, currentMove.stones.length);
+        Stone[] testPosition = Arrays.copyOf(currentMove.getStones(), currentMove.getStones().length);
         testPosition[x + y * boardWidth] = new Stone(color, x, y);
         /*
             Next, check the liberties of opponent's adjacent currentMove.stones and check if there is a capture
@@ -132,12 +132,12 @@ public class Game {
         // There will be a capture of 1 stone upon playing this move
         // Check if this is the illegal ko recapture
         if (captures == 1) {
-            resultNode.lastKoX = lastChain.get(0).getX();
-            resultNode.lastKoY = lastChain.get(0).getY();
+            resultNode.setLastKoX(lastChain.get(0).getX());
+            resultNode.setLastKoY(lastChain.get(0).getY());
         } else {
             // Negative ko co-ordinates means no illegal ko square next turn
-            resultNode.lastKoX = -1;
-            resultNode.lastKoY = -1;
+            resultNode.setLastKoX(-1);
+            resultNode.setLastKoY(-1);
         }
         /*
             Now we check if the current move is suicidal
@@ -198,10 +198,10 @@ public class Game {
             Sound.playMove(color, adjacent.length, snap, bigCollision, callback);
         }
         //TODO a sound when suicidal?
-        resultNode.stones = Arrays.copyOf(testPosition, testPosition.length);
+        resultNode.setStones(Arrays.copyOf(testPosition, testPosition.length));
         result.node = resultNode;
-        resultNode.nextColor = color == Stone.BLACK ? Stone.WHITE : Stone.BLACK;
-        resultNode.moveNumber = currentMove.moveNumber + 1;
+        resultNode.setNextColor(color == Stone.BLACK ? Stone.WHITE : Stone.BLACK);
+        resultNode.setMoveNumber(currentMove.getMoveNumber() + 1);
         currentMove.addChild(resultNode);
         setCurrentMove(resultNode);
         fireMovePlayedEvent(x, y, color);
@@ -282,7 +282,7 @@ public class Game {
     }
 
     public Stone[] getAdjacentStones(int x, int y, boolean sameColorOnly) {
-        return getAdjacentStones(this.currentMove.stones, x, y, sameColorOnly);
+        return getAdjacentStones(currentMove.getStones(), x, y, sameColorOnly);
     }
 
     public Stone[] getAdjacentStones(Stone[] stones, int x, int y, boolean sameColorOnly) {
@@ -321,7 +321,7 @@ public class Game {
 
     private void fireMovePlayedEvent(int x, int y, int color) {
         for (GameListener l : listeners)
-            l.movePlayed(currentMove.stones, x, y, color);
+            l.movePlayed(currentMove.getStones(), x, y, color);
     }
 
     private void fireCurrentMoveChangedEvent(MoveNode newMove) {

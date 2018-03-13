@@ -37,7 +37,7 @@ public class GameTreeUI extends BorderPane implements GameListener {
         this.game = game;
         this.game.addListener(this);
         this.currentMove = game.getCurrentMove();
-        this.setPrefHeight(120);
+        this.setPrefHeight(200);
 
         canvas = new GameTreeCanvas(this);
         container = new CanvasContainer(canvas);
@@ -70,7 +70,7 @@ public class GameTreeUI extends BorderPane implements GameListener {
         itemData.clear();
         maxRows = 1;
         maxMoves = 1;
-        indexMoveNode(game.getGameTree(), null,  0, 0);
+        indexMoveNode(game.getGameTree(), null,  0);
         updateComponents();
         render();
     }
@@ -107,29 +107,31 @@ public class GameTreeUI extends BorderPane implements GameListener {
      * @param indentLevel Branch indentation level used to display child branches.
      * @param chainCounter The counter for the index of the current node in the variation chain.
      */
-    private static final int DRAW_X_MARGIN = 10;
-    private static final int DRAW_Y_MARGIN = 10;
-    private void indexMoveNode(MoveNode node, MoveNodeItem parentItem, int row, int chainCounter) {
+    protected static final int DRAW_X_MARGIN = 10;
+    protected static final int DRAW_Y_MARGIN = 10;
+    private void indexMoveNode(MoveNode node, MoveNodeItem parentItem, int row) {
         // Resolve node position collision
         List<MoveNodeItem> itemList = itemData.getOrDefault(node.getMoveNumber(), new ArrayList<>());
         for (MoveNodeItem item : itemList)
-            if (item.getDisplayColumn() == row)
+            if (item.getDisplayRow() == row) {
                 row++;
+            }
 
         if (maxRows < row)
             maxRows = row;
         if (maxMoves < node.getMoveNumber())
             maxMoves = node.getMoveNumber();
 
-        double xPos = DRAW_X_MARGIN + node.moveNumber * MoveNodeItem.DISPLAY_WIDTH;
+        double xPos = DRAW_X_MARGIN + node.getMoveNumber() * MoveNodeItem.DISPLAY_WIDTH;
         double yPos = DRAW_Y_MARGIN + row * MoveNodeItem.DISPLAY_HEIGHT;
         MoveNodeItem item = new MoveNodeItem(this, parentItem, xPos, yPos, node);
         itemData.putIfAbsent(node.getMoveNumber(), new ArrayList<>());
+        item.setDisplayRow(row);
         itemList = itemData.get(node.getMoveNumber());
         itemList.add(item);
         if (node.hasChildren()) {
             for (MoveNode child : node.getChildren()) {
-                indexMoveNode(child, item, node.getChildren().indexOf(child) == 0 ? row : ++row, chainCounter + 1);
+                indexMoveNode(child, item, node.getChildren().indexOf(child) == 0 ? row : ++row);
             }
         }
     }

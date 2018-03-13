@@ -26,7 +26,7 @@ public class DefaultBoardController extends AbstractGameController {
 
         // TODO temporary
         if (button.equals(MouseButton.PRIMARY) && x >= 0 && y >= 0) {
-            placeMove(x, y, game.getCurrentMove().nextColor, null);
+            placeMove(x, y, game.getCurrentMove().getNextColor(), null);
         }
     }
 

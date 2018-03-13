@@ -10,20 +10,20 @@ import java.util.List;
  */
 public class MoveNode {
 
-    public MoveNode parent;
-    public List<MoveNode> children = new ArrayList<>();
+    private MoveNode parent;
+    private List<MoveNode> children = new ArrayList<>();
 
-    public int moveNumber;
-    public int moveX, moveY;
-    public Stone[] stones;     // The stones on the board at this move
-    public int whitePrisoners; // Number of captures made by the white player
-    public int blackPrisoners; // Number of captures made by the black player
-    public int lastKoX;        // Where the last illegal ko co-ordinate is
-    public int lastKoY;
-    public String comment;
-    public int nextColor;      // The player to make the next move
+    private int moveNumber;
+    private int moveX, moveY;
+    private Stone[] stones;     // The stones on the board at this move
+    private int whitePrisoners; // Number of captures made by the white player
+    private int blackPrisoners; // Number of captures made by the black player
+    private int lastKoX;        // Where the last illegal ko co-ordinate is
+    private int lastKoY;
+    private String comment;
+    private int nextColor;      // The player to make the next move
 
-    public Stone[] lastCapture; // Opponent stones captured by the last move
+    private Stone[] lastCapture; // Opponent stones captured by the last move
 
     // Root node initializer
     public MoveNode() {
@@ -49,55 +49,111 @@ public class MoveNode {
             this.children.add(child);
     }
 
+    public boolean hasChildren() {
+        return getChildren().size() > 0;
+    }
+
     public MoveNode getParent() {
         return parent;
+    }
+
+    public void setParent(MoveNode parent) {
+        this.parent = parent;
     }
 
     public List<MoveNode> getChildren() {
         return children;
     }
 
+    public void setChildren(List<MoveNode> children) {
+        this.children = children;
+    }
+
     public int getMoveNumber() {
         return moveNumber;
+    }
+
+    public void setMoveNumber(int moveNumber) {
+        this.moveNumber = moveNumber;
     }
 
     public int getMoveX() {
         return moveX;
     }
 
+    public void setMoveX(int moveX) {
+        this.moveX = moveX;
+    }
+
     public int getMoveY() {
         return moveY;
+    }
+
+    public void setMoveY(int moveY) {
+        this.moveY = moveY;
     }
 
     public Stone[] getStones() {
         return stones;
     }
 
+    public void setStones(Stone[] stones) {
+        this.stones = stones;
+    }
+
     public int getWhitePrisoners() {
         return whitePrisoners;
+    }
+
+    public void setWhitePrisoners(int whitePrisoners) {
+        this.whitePrisoners = whitePrisoners;
     }
 
     public int getBlackPrisoners() {
         return blackPrisoners;
     }
 
+    public void setBlackPrisoners(int blackPrisoners) {
+        this.blackPrisoners = blackPrisoners;
+    }
+
     public int getLastKoX() {
         return lastKoX;
+    }
+
+    public void setLastKoX(int lastKoX) {
+        this.lastKoX = lastKoX;
     }
 
     public int getLastKoY() {
         return lastKoY;
     }
 
+    public void setLastKoY(int lastKoY) {
+        this.lastKoY = lastKoY;
+    }
+
     public String getComment() {
         return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public int getNextColor() {
+        return nextColor;
+    }
+
+    public void setNextColor(int nextColor) {
+        this.nextColor = nextColor;
     }
 
     public Stone[] getLastCapture() {
         return lastCapture;
     }
 
-    public boolean hasChildren() {
-        return getChildren().size() > 0;
+    public void setLastCapture(Stone[] lastCapture) {
+        this.lastCapture = lastCapture;
     }
 }

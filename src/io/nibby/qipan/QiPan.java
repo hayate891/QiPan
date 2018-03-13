@@ -30,9 +30,9 @@ public class QiPan extends Application {
         pane.setBottom(sidepane);
 
         Scene scene = new Scene(pane, 800, 600);
-
         primaryStage.setTitle(TITLE);
         primaryStage.setScene(scene);
+        primaryStage.setAlwaysOnTop(true);
         primaryStage.show();
     }
 
