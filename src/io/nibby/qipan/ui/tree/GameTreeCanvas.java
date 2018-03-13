@@ -1,5 +1,6 @@
 package io.nibby.qipan.ui.tree;
 
+import io.nibby.qipan.ui.Renderable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -9,7 +10,7 @@ import java.util.List;
 /**
  * A UI component that displays the in-game move tree graphically.
  */
-public class GameTreeCanvas extends Canvas {
+public class GameTreeCanvas extends Canvas implements Renderable {
 
     private GameTreeUI parent;
     private GraphicsContext g;
@@ -39,10 +40,5 @@ public class GameTreeCanvas extends Canvas {
         }
     }
 
-    @Override
-    public void resize(double width, double height) {
-        super.resize(width, height);
-        render();
-    }
 
 }

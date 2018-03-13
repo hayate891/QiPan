@@ -16,11 +16,8 @@ import javafx.scene.paint.Color;
 public class MoveNodeItem {
 
     // Size constants (pixels)
-    public static final int DISPLAY_FULL_WIDTH = 64;
-    public static final int DISPLAY_FULL_HEIGHT = 24;
-
-    public static final int DISPLAY_SMALL_WIDTH = 24;
-    public static final int DISPLAY_SMALL_HEIGHT = 24;
+    public static final int DISPLAY_WIDTH = 24;
+    public static final int DISPLAY_HEIGHT = 24;
 
     private static final Color[] STONE_COLORS = { Color.BLACK, Color.WHITE };
 
@@ -87,11 +84,11 @@ public class MoveNodeItem {
     }
 
     public double getWidth() {
-        return treeUI.getDisplayMode() == GameTreeUI.DISPLAY_FULL ? DISPLAY_FULL_WIDTH : DISPLAY_SMALL_WIDTH;
+        return DISPLAY_WIDTH;
     }
 
     public double getHeight() {
-        return treeUI.getDisplayMode() == GameTreeUI.DISPLAY_FULL ? DISPLAY_FULL_HEIGHT : DISPLAY_SMALL_HEIGHT;
+        return DISPLAY_HEIGHT;
     }
 
     public int getDisplayColumn() {

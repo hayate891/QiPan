@@ -37,6 +37,8 @@ public class CanvasContainer extends Pane {
         canvas.setLayoutY(y);
         canvas.setWidth(w);
         canvas.setHeight(h);
+        if (canvas instanceof Renderable)
+            ((Renderable) canvas).render();
     }
 
 }

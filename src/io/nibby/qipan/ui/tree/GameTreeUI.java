@@ -23,22 +23,20 @@ public class GameTreeUI extends BorderPane implements GameListener {
     private ScrollBar hScroll; // Horizontal
     private ScrollBar vScroll; // Vertical
     private Map<Integer, List<MoveNodeItem>> itemData = new HashMap<>();
-    private MoveNode currentMove = null;
+    private MoveNode currentMove;
 
     // Scroll offsets
     private double xScroll = 0d;
     private double yScroll = 0d;
 
-    // Display constants
-    public static final int ITEM_MARGIN_HORIZONTAL = 5;
-    public static final int ITEM_MARGIN_VERTICAL = 5;
-    public static final int DISPLAY_FULL = 0;
-    public static final int DISPLAY_SMALL = 1;
-    private int displayMode = DISPLAY_SMALL;
+    // Sizing properties (calculated in updateNodeItemData())
+    private int maxColumns = 1;
+    private int maxMoves = 1;
 
     public GameTreeUI(Game game) {
         this.game = game;
         this.game.addListener(this);
+        this.currentMove = game.getCurrentMove();
         this.setPrefWidth(300);
 
         canvas = new GameTreeCanvas(this);
@@ -46,6 +44,7 @@ public class GameTreeUI extends BorderPane implements GameListener {
         setCenter(container);
 
         hScroll = new ScrollBar();
+        hScroll.setMin(0);
         hScroll.setOrientation(Orientation.HORIZONTAL);
         hScroll.setManaged(false);
         hScroll.setVisible(false);
@@ -55,25 +54,50 @@ public class GameTreeUI extends BorderPane implements GameListener {
         setBottom(hScroll);
 
         vScroll = new ScrollBar();
+        vScroll.setMin(0);
         vScroll.setOrientation(Orientation.VERTICAL);
         vScroll.setManaged(false);
         vScroll.setVisible(false);
         setRight(vScroll);
-    }
 
-    /*
-        Updates the tree data
-     */
-    private void update() {
-        render();
+        updateNodeItemData();
     }
 
     /*
         Reconstructs the widget structure and recalculates all positioning.
      */
-    private void reindexMoveNodes() {
+    private void updateNodeItemData() {
         itemData.clear();
+        maxColumns = 1;
+        maxMoves = 1;
         indexMoveNode(game.getGameTree(), null,  0, 0);
+        updateComponents();
+        render();
+    }
+
+    private void updateComponents() {
+        // Calculate sizing
+        double treeWidth = 2 * DRAW_X_MARGIN + maxColumns * MoveNodeItem.DISPLAY_WIDTH;
+        double treeHeight = 2 * DRAW_Y_MARGIN + maxMoves * MoveNodeItem.DISPLAY_HEIGHT;
+        double componentWidth = getWidth();
+        double componentHeight = getHeight();
+
+        // Adjust scrollbar properties depending on component sizing
+        boolean vScrollable = componentHeight < treeHeight;
+        vScroll.setVisible(vScrollable);
+        vScroll.setManaged(vScrollable);
+        if (vScrollable) {
+            vScroll.setMax(treeHeight);
+            vScroll.setVisibleAmount(componentHeight);
+        }
+
+        boolean hScrollable = componentWidth < treeWidth;
+        hScroll.setVisible(hScrollable);
+        hScroll.setManaged(hScrollable);
+        if (hScrollable) {
+            hScroll.setMax(treeWidth);
+            hScroll.setVisibleAmount(componentWidth);
+        }
     }
 
     /**
@@ -85,28 +109,26 @@ public class GameTreeUI extends BorderPane implements GameListener {
      * @param indentLevel Branch indentation level used to display child branches.
      * @param chainCounter The counter for the index of the current node in the variation chain.
      */
-    private static final int ITEM_X_OFFSET = 10;
-    private static final int ITEM_Y_OFFSET = 10;
+    private static final int DRAW_X_MARGIN = 10;
+    private static final int DRAW_Y_MARGIN = 10;
     private void indexMoveNode(MoveNode node, MoveNodeItem parentItem, int column, int chainCounter) {
-        double itemWidth = (displayMode == DISPLAY_FULL
-                ? MoveNodeItem.DISPLAY_FULL_WIDTH : MoveNodeItem.DISPLAY_SMALL_WIDTH) + ITEM_MARGIN_HORIZONTAL;
-        double itemHeight = (displayMode == DISPLAY_FULL
-                ? MoveNodeItem.DISPLAY_FULL_HEIGHT : MoveNodeItem.DISPLAY_SMALL_HEIGHT) + ITEM_MARGIN_VERTICAL;
-
         // Resolve node position collision
         List<MoveNodeItem> itemList = itemData.getOrDefault(node.getMoveNumber(), new ArrayList<>());
         for (MoveNodeItem item : itemList)
             if (item.getDisplayColumn() == column)
                 column++;
 
-        double xPos = ITEM_X_OFFSET + column * itemWidth;
-        double yPos = ITEM_Y_OFFSET + node.moveNumber * itemHeight;
+        if (maxColumns < column)
+            maxColumns = column;
+        if (maxMoves < node.getMoveNumber())
+            maxMoves = node.getMoveNumber();
+
+        double xPos = DRAW_X_MARGIN + column * MoveNodeItem.DISPLAY_WIDTH;
+        double yPos = DRAW_Y_MARGIN + node.moveNumber * MoveNodeItem.DISPLAY_HEIGHT;
         MoveNodeItem item = new MoveNodeItem(this, parentItem, xPos, yPos, node);
-        item.setDisplayColumn(column);
         itemData.putIfAbsent(node.getMoveNumber(), new ArrayList<>());
         itemList = itemData.get(node.getMoveNumber());
         itemList.add(item);
-
         if (node.hasChildren()) {
             for (MoveNode child : node.getChildren()) {
                 indexMoveNode(child, item, node.getChildren().indexOf(child) == 0 ? column : ++column, chainCounter + 1);
@@ -120,23 +142,17 @@ public class GameTreeUI extends BorderPane implements GameListener {
 
     @Override
     public void movePlayed(Stone[] board, int x, int y, int color) {
-        reindexMoveNodes();
-        update();
+        updateNodeItemData();
     }
 
     @Override
     public void currentMoveChanged(MoveNode currentMove) {
         this.currentMove = currentMove;
-        reindexMoveNodes();
-        update();
+        updateNodeItemData();
     }
 
     public Map<Integer, List<MoveNodeItem>> getItemData() {
         return itemData;
-    }
-
-    public int getDisplayMode() {
-        return displayMode;
     }
 
     public MoveNode getCurrentMove() {

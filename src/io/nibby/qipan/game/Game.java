@@ -27,7 +27,7 @@ public class Game {
         gameTree.stones = new Stone[boardWidth * boardHeight];
         gameTree.moveNumber = 0;
         gameTree.nextColor = Stone.BLACK;
-        currentMove = gameTree;
+        setCurrentMove(gameTree);
     }
 
     public Stone[] getStones() {
