@@ -4,6 +4,7 @@ import io.nibby.qipan.game.GameRules;
 import io.nibby.qipan.ui.board.BoardUI;
 import io.nibby.qipan.ui.board.DefaultBoardController;
 import io.nibby.qipan.game.Game;
+import io.nibby.qipan.ui.review.ReviewWindow;
 import io.nibby.qipan.ui.tree.GameTreeUI;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -20,20 +21,8 @@ public class QiPan extends Application {
     public void start(Stage primaryStage) throws Exception {
         // Temporary
         Game game = new Game(19, 19, GameRules.CHINESE);
-        BorderPane pane = new BorderPane();
-        BoardUI container = new BoardUI(game, new DefaultBoardController());
-        pane.setCenter(container);
-
-        GameTreeUI tree = new GameTreeUI(game);
-        BorderPane sidepane = new BorderPane();
-        sidepane.setCenter(tree);
-        pane.setBottom(sidepane);
-
-        Scene scene = new Scene(pane, 800, 600);
-        primaryStage.setTitle(TITLE);
-        primaryStage.setScene(scene);
-        primaryStage.setAlwaysOnTop(true);
-        primaryStage.show();
+        ReviewWindow reviewWindow = new ReviewWindow(game);
+        reviewWindow.show();
     }
 
     public static void main(String[] args) {
