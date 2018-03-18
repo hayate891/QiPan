@@ -38,6 +38,10 @@ public class DefaultBoardController extends AbstractGameController {
     @Override
     public void mouseScrolled(double notch) {
         super.mouseScrolled(notch);
+        if (notch > 0)
+            gotoPreviousMove();
+        else if(notch < 0)
+            gotoNextMove();
     }
 
     @Override
@@ -46,20 +50,28 @@ public class DefaultBoardController extends AbstractGameController {
 
         // TODO Make these configurable
         if (key.equals(KeyCode.LEFT)) {
-            MoveNode move = game.getCurrentMove();
-            if (move.getParent() != null)
-                game.setCurrentMove(move.getParent());
+            gotoPreviousMove();
         }
 
         if (key.equals(KeyCode.RIGHT)) {
-            MoveNode move = game.getCurrentMove();
-            if (!move.getChildren().isEmpty())
-                game.setCurrentMove(move.getChildren().get(0));
+            gotoNextMove();
         }
     }
 
     @Override
     public void keyReleased(KeyCode key) {
         super.keyReleased(key);
+    }
+
+    private void gotoNextMove() {
+        MoveNode move = game.getCurrentMove();
+        if (!move.getChildren().isEmpty())
+            game.setCurrentMove(move.getChildren().get(0));
+    }
+
+    private void gotoPreviousMove() {
+        MoveNode move = game.getCurrentMove();
+        if (move.getParent() != null)
+            game.setCurrentMove(move.getParent());
     }
 }

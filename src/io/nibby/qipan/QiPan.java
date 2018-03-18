@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 public class QiPan extends Application {
 
     public static final String NAME = "QiPan";
-    public static final String VERSION = "v0.1.1";
+    public static final String VERSION = "v0.1.2";
     public static final String TITLE = NAME + " " + VERSION;
 
     @Override
