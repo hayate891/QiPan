@@ -57,8 +57,8 @@ public class ReviewWindow extends Stage {
         boardViewSplit.getItems().add(treeViewSplit);
         boardViewSplit.setDividerPosition(0, 0.8d);
 
-
         Scene scene = new Scene(content, 800, 700);
+        scene.getStylesheets().add("/megumi/main.css");
         setScene(scene);
         setAlwaysOnTop(true);
         setMinWidth(800);

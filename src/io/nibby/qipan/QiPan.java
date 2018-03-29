@@ -1,14 +1,9 @@
 package io.nibby.qipan;
 
-import io.nibby.qipan.game.GameRules;
-import io.nibby.qipan.ui.board.BoardUI;
-import io.nibby.qipan.ui.board.DefaultBoardController;
 import io.nibby.qipan.game.Game;
+import io.nibby.qipan.game.GameRules;
 import io.nibby.qipan.ui.review.ReviewWindow;
-import io.nibby.qipan.ui.tree.GameTreeUI;
 import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class QiPan extends Application {

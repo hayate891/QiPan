@@ -9,6 +9,7 @@ public class ReviewMenubar extends MenuBar {
 
     public ReviewMenubar(ReviewWindow window) {
         this.window = window;
+        getStyleClass().add("menubar");
 
         // TODO temporary
         getMenus().add(new Menu("File"));

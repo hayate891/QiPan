@@ -11,12 +11,18 @@ import javafx.scene.layout.Pane;
  */
 public class BoardUI extends Pane implements GameListener {
 
+    // Amount of pixels needed on left-and-right of the go board in order to display additional
+    // game metadata
+    private static final int BOARD_METADATA_MIN_PADDING = 80;
+    private boolean displayMetadata = true;
+
     private BoardMetrics metrics = new BoardMetrics();
     private Game game;
     private AbstractGameController boardController;
     private final BoardCanvas boardView;
     private final BoardInputCanvas boardInputView;
 
+    //TODO temporary, change later
     private BoardStyle boardStyle = BoardStyle.KAYA;
     private BoardBackgroundStyle boardBgStyle = BoardBackgroundStyle.TATAMI;
     private StoneStyle stoneStyle = StoneStyle.CERAMIC;
@@ -84,6 +90,16 @@ public class BoardUI extends Pane implements GameListener {
             render();
     }
 
+    @Override
+    public void movePlayed(Stone[] board, int x, int y, int color) {
+        render();
+    }
+
+    @Override
+    public void currentMoveChanged(MoveNode currentMove) {
+        render();
+    }
+
     public BoardStyle getBoardStyle() {
         return boardStyle;
     }
@@ -128,13 +144,11 @@ public class BoardUI extends Pane implements GameListener {
         return boardInputView;
     }
 
-    @Override
-    public void movePlayed(Stone[] board, int x, int y, int color) {
-        render();
+    public boolean isDisplayMetadata() {
+        return displayMetadata;
     }
 
-    @Override
-    public void currentMoveChanged(MoveNode currentMove) {
-        render();
+    public void setDisplayMetadata(boolean displayMetadata) {
+        this.displayMetadata = displayMetadata;
     }
 }
