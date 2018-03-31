@@ -2,6 +2,8 @@ package io.nibby.qipan.settings;
 
 import io.nibby.qipan.QiPan;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -9,7 +11,7 @@ import java.util.List;
 
 public class Settings {
 
-    private static final Path BASE_DIRECTORY = resolveBaseDirectory();
+    public static final Path BASE_DIRECTORY = resolveBaseDirectory();
 
     private List<SettingsModule> modules = new ArrayList<>();
     public static final GeneralSettings general = new GeneralSettings();
@@ -17,6 +19,14 @@ public class Settings {
     public static final GuiSettings gui = new GuiSettings();
 
     static {
+        // Validate base directory
+        if (BASE_DIRECTORY != null && Files.notExists(BASE_DIRECTORY)) {
+            try {
+                Files.createDirectories(BASE_DIRECTORY);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         // Initialize modules
         new Settings();
     }
@@ -25,15 +35,12 @@ public class Settings {
         String osName = System.getProperty("os.name");
         Path home = Paths.get(System.getProperty("user.home"));
 
-        if (osName.contains("mac"))
+        if (osName.contains("Mac"))
             return home.resolve("Library").resolve("Application Support").resolve(QiPan.NAME);
-
-        else if (osName.contains("win"))
+        else if (osName.contains("Win"))
             return home.resolve("AppData").resolve("Roaming").resolve(QiPan.NAME);
-
         else if (osName.contains("nix"))
             return home.resolve(QiPan.NAME);
-
         else
             return null;
     }

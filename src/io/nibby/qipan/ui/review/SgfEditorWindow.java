@@ -1,6 +1,8 @@
 package io.nibby.qipan.ui.review;
 
+import io.nibby.qipan.QiPan;
 import io.nibby.qipan.game.Game;
+import io.nibby.qipan.settings.Settings;
 import io.nibby.qipan.ui.board.BoardUI;
 import io.nibby.qipan.ui.board.DefaultBoardController;
 import io.nibby.qipan.ui.tree.GameTreeUI;
@@ -12,10 +14,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class ReviewWindow extends Stage {
+public class SgfEditorWindow extends Stage {
 
-    private ReviewMenubar mainMenubar;
-    private ReviewMainToolbar mainToolbar;
+    private SgfEditorMenuBar mainMenubar;
+    private SgfEditorToolBar mainToolbar;
     private SplitPane boardViewSplit;
     private BoardUI boardUi;
     private GameTreeUI treeUi;
@@ -24,7 +26,7 @@ public class ReviewWindow extends Stage {
 
     private Game game;
 
-    public ReviewWindow(Game game) {
+    public SgfEditorWindow(Game game) {
         this.game = game;
         setupUI();
     }
@@ -33,10 +35,10 @@ public class ReviewWindow extends Stage {
         VBox topPane = new VBox();
 
         BorderPane content = new BorderPane();
-        mainMenubar = new ReviewMenubar(this);
+        mainMenubar = new SgfEditorMenuBar(this);
         topPane.getChildren().add(mainMenubar);
 
-        mainToolbar = new ReviewMainToolbar(this);
+        mainToolbar = new SgfEditorToolBar(this);
         topPane.getChildren().add(mainToolbar);
         content.setTop(topPane);
 
@@ -58,7 +60,9 @@ public class ReviewWindow extends Stage {
         boardViewSplit.setDividerPosition(0, 0.8d);
 
         Scene scene = new Scene(content, 800, 700);
-        scene.getStylesheets().add("/megumi/main.css");
+        scene.getStylesheets().add(Settings.gui.getUiStyle().getStylesheet());
+        //TODO temporary
+        setTitle(QiPan.TITLE);
         setScene(scene);
         setAlwaysOnTop(true);
         setMinWidth(800);

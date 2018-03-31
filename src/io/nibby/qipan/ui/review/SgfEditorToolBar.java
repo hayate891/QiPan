@@ -5,11 +5,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 
-public class ReviewMainToolbar extends ToolBar {
+public class SgfEditorToolBar extends ToolBar {
 
-    private ReviewWindow window;
+    private SgfEditorWindow window;
 
-    public ReviewMainToolbar(ReviewWindow window) {
+    public SgfEditorToolBar(SgfEditorWindow window) {
         this.window = window;
 
         Pane leftPadder = new Pane();

@@ -3,6 +3,7 @@ package io.nibby.qipan.ui.board;
 import io.nibby.qipan.game.Game;
 import io.nibby.qipan.game.GameListener;
 import io.nibby.qipan.game.MoveNode;
+import io.nibby.qipan.settings.Settings;
 import javafx.scene.Cursor;
 import javafx.scene.layout.Pane;
 
@@ -22,15 +23,16 @@ public class BoardUI extends Pane implements GameListener {
     private final BoardCanvas boardView;
     private final BoardInputCanvas boardInputView;
 
-    //TODO temporary, change later
-    private BoardStyle boardStyle = BoardStyle.KAYA;
-    private BoardBackgroundStyle boardBgStyle = BoardBackgroundStyle.TATAMI;
-    private StoneStyle stoneStyle = StoneStyle.CERAMIC;
+    private BoardStyle boardStyle;
+    private BoardBackgroundStyle boardBgStyle;
+    private StoneStyle stoneStyle;
 
     public BoardUI(Game game, AbstractGameController controller) {
         setGame(game);
+        stoneStyle = Settings.gui.getGameStoneStyle();
+        boardStyle = Settings.gui.getGameBoardStyle();
+        boardBgStyle = Settings.gui.getGameBoardBgStyle();
         metrics.recalculate(this);
-
         this.boardController = controller;
         boardView = new BoardCanvas(this);
         boardInputView = new BoardInputCanvas(this);
@@ -38,7 +40,6 @@ public class BoardUI extends Pane implements GameListener {
         this.boardController.onAdd(this);
         boardInputView.toFront();
         setCursor(Cursor.HAND);
-
         widthProperty().addListener(e -> {
             updateSize(getWidth(), getHeight());
         });

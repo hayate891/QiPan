@@ -3,11 +3,11 @@ package io.nibby.qipan.ui.review;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 
-public class ReviewMenubar extends MenuBar {
+public class SgfEditorMenuBar extends MenuBar {
 
-    private ReviewWindow window;
+    private SgfEditorWindow window;
 
-    public ReviewMenubar(ReviewWindow window) {
+    public SgfEditorMenuBar(SgfEditorWindow window) {
         this.window = window;
         getStyleClass().add("menubar");
 
