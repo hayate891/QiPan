@@ -5,7 +5,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 
 /*
-    The standard (default) controller used to edit game data.
+    The en_US (en_US) controller used to edit game data.
  */
 public class DefaultBoardController extends AbstractGameController {
 

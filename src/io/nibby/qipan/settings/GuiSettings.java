@@ -24,6 +24,7 @@ public class GuiSettings implements SettingsModule {
 
     private void saveDefaults() {
         uiStyle = UIStyle.MEGUMI;
+        uiStyle.loadMeta();
         gameStoneStyle = StoneStyle.CERAMIC;
         gameBoardStyle = BoardStyle.KAYA;
         gameBoardBgStyle = BoardBackgroundStyle.TATAMI;
@@ -57,6 +58,7 @@ public class GuiSettings implements SettingsModule {
             } catch (Exception e) {
                 uiStyle = UIStyle.MEGUMI;
             }
+            uiStyle.loadMeta();
 
             try {
                 gameStoneStyle = StoneStyle.valueOf(reader.readLine());

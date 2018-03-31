@@ -74,8 +74,8 @@ public enum StoneStyle {
                 case WHITE:
                     gradient = new RadialGradient(stone.rgFocusAngle, stone.rgFocusDistance, stone.rgCenterX, stone.rgCenterY,
                             stone.rgRadius, true, CycleMethod.NO_CYCLE,
-                            new Stop(0d, Color.color(0.98d, 0.98d, 0.98d, 1d)),
-                            new Stop(0.99d, Color.color(0.90d, 0.90d, 0.90d, 1d)));
+                            new Stop(0d, Color.color(0.99d, 0.99d, 0.99d, 1d)),
+                            new Stop(0.99d, Color.color(0.87d, 0.87d, 0.87d, 1d)));
                     g.setFill(gradient);
 
                     g.setEffect(shadow);

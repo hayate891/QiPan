@@ -30,7 +30,7 @@ public class GameTreeUI extends BorderPane implements GameListener {
     private double yScroll = 0d;
 
     // Sizing properties (calculated in updateNodeItemData())
-    private int maxRows = 1;
+    private int maxBranches = 1;
     private int maxMoves = 1;
 
     public GameTreeUI(Game game) {
@@ -68,7 +68,7 @@ public class GameTreeUI extends BorderPane implements GameListener {
      */
     private void updateNodeItemData() {
         itemData.clear();
-        maxRows = 1;
+        maxBranches = 1;
         maxMoves = 1;
         indexMoveNode(game.getGameTree(), null,  0);
         updateComponents();
@@ -77,8 +77,8 @@ public class GameTreeUI extends BorderPane implements GameListener {
 
     private void updateComponents() {
         // Calculate sizing
-        double treeWidth = 2 * DRAW_X_MARGIN + maxMoves * MoveNodeItem.DISPLAY_WIDTH;
-        double treeHeight = 2 * DRAW_Y_MARGIN + maxRows * MoveNodeItem.DISPLAY_HEIGHT;
+        double treeWidth = 2 * DRAW_X_MARGIN + maxBranches * MoveNodeItem.DISPLAY_WIDTH;
+        double treeHeight = 2 * DRAW_Y_MARGIN + maxMoves * MoveNodeItem.DISPLAY_HEIGHT;
         double componentWidth = getWidth();
         double componentHeight = getHeight();
         // Adjust scrollbar properties depending on component sizing
@@ -117,13 +117,13 @@ public class GameTreeUI extends BorderPane implements GameListener {
                 row++;
             }
 
-        if (maxRows < row)
-            maxRows = row;
+        if (maxBranches < row)
+            maxBranches = row;
         if (maxMoves < node.getMoveNumber())
             maxMoves = node.getMoveNumber();
 
-        double xPos = DRAW_X_MARGIN + node.getMoveNumber() * MoveNodeItem.DISPLAY_WIDTH;
-        double yPos = DRAW_Y_MARGIN + row * MoveNodeItem.DISPLAY_HEIGHT;
+        double xPos = DRAW_X_MARGIN + row * MoveNodeItem.DISPLAY_WIDTH;
+        double yPos = DRAW_Y_MARGIN + node.getMoveNumber() * MoveNodeItem.DISPLAY_HEIGHT;
         MoveNodeItem item = new MoveNodeItem(this, parentItem, xPos, yPos, node);
         itemData.putIfAbsent(node.getMoveNumber(), new ArrayList<>());
         item.setDisplayRow(row);
