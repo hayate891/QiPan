@@ -30,4 +30,8 @@ public enum BoardStyle {
     public Color getMarkerColor() {
         return markerColor;
     }
+
+    public static BoardStyle getDefault() {
+        return KAYA;
+    }
 }

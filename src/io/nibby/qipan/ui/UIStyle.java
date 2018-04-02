@@ -15,7 +15,7 @@ public enum UIStyle {
         this.directory = directory;
     }
 
-    public void loadMeta() {
+    public void initialize() {
         if (meta != null)
             return;
 

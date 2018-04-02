@@ -24,10 +24,10 @@ public class GuiSettings implements SettingsModule {
 
     private void saveDefaults() {
         uiStyle = UIStyle.MEGUMI;
-        uiStyle.loadMeta();
-        gameStoneStyle = StoneStyle.CERAMIC;
-        gameBoardStyle = BoardStyle.KAYA;
-        gameBoardBgStyle = BoardBackgroundStyle.TATAMI;
+        uiStyle.initialize();
+        gameStoneStyle = StoneStyle.getDefault();
+        gameBoardStyle = BoardStyle.getDefault();
+        gameBoardBgStyle = BoardBackgroundStyle.getDefault();
 
         save();
     }
@@ -58,7 +58,7 @@ public class GuiSettings implements SettingsModule {
             } catch (Exception e) {
                 uiStyle = UIStyle.MEGUMI;
             }
-            uiStyle.loadMeta();
+            uiStyle.initialize();
 
             try {
                 gameStoneStyle = StoneStyle.valueOf(reader.readLine());

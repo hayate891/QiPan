@@ -22,4 +22,8 @@ public enum BoardBackgroundStyle {
     public Image getTexture() {
         return texture;
     }
+
+    public static BoardBackgroundStyle getDefault() {
+        return TATAMI;
+    }
 }

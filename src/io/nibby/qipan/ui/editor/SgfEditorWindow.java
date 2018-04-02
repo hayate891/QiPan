@@ -4,7 +4,7 @@ import io.nibby.qipan.QiPan;
 import io.nibby.qipan.game.Game;
 import io.nibby.qipan.ui.UIStylesheets;
 import io.nibby.qipan.ui.board.BoardUI;
-import io.nibby.qipan.ui.board.DefaultBoardController;
+import io.nibby.qipan.ui.board.SgfEditorController;
 import io.nibby.qipan.ui.tree.GameTreeUI;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
@@ -44,7 +44,7 @@ public class SgfEditorWindow extends Stage {
 
         boardViewSplit = new SplitPane();
         boardViewSplit.setOrientation(Orientation.HORIZONTAL);
-        boardUi = new BoardUI(game, new DefaultBoardController());
+        boardUi = new BoardUI(game, new SgfEditorController());
         boardViewSplit.getItems().add(boardUi);
         content.setCenter(boardViewSplit);
 

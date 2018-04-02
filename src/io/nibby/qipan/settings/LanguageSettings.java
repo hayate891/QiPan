@@ -29,7 +29,7 @@ public class LanguageSettings implements SettingsModule {
             this.locale = locale;
         }
 
-        private void loadResources() {
+        private void initialize() {
             if (resourceBundles != null)
                 return;
 
@@ -71,7 +71,7 @@ public class LanguageSettings implements SettingsModule {
 
     private void saveDefaults() {
         locale = SupportedLocales.en_US;
-        locale.loadResources();
+        locale.initialize();
 
         save();
     }
@@ -98,7 +98,7 @@ public class LanguageSettings implements SettingsModule {
             } catch (Exception e) {
                 locale = SupportedLocales.en_US;
             }
-            locale.loadResources();
+            locale.initialize();
         } catch (IOException e) {
             e.printStackTrace();
         }

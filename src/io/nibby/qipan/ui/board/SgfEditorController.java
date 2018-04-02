@@ -7,7 +7,7 @@ import javafx.scene.input.MouseButton;
 /*
     The en_US (en_US) controller used to edit game data.
  */
-public class DefaultBoardController extends AbstractGameController {
+public class SgfEditorController extends AbstractGameController {
 
     @Override
     public void mouseMoved(int x, int y, int oldX, int oldY) {
@@ -49,11 +49,11 @@ public class DefaultBoardController extends AbstractGameController {
         super.keyPressed(key);
 
         // TODO Make these configurable
-        if (key.equals(KeyCode.LEFT)) {
+        if (key.equals(KeyCode.UP)) {
             gotoPreviousMove();
         }
 
-        if (key.equals(KeyCode.RIGHT)) {
+        if (key.equals(KeyCode.DOWN)) {
             gotoNextMove();
         }
     }

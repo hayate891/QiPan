@@ -97,7 +97,7 @@ public enum StoneStyle {
         }
     },
 
-    yunzi("Yun Zi") {
+    YUNZI("Yun Zi") {
         @Override
         public void render(GraphicsContext g, Stone stone, BoardMetrics metrics) {
 
@@ -123,4 +123,8 @@ public enum StoneStyle {
     public abstract void render(GraphicsContext g, Stone stone, BoardMetrics metrics);
     public abstract double wobbleMargin();
     public abstract boolean fuzzyPlacement();
+
+    public static StoneStyle getDefault() {
+        return CERAMIC;
+    }
 }

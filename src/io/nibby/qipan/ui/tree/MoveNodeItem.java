@@ -41,7 +41,6 @@ public class MoveNodeItem {
 
     public void renderLines(GraphicsContext g) {
         double iconSize = getWidth() / 2 < getHeight() / 2 ? getWidth() / 2 : getHeight() / 2;
-
         // TODO temporary
         if (node.equals(treeUI.getCurrentMove())) {
             g.setFill(Color.LIGHTBLUE);
@@ -61,8 +60,8 @@ public class MoveNodeItem {
             } else {
                 // This is the 2nd+ child that is spanning multiple rows from its parent
                 // its connection will be facilitated by a direct connection to the position of the child above.
-                double lastChildX = GameTreeUI.DRAW_X_MARGIN + node.getMoveNumber() * DISPLAY_WIDTH;
-                double lastChildY = GameTreeUI.DRAW_Y_MARGIN + (getDisplayRow() - 1) * DISPLAY_HEIGHT;
+                double lastChildX = GameTreeUI.DRAW_X_MARGIN + (getDisplayRow() - 1) * DISPLAY_WIDTH;
+                double lastChildY = GameTreeUI.DRAW_Y_MARGIN + node.getMoveNumber() * DISPLAY_HEIGHT;
 
                 g.strokeLine(lastChildX + getWidth() / 2, lastChildY + getHeight() / 2,
                         getX() + getWidth() / 2, getY() + getHeight() / 2);
