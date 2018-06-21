@@ -1,3 +1,80 @@
-.menubar {
+@import url("menu.css");
+@import url("toolbar.css");
 
+.split-pane {
+    -fx-background-color: rgb(50, 50, 50);
+}
+
+.split-pane *.split-pane-divider {
+    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-padding: 0px 1px 0px 1px;
+}
+
+.scroll-bar {
+    -fx-background-color: rgba(255, 255, 255);
+}
+
+/* Main tab pane in SGFEditor window */
+.main-tab-pane *.tab-header-area {
+    -fx-padding: 5px 3px -1px 3px;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.main-tab-pane *.tab-header-area,
+.main-tab-pane *.tab-header-area .tab-header-background {
+    -fx-background-color: rgb(46, 95, 173);
+
+}
+
+.main-tab-pane .tab {
+    -fx-background-color: rgb(46, 95, 173);
+}
+
+.main-tab-pane .tab:selected {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+}
+/* Game tree */
+
+.scroll-bar-light .thumb {
+    -fx-background-color: rgba(200, 200, 200);
+}
+
+.corner {
+    -fx-background-color: rgb(255, 255, 255);
+}
+
+/* Move comment area */
+.move-comments-header {
+    -fx-background-color: rgb(100, 100, 100);
+    -fx-padding: 5px 10px 5px 10px;
+}
+
+.move-comments-header-label {
+    -fx-text-fill: white;
+}
+
+.move-comments .content {
+    -fx-background-color: rgb(50, 50, 50);
+}
+
+.move-comments {
+    -fx-text-fill: white;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-border-radius: 0px;
+    -fx-background-radius: 0px;
+}
+
+.move-comments .scroll-pane {
+    -fx-background-color: rgb(50, 50, 50);
+}
+
+.move-comments .scroll-pane *.scroll-bar {
+    -fx-background-color: rgb(50, 50, 50);
+}
+
+.move-comments .scroll-pane *.scroll-bar .thumb {
+    -fx-background-color: rgb(150, 150, 150);
 }

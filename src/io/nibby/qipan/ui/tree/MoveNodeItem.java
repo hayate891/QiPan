@@ -15,7 +15,7 @@ import javafx.scene.paint.Color;
  */
 public class MoveNodeItem {
 
-    // Size constants (pixels)
+    // Size constants (pixels)N
     public static final int DISPLAY_WIDTH = 24;
     public static final int DISPLAY_HEIGHT = 24;
 
@@ -41,10 +41,13 @@ public class MoveNodeItem {
 
     public void renderLines(GraphicsContext g) {
         double iconSize = getWidth() / 2 < getHeight() / 2 ? getWidth() / 2 : getHeight() / 2;
+        double ox = treeUI.getXOffset();
+        double oy = treeUI.getYOffset();
+
         // TODO temporary
         if (node.equals(treeUI.getCurrentMove())) {
             g.setFill(Color.LIGHTBLUE);
-            g.fillRect(getX(), getY(), getWidth(), getHeight());
+            g.fillRect(getX() + ox, getY() + oy, getWidth(), getHeight());
         }
         if (parent != null) {
             g.setStroke(Color.LIGHTGRAY);
@@ -55,16 +58,21 @@ public class MoveNodeItem {
                 The rest of the lines will be chained through the 2nd child to ensure cleaner presentation.
              */
             if (parent != null && parent.getNode().getChildren().indexOf(node) < 2) {
-                g.strokeLine(parent.getX() + getWidth() / 2, parent.getY() + getHeight() / 2,
-                        getX() + getWidth() / 2, getY() + getHeight() / 2);
+                double x1 = ox + parent.getX() + getWidth() / 2;
+                double y1 = oy + parent.getY() + getHeight() / 2 + oy;
+                double x2 = ox + getX() + getWidth() / 2;
+                double y2 = oy + getY() + getHeight() / 2;
+                g.strokeLine(x1, y1, x2, y2);
             } else {
                 // This is the 2nd+ child that is spanning multiple rows from its parent
                 // its connection will be facilitated by a direct connection to the position of the child above.
                 double lastChildX = GameTreeUI.DRAW_X_MARGIN + (getDisplayRow() - 1) * DISPLAY_WIDTH;
                 double lastChildY = GameTreeUI.DRAW_Y_MARGIN + node.getMoveNumber() * DISPLAY_HEIGHT;
-
-                g.strokeLine(lastChildX + getWidth() / 2, lastChildY + getHeight() / 2,
-                        getX() + getWidth() / 2, getY() + getHeight() / 2);
+                double x1 = ox + lastChildX + getWidth() / 2;
+                double y1 = oy + lastChildY + getHeight() / 2;
+                double x2 = ox + getX() + getWidth() / 2;
+                double y2 = oy + getY() + getHeight() / 2;
+                g.strokeLine(x1, y1, x2, y2);
             }
             g.setLineWidth(1d);
         }
@@ -74,10 +82,14 @@ public class MoveNodeItem {
         double iconSize = getWidth() / 2 < getHeight() / 2 ? getWidth() / 2 : getHeight() / 2;
         // Stone icon
         // TODO Make this more sexy later
+        double ox = treeUI.getXOffset();
+        double oy = treeUI.getYOffset();
+        double x = ox + getX() + getWidth() / 2 - iconSize / 2;
+        double y = oy + getY() + getHeight() / 2 - iconSize / 2;
         g.setFill(STONE_COLORS[node.getNextColor() == Stone.BLACK ? 1 : 0]);
-        g.fillOval(getX() + getWidth() / 2 - iconSize / 2, getY() + getHeight() / 2 - iconSize / 2, iconSize, iconSize);
+        g.fillOval(x, y, iconSize, iconSize);
         g.setStroke(STONE_COLORS[(node.getNextColor() + 1) % 2]);
-        g.strokeOval(getX() + getWidth() / 2 - iconSize / 2, getY() + getHeight() / 2 - iconSize / 2, iconSize, iconSize);
+        g.strokeOval(x, y, iconSize, iconSize);
     }
 
     public double getX() {

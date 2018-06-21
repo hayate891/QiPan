@@ -8,6 +8,7 @@ import io.nibby.qipan.ui.board.Stone;
 import javafx.geometry.Orientation;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 
 import java.util.*;
 
@@ -22,6 +23,7 @@ public class GameTreeUI extends BorderPane implements GameListener {
     private GameTreeCanvas canvas;
     private ScrollBar hScroll; // Horizontal
     private ScrollBar vScroll; // Vertical
+    private FlowPane corner;
     private Map<Integer, List<MoveNodeItem>> itemData = new HashMap<>();
     private MoveNode currentMove;
 
@@ -40,27 +42,64 @@ public class GameTreeUI extends BorderPane implements GameListener {
         this.setPrefHeight(200);
 
         canvas = new GameTreeCanvas(this);
+        canvas.setOnScroll(e -> {
+            if (!vScroll.isVisible())
+                return;
+            double delta = e.getDeltaY();
+            double value = vScroll.getValue();
+            if (delta > 0) {
+                value -= delta;
+                if (value < vScroll.getMin())
+                    value = vScroll.getMin();
+            } else {
+                value -= delta;
+                if (value > vScroll.getMax())
+                    value = vScroll.getMax();
+            }
+            vScroll.setValue(value);
+        });
         container = new CanvasContainer(canvas);
         setCenter(container);
 
         hScroll = new ScrollBar();
+        hScroll.getStyleClass().add("scroll-bar-light");
         hScroll.setMin(0);
         hScroll.setOrientation(Orientation.HORIZONTAL);
         hScroll.setManaged(false);
         hScroll.setVisible(false);
-        widthProperty().addListener(e -> {
-            hScroll.setMaxWidth(getWidth() - 16);
+        hScroll.valueProperty().addListener(e -> {
+            xScroll = hScroll.getValue();
+            render();
         });
-        setBottom(hScroll);
+        BorderPane bottom = new BorderPane();
+        bottom.setCenter(hScroll);
+        corner = new FlowPane();
+        corner.getStyleClass().add("corner");
+        corner.setMaxWidth(16);
+        bottom.setRight(corner);
+        bottom.setMinWidth(0);
+        setBottom(bottom);
 
         vScroll = new ScrollBar();
+        vScroll.getStyleClass().add("scroll-bar-light");
         vScroll.setMin(0);
         vScroll.setOrientation(Orientation.VERTICAL);
         vScroll.setManaged(false);
         vScroll.setVisible(false);
+        vScroll.valueProperty().addListener(e -> {
+            yScroll = vScroll.getValue();
+            render();
+        });
         setRight(vScroll);
 
         updateNodeItemData();
+
+        vScroll.setVisible(false);
+        vScroll.setManaged(false);
+        hScroll.setVisible(false);
+        hScroll.setManaged(false);
+        corner.setVisible(false);
+        corner.setManaged(false);
     }
 
     /*
@@ -86,16 +125,19 @@ public class GameTreeUI extends BorderPane implements GameListener {
         vScroll.setVisible(vScrollable);
         vScroll.setManaged(vScrollable);
         if (vScrollable) {
-            vScroll.setMax(treeHeight);
-            vScroll.setVisibleAmount(componentHeight);
+            vScroll.setMax(treeHeight - componentHeight + DRAW_X_MARGIN * 2);
+            vScroll.setVisibleAmount((componentHeight / treeHeight) * (treeHeight - componentHeight));
         }
         boolean hScrollable = componentWidth < treeWidth;
         hScroll.setVisible(hScrollable);
         hScroll.setManaged(hScrollable);
         if (hScrollable) {
-            hScroll.setMax(treeWidth);
-            hScroll.setVisibleAmount(componentWidth);
+            hScroll.setMax(treeWidth - componentWidth + DRAW_Y_MARGIN * 2);
+            hScroll.setVisibleAmount((componentWidth / treeWidth) * (treeWidth - componentWidth));
         }
+
+        corner.setVisible(hScrollable && vScrollable);
+        corner.setManaged(hScrollable && vScrollable);
     }
 
     /**
@@ -157,5 +199,13 @@ public class GameTreeUI extends BorderPane implements GameListener {
 
     public MoveNode getCurrentMove() {
         return currentMove;
+    }
+
+    public double getXOffset() {
+        return -xScroll;
+    }
+
+    public double getYOffset() {
+        return -yScroll;
     }
 }

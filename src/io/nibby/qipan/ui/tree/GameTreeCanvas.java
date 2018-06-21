@@ -21,7 +21,8 @@ public class GameTreeCanvas extends Canvas implements Renderable {
     }
 
     public void render() {
-        g.clearRect(0, 0, getWidth(), getHeight());
+        g.setFill(Color.WHITE);
+        g.fillRect(0, 0, getWidth(), getHeight());
         //TODO temporary
         // TODO Render only those in visible regions
         for (int moveNum : parent.getItemData().keySet()) {
