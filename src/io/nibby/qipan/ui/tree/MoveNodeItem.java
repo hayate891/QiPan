@@ -59,7 +59,7 @@ public class MoveNodeItem {
              */
             if (parent != null && parent.getNode().getChildren().indexOf(node) < 2) {
                 double x1 = ox + parent.getX() + getWidth() / 2;
-                double y1 = oy + parent.getY() + getHeight() / 2 + oy;
+                double y1 = oy + parent.getY() + getHeight() / 2;
                 double x2 = ox + getX() + getWidth() / 2;
                 double y2 = oy + getY() + getHeight() / 2;
                 g.strokeLine(x1, y1, x2, y2);

@@ -6,7 +6,9 @@ import io.nibby.qipan.game.MoveNode;
 import io.nibby.qipan.ui.CanvasContainer;
 import io.nibby.qipan.ui.board.Stone;
 import javafx.geometry.Orientation;
+import javafx.scene.Cursor;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 
@@ -68,6 +70,7 @@ public class GameTreeUI extends BorderPane implements GameListener {
         hScroll.setManaged(false);
         hScroll.setVisible(false);
         hScroll.valueProperty().addListener(e -> {
+
             xScroll = hScroll.getValue();
             render();
         });
@@ -125,14 +128,14 @@ public class GameTreeUI extends BorderPane implements GameListener {
         vScroll.setVisible(vScrollable);
         vScroll.setManaged(vScrollable);
         if (vScrollable) {
-            vScroll.setMax(treeHeight - componentHeight + DRAW_X_MARGIN * 2);
+            vScroll.setMax(treeHeight - componentHeight + DRAW_X_MARGIN * 2 + 16);
             vScroll.setVisibleAmount((componentHeight / treeHeight) * (treeHeight - componentHeight));
         }
         boolean hScrollable = componentWidth < treeWidth;
         hScroll.setVisible(hScrollable);
         hScroll.setManaged(hScrollable);
         if (hScrollable) {
-            hScroll.setMax(treeWidth - componentWidth + DRAW_Y_MARGIN * 2);
+            hScroll.setMax(treeWidth - componentWidth + DRAW_Y_MARGIN * 2 + 16);
             hScroll.setVisibleAmount((componentWidth / treeWidth) * (treeWidth - componentWidth));
         }
 

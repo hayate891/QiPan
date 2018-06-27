@@ -49,8 +49,9 @@ public enum StoneStyle {
 
         @Override
         public void render(GraphicsContext g, Stone stone, BoardMetrics metrics) {
-            double x = metrics.getBoardStoneX(stone.getX()) + stone.wobbleX + stone.fuzzyX;
-            double y = metrics.getBoardStoneY(stone.getY()) + stone.wobbleY + stone.fuzzyY;
+            double o = metrics.stoneSize / 16;
+            double x = metrics.getBoardStoneX(stone.getX()) + stone.wobbleX + stone.fuzzyX + o;
+            double y = metrics.getBoardStoneY(stone.getY()) + stone.wobbleY + stone.fuzzyY + o;
             RadialGradient gradient;
             DropShadow shadow = new DropShadow();
             shadow.setRadius(metrics.stoneSize / 8);

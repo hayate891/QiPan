@@ -58,6 +58,7 @@ public class SgfEditorWindow extends Stage {
         { // Tab 1 -- game tree
             treeUi = new GameTreeUI(game);
             Tab treeTab = new Tab(bundle.getString("editor.tabpane.gametree"), treeUi);
+            treeTab.setClosable(false);
             tabPane.getTabs().add(treeTab);
         }
 
