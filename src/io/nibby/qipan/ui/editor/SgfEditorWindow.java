@@ -54,6 +54,8 @@ public class SgfEditorWindow extends Stage {
         treeViewSplit.setOrientation(Orientation.VERTICAL);
 
         TabPane tabPane = new TabPane();
+        tabPane.setMinWidth(200);
+        tabPane.setMinHeight(350);
         tabPane.getStyleClass().add("main-tab-pane");
         { // Tab 1 -- game tree
             treeUi = new GameTreeUI(game);
@@ -65,19 +67,10 @@ public class SgfEditorWindow extends Stage {
         moveComments = new TextArea();
         moveComments.getStyleClass().add("move-comments");
         moveComments.setWrapText(true);
-        moveComments.setPromptText(bundle.getString("editor.comments.prompt"));
+        moveComments.setPromptText(bundle.getString("editor.tabpane.movecomment-prompt"));
 
-        BorderPane commentPane = new BorderPane();
-        FlowPane commentHeader = new FlowPane();
-        commentHeader.getStyleClass().add("move-comments-header");
-        Label headerLabel = new Label(bundle.getString("editor.comments.header"));
-        headerLabel.getStyleClass().add("move-comments-header-label");
-        commentHeader.getChildren().add(headerLabel);
-        commentPane.setTop(commentHeader);
-        commentPane.setCenter(moveComments);
-
-        treeViewSplit.getItems().addAll(tabPane, commentPane);
-        treeViewSplit.setDividerPosition(0, 0.6d);
+        treeViewSplit.getItems().addAll(tabPane, moveComments);
+        treeViewSplit.setDividerPosition(0, 0.75d);
         boardViewSplit.getItems().add(treeViewSplit);
         boardViewSplit.setDividerPosition(0, 0.6d);
 

@@ -2,7 +2,7 @@
 @import url("toolbar.css");
 
 .split-pane {
-    -fx-background-color: rgb(50, 50, 50);
+    -fx-background-color: rgb(0, 0, 0);
 }
 
 .split-pane *.split-pane-divider {
@@ -24,7 +24,6 @@
 .main-tab-pane *.tab-header-area,
 .main-tab-pane *.tab-header-area .tab-header-background {
     -fx-background-color: rgb(46, 95, 173);
-
 }
 
 .main-tab-pane .tab {
@@ -46,17 +45,9 @@
 }
 
 /* Move comment area */
-.move-comments-header {
-    -fx-background-color: rgb(100, 100, 100);
-    -fx-padding: 5px 10px 5px 10px;
-}
-
-.move-comments-header-label {
-    -fx-text-fill: white;
-}
-
 .move-comments .content {
-    -fx-background-color: rgb(50, 50, 50);
+    -fx-background-color: rgb(8, 17, 33);
+    -fx-background-radius: 0px;
 }
 
 .move-comments {
@@ -65,14 +56,17 @@
     -fx-faint-focus-color: transparent;
     -fx-border-radius: 0px;
     -fx-background-radius: 0px;
+    -fx-background-color: rgb(8, 17, 33);
+    -fx-border-width: 2px 0px 0px 0px;
+    -fx-border-color: rgb(46, 95, 173);
 }
 
 .move-comments .scroll-pane {
-    -fx-background-color: rgb(50, 50, 50);
+    -fx-background-color: rgb(8, 17, 33);
 }
 
 .move-comments .scroll-pane *.scroll-bar {
-    -fx-background-color: rgb(50, 50, 50);
+    -fx-background-color: rgb(8, 17, 33);
 }
 
 .move-comments .scroll-pane *.scroll-bar .thumb {
