@@ -16,12 +16,21 @@ public class QiPan extends Application {
     public static final String CHARSET = "UTF-8";
     public static Font SYSTEM_FONT;
 
+    private LeelazHandler leelaz;
+
     @Override
     public void start(Stage primaryStage) {
         System.setProperty("file.encoding", "UTF-8");
         Game game = new Game(19, 19, GameRules.CHINESE);
         SgfEditorWindow sgfEditorWindow = new SgfEditorWindow(game);
         sgfEditorWindow.show();
+
+        leelaz = new LeelazHandler(this);
+        leelaz.start();
+    }
+
+    public LeelazHandler getLeelaHandler() {
+        return leelaz;
     }
 
     public static void main(String[] args) {

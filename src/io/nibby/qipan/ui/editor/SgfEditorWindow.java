@@ -72,9 +72,9 @@ public class SgfEditorWindow extends Stage {
         treeViewSplit.getItems().addAll(tabPane, moveComments);
         treeViewSplit.setDividerPosition(0, 0.75d);
         boardViewSplit.getItems().add(treeViewSplit);
-        boardViewSplit.setDividerPosition(0, 0.6d);
+        boardViewSplit.setDividerPosition(0, 0.75d);
 
-        Scene scene = new Scene(content, 800, 600);
+        Scene scene = new Scene(content, 860, 560);
         UIStylesheets.applyTo(scene);
         //TODO temporary
         setTitle(QiPan.TITLE);
