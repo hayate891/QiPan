@@ -1,0 +1,16 @@
+.text-field {
+    -fx-background-color: rgb(240, 240, 240);
+    -fx-border-color: rgb(230, 230, 230);
+    -fx-border-width: 2;
+}
+
+.text-field:focused {
+    -fx-background-color: rgb(229, 239, 255);
+    -fx-border-color: rgb(168, 201, 255);
+    -fx-border-width: 2;
+}
+
+.button {
+    -fx-background-color: rgb(46, 119, 242);
+    -fx-text-fill: white;
+}

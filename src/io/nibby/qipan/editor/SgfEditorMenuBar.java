@@ -1,4 +1,4 @@
-package io.nibby.qipan.ui.editor;
+package io.nibby.qipan.editor;
 
 import io.nibby.qipan.settings.Settings;
 import javafx.scene.control.Menu;

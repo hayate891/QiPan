@@ -47,7 +47,8 @@ public class Game {
     }
 
     /**
-     * Places a single stone onto the go board as an independent move.
+     * Places a single stone onto the go board as an independent move. The main rules validation is done in the
+     * GameRules object associated with the game.
      *
      * @param x x co-ordinate on the board.
      * @param y y co-ordinate on the board.

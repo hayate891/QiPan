@@ -1,4 +1,4 @@
-package io.nibby.qipan.ui.editor;
+package io.nibby.qipan.editor;
 
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;

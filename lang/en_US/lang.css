@@ -1,4 +1,8 @@
 * {
     -fx-font-family: "Sukhumvit Set";
-    -fx-font-size: 13;
+    -fx-font-size: 14;
+}
+
+.bold {
+    font-weight: bold;
 }
