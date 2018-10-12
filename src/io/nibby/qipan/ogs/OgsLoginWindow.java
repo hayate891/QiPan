@@ -16,7 +16,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 
+import java.io.IOException;
 import java.util.ResourceBundle;
 
 public class OgsLoginWindow extends Stage {
@@ -83,7 +88,15 @@ public class OgsLoginWindow extends Stage {
         String username = fieldUsername.getText();
         String password = fieldPassword.getText();
 
-        
+        // REST request to OGS
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
+            HttpPost post = new HttpPost("http://online-go.com/oauth2/access_token");
+            post.setHeader("client_id", "");
+            HttpResponse response = httpClient.execute(post);
+        } catch (IOException e) {
+            // TODO error handling
+            e.printStackTrace();
+        }
     }
 
 }

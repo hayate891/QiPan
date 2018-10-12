@@ -1,8 +1,5 @@
 package io.nibby.qipan;
 
-import io.nibby.qipan.game.Game;
-import io.nibby.qipan.game.GameRules;
-import io.nibby.qipan.editor.SgfEditorWindow;
 import io.nibby.qipan.ogs.OgsLoginWindow;
 import javafx.application.Application;
 import javafx.scene.text.Font;
@@ -22,7 +19,6 @@ public class QiPan extends Application {
 //        Game game = new Game(19, 19, GameRules.JAPANESE);
 //        SgfEditorWindow sgfEditorWindow = new SgfEditorWindow(game);
 //        sgfEditorWindow.show();
-//
         OgsLoginWindow ogs = new OgsLoginWindow();
         ogs.show();
     }

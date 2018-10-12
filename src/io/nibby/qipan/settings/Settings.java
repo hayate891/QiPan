@@ -17,6 +17,7 @@ public class Settings {
     public static final GeneralSettings general = new GeneralSettings();
     public static final LanguageSettings language = new LanguageSettings();
     public static final GuiSettings gui = new GuiSettings();
+    public static final OgsAuthSettings ogsToken = new OgsAuthSettings();
 
     static {
         // Validate base directory
@@ -55,6 +56,7 @@ public class Settings {
         modules.add(general);
         modules.add(language);
         modules.add(gui);
+        modules.add(ogsToken);
 
         loadAll();
     }
