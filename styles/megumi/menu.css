@@ -15,30 +15,21 @@
 }
 
 .menu-item {
-    -fx-background-color: black;
+    -fx-background-color: rgb(46, 95, 173);
     -fx-text-fill: white;
-    -fx-padding: 2px 5px 2px 5px;
 }
 
 .menu-item .label {
     -fx-text-fill: white;
 }
 
-.menu-item .accelerator-text {
-    -fx-text-fill: rgb(214, 189, 0);
-}
-
 .menu-item:focused {
-    -fx-background-color: rgb(46, 95, 173);
-}
-
-.menu-item:focused .label {
-    -fx-text-fill: rgb(214, 189, 0);
+    -fx-background-color: rgb(61, 135, 255);
 }
 
 .context-menu {
     -fx-min-width: 200px;
     -fx-background-color: rgb(46, 95, 173);
-    -fx-padding: 0px 0px 0px 3px ;
+    -fx-padding: 0px 0px 0px 0px;
     -fx-text-fill: white;
 }

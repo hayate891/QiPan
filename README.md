@@ -1,17 +1,17 @@
 # 棋盘 - QiPan
 An **elegant** Go SGF editor, formerly known as _WeiqiTool_.
 
-![Screenshot](/screenshots/1.png "QiPan v0.1.1")
+![Screenshot](/screenshots/2.png "QiPan v0.2")
 
 ## Current Progress
-Boshi is a long way from v1.0.
+QiPan is a long way from v1.0.
 As with all great apps, though, we have humble beginnings.
 
 ### Chapter 1: Humble Beginnings (v0.5 earlybird)
 - [x] Rendering a goban
 - [x] Stones (placement, captures, ko)
-- [ ] Move tree
-- [ ] Sound effects
+- [x] Move tree
+- [x] Sound effects
 - [ ] Annotations
 - [ ] Saving / loading SGF
 - [ ] SGF info editor
@@ -26,9 +26,6 @@ As with all great apps, though, we have humble beginnings.
 
 ### Chapter 3: Towards the Finish Line (v0.9 beta)
 - [ ] CLI for AI
-- [ ] Player profiling
-    - Create a database of you (or your students') played games
-    - Track strength improvements over time.
 - [ ] Animations, UI effects
 
 ### Chapter 4: The Journey Begins (v1.0 +)
