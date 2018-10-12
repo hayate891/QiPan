@@ -26,7 +26,7 @@ public class SgfEditorController extends AbstractGameController {
 
         // TODO temporary
         if (button.equals(MouseButton.PRIMARY) && x >= 0 && y >= 0) {
-            placeMove(x, y, game.getCurrentMove().getNextColor(), null);
+            placeMove(x, y, game.getCurrentMove().getMoveNumber() %2 == 1 ? Stone.BLACK : Stone.WHITE, null);
         }
     }
 

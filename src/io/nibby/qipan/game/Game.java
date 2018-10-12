@@ -15,7 +15,7 @@ public class Game {
     private final List<GameListener> listeners = new ArrayList<>();
     private int boardWidth, boardHeight;
     private GameRules rules;
-    private MoveNode gameTree;
+    private MoveNode gameTreeRoot;
     private MoveNode currentMove;
 
     public Game(int bWidth, int bHeight, GameRules rules) {
@@ -23,11 +23,9 @@ public class Game {
         this.boardHeight = bHeight;
         this.rules = rules;
         // Create the root node
-        gameTree = new MoveNode();
-        gameTree.setStones(new Stone[boardWidth * boardHeight]);
-        gameTree.setMoveNumber(0);
-        gameTree.setNextColor(Stone.BLACK);
-        setCurrentMove(gameTree);
+        gameTreeRoot = new MoveNode();
+        gameTreeRoot.setStones(new Stone[boardWidth * boardHeight]);
+        setCurrentMove(gameTreeRoot);
     }
 
     public Stone[] getStones() {
@@ -46,8 +44,8 @@ public class Game {
      *
      * @return The root node of the game tree
      */
-    public MoveNode getGameTree() {
-        return gameTree;
+    public MoveNode getGameTreeRoot() {
+        return gameTreeRoot;
     }
 
     // A data tuple for returning information related to stone placement.
@@ -200,8 +198,6 @@ public class Game {
         //TODO a sound when suicidal?
         resultNode.setStones(Arrays.copyOf(testPosition, testPosition.length));
         result.node = resultNode;
-        resultNode.setNextColor(color == Stone.BLACK ? Stone.WHITE : Stone.BLACK);
-        resultNode.setMoveNumber(currentMove.getMoveNumber() + 1);
         currentMove.addChild(resultNode);
         setCurrentMove(resultNode);
         fireMovePlayedEvent(x, y, color);

@@ -6,13 +6,11 @@ import io.nibby.qipan.settings.Settings;
 import io.nibby.qipan.ui.UIStylesheets;
 import io.nibby.qipan.ui.board.BoardUI;
 import io.nibby.qipan.ui.board.SgfEditorController;
-import io.nibby.qipan.ui.tree.GameTreeUI;
+import io.nibby.qipan.ui.GameTreeUI;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.util.ResourceBundle;

@@ -1,4 +1,4 @@
-package io.nibby.qipan.ui.tree;
+package io.nibby.qipan.ui;
 
 import io.nibby.qipan.game.MoveNode;
 import io.nibby.qipan.ui.board.Stone;
@@ -13,7 +13,7 @@ import javafx.scene.paint.Color;
  * DISPLAY_FULL draws the move node with as much info as possible.
  * DISPLAY_SMALL draws the move node with an icon and move co-ordinate only.
  */
-public class MoveNodeItem {
+public class GameTreeNode {
 
     // Size constants (pixels)N
     public static final int DISPLAY_WIDTH = 24;
@@ -29,9 +29,9 @@ public class MoveNodeItem {
     private int displayRow;
     private MoveNode node;
     private GameTreeUI treeUI;
-    private MoveNodeItem parent;
+    private GameTreeNode parent;
 
-    public MoveNodeItem(GameTreeUI treeUi, MoveNodeItem parent, double x, double y, MoveNode node) {
+    public GameTreeNode(GameTreeUI treeUi, GameTreeNode parent, double x, double y, MoveNode node) {
         this.parent = parent;
         setTreeUI(treeUi);
         setX(x);
@@ -57,19 +57,14 @@ public class MoveNodeItem {
                 has multiple children. A straight line is only drawn for the first two parent-child connections.
                 The rest of the lines will be chained through the 2nd child to ensure cleaner presentation.
              */
-            if (parent != null && parent.getNode().getChildren().indexOf(node) < 2) {
+            if (getDisplayColumn() - parent.getDisplayColumn() > 1) {
                 double x1 = ox + parent.getX() + getWidth() / 2;
                 double y1 = oy + parent.getY() + getHeight() / 2;
-                double x2 = ox + getX() + getWidth() / 2;
-                double y2 = oy + getY() + getHeight() / 2;
-                g.strokeLine(x1, y1, x2, y2);
+                g.strokeLine(x1, y1, getX() + getWidth() / 2 + ox, y1);
+                g.strokeLine(getX() + getWidth() / 2 + ox, y1, getX() + getWidth() / 2 + ox, getY() + getHeight() / 2 + oy);
             } else {
-                // This is the 2nd+ child that is spanning multiple rows from its parent
-                // its connection will be facilitated by a direct connection to the position of the child above.
-                double lastChildX = GameTreeUI.DRAW_X_MARGIN + (getDisplayRow() - 1) * DISPLAY_WIDTH;
-                double lastChildY = GameTreeUI.DRAW_Y_MARGIN + node.getMoveNumber() * DISPLAY_HEIGHT;
-                double x1 = ox + lastChildX + getWidth() / 2;
-                double y1 = oy + lastChildY + getHeight() / 2;
+                double x1 = ox + parent.getX() + getWidth() / 2;
+                double y1 = oy + parent.getY() + getHeight() / 2;
                 double x2 = ox + getX() + getWidth() / 2;
                 double y2 = oy + getY() + getHeight() / 2;
                 g.strokeLine(x1, y1, x2, y2);
@@ -86,9 +81,9 @@ public class MoveNodeItem {
         double oy = treeUI.getYOffset();
         double x = ox + getX() + getWidth() / 2 - iconSize / 2;
         double y = oy + getY() + getHeight() / 2 - iconSize / 2;
-        g.setFill(STONE_COLORS[node.getNextColor() == Stone.BLACK ? 1 : 0]);
+        g.setFill(STONE_COLORS[node.getMoveNumber() % 2]);
         g.fillOval(x, y, iconSize, iconSize);
-        g.setStroke(STONE_COLORS[(node.getNextColor() + 1) % 2]);
+        g.setStroke(STONE_COLORS[(node.getMoveNumber() + 1) % 2]);
         g.strokeOval(x, y, iconSize, iconSize);
     }
 
@@ -116,15 +111,16 @@ public class MoveNodeItem {
         return DISPLAY_HEIGHT;
     }
 
-    public int getDisplayRow() {
+    public int getDisplayColumn() {
         return displayRow;
     }
 
-    public void setDisplayRow(int displayRow) {
-        this.displayRow = displayRow;
+    public void setDisplayColumn(int column) {
+        this.displayRow = column;
+        x = GameTreeUI.DRAW_X_MARGIN + getDisplayColumn() * DISPLAY_HEIGHT;
     }
 
-    public MoveNodeItem getParent() {
+    public GameTreeNode getParent() {
         return parent;
     }
 

@@ -13,7 +13,6 @@ public class MoveNode {
     private MoveNode parent;
     private List<MoveNode> children = new ArrayList<>();
 
-    private int moveNumber;
     private int moveX, moveY;
     private Stone[] stones;     // The stones on the board at this move
     private int whitePrisoners; // Number of captures made by the white player
@@ -21,13 +20,11 @@ public class MoveNode {
     private int lastKoX;        // Where the last illegal ko co-ordinate is
     private int lastKoY;
     private String comment;
-    private int nextColor;      // The player to make the next move
 
     private Stone[] lastCapture; // Opponent stones captured by the last move
 
     // Root node initializer
     public MoveNode() {
-        this.moveNumber = 0;
         this.parent = null;
         this.moveX = -1;
         this.moveY = -1;
@@ -67,14 +64,6 @@ public class MoveNode {
 
     public void setChildren(List<MoveNode> children) {
         this.children = children;
-    }
-
-    public int getMoveNumber() {
-        return moveNumber;
-    }
-
-    public void setMoveNumber(int moveNumber) {
-        this.moveNumber = moveNumber;
     }
 
     public int getMoveX() {
@@ -141,19 +130,21 @@ public class MoveNode {
         this.comment = comment;
     }
 
-    public int getNextColor() {
-        return nextColor;
-    }
-
-    public void setNextColor(int nextColor) {
-        this.nextColor = nextColor;
-    }
-
     public Stone[] getLastCapture() {
         return lastCapture;
     }
 
     public void setLastCapture(Stone[] lastCapture) {
         this.lastCapture = lastCapture;
+    }
+
+    public int getMoveNumber() {
+        int length = 1;
+        MoveNode parent = this.parent;
+        while (parent != null) {
+            parent = parent.getParent();
+            length++;
+        }
+        return length;
     }
 }

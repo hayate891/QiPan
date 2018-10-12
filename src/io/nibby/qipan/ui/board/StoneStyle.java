@@ -44,7 +44,7 @@ public enum StoneStyle {
         }
     },
 
-    // CERAMIC bi-convex 35mm
+    // CERAMIC bi-convex
     CERAMIC("Ceramic") {
 
         @Override
@@ -89,7 +89,7 @@ public enum StoneStyle {
 
         @Override
         public double wobbleMargin() {
-            return 1.5d;
+            return 2d;
         }
 
         @Override

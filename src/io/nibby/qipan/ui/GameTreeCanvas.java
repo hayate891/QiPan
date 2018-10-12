@@ -1,6 +1,5 @@
-package io.nibby.qipan.ui.tree;
+package io.nibby.qipan.ui;
 
-import io.nibby.qipan.ui.Renderable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -25,16 +24,16 @@ public class GameTreeCanvas extends Canvas implements Renderable {
         g.fillRect(0, 0, getWidth(), getHeight());
         //TODO temporary
         // TODO Render only those in visible regions
-        for (int moveNum : parent.getItemData().keySet()) {
-            List<MoveNodeItem> moveItems = parent.getItemData().get(moveNum);
-            for (MoveNodeItem item : moveItems) {
+        for (int moveNum : parent.getNodeData().keySet()) {
+            List<GameTreeNode> moveItems = parent.getNodeData().get(moveNum);
+            for (GameTreeNode item : moveItems) {
                 item.renderLines(g);
             }
         }
 
-        for (int moveNum : parent.getItemData().keySet()) {
-            List<MoveNodeItem> moveItems = parent.getItemData().get(moveNum);
-            for (MoveNodeItem item : moveItems) {
+        for (int moveNum : parent.getNodeData().keySet()) {
+            List<GameTreeNode> moveItems = parent.getNodeData().get(moveNum);
+            for (GameTreeNode item : moveItems) {
                 item.render(g);
             }
         }

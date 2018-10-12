@@ -48,6 +48,7 @@ public class Stone {
             return;
         }
 
+        //TODO Reduce amount of hard-coded values
         Random r = new Random();
         double w = wobble / wobbleMax;
         wobbleX = r.nextDouble() * wobble;
