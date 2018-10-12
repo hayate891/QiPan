@@ -23,6 +23,7 @@ public class Game {
         // Create the root node
         gameTreeRoot = new MoveNode();
         gameTreeRoot.setBoardPosition(new Stone[boardWidth * boardHeight]);
+        gameTreeRoot.setState(MoveNode.STATE_ROOT);
         setCurrentMove(gameTreeRoot);
     }
 
@@ -52,15 +53,15 @@ public class Game {
      *
      * @param x x co-ordinate on the board.
      * @param y y co-ordinate on the board.
-     * @param color Color of the stone.
      * @param style Stone styling option, used to determine the wobble margin.
      * @param metrics Sizing information to calculate stone setWobble and placement offset.
      */
-    public AbstractRules.PlaceMoveResult playMove(int x, int y, int color, StoneStyle style, BoardMetrics metrics,
+    public AbstractRules.PlaceMoveResult playMove(int x, int y, StoneStyle style, BoardMetrics metrics,
                                                   Sound.ActionCallback callback) {
 
-        AbstractRules.PlaceMoveResult result = rules.playMove(currentMove, x, y, color, boardWidth, boardHeight);
+        AbstractRules.PlaceMoveResult result = rules.playMove(currentMove, x, y, boardWidth, boardHeight);
         if (result.result == AbstractRules.PlaceMoveResult.PLACE_OK) {
+            int color = result.color;
             Stone[] position = result.node.getBoardPosition();
             //Wibbly wobbly
             Stone stone = position[x + y * boardWidth];

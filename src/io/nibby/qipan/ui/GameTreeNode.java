@@ -81,10 +81,21 @@ public class GameTreeNode {
         double oy = treeUI.getYOffset();
         double x = ox + getX() + getWidth() / 2 - iconSize / 2;
         double y = oy + getY() + getHeight() / 2 - iconSize / 2;
-        g.setFill(STONE_COLORS[node.getMoveNumber() % 2]);
-        g.fillOval(x, y, iconSize, iconSize);
-        g.setStroke(STONE_COLORS[(node.getMoveNumber() + 1) % 2]);
-        g.strokeOval(x, y, iconSize, iconSize);
+        switch(node.getState()) {
+            case MoveNode.STATE_ROOT:
+                g.setFill(Color.ORANGE);
+                g.fillRect(x, y, iconSize, iconSize);
+                g.setStroke(Color.WHITE);
+                g.strokeRect(x, y, iconSize, iconSize);
+                break;
+            case MoveNode.STATE_MOVE_BLACK:
+            case MoveNode.STATE_MOVE_WHITE:
+                g.setFill(STONE_COLORS[node.getMoveNumber() % 2]);
+                g.fillOval(x, y, iconSize, iconSize);
+                g.setStroke(STONE_COLORS[(node.getMoveNumber() + 1) % 2]);
+                g.strokeOval(x, y, iconSize, iconSize);
+                break;
+        }
     }
 
     public double getX() {

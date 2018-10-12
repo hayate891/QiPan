@@ -6,22 +6,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Each node represents a game position
+ * Each node represents a game position at that point. There are various metadata associated with it.
  */
 public class MoveNode {
+
+    public static final int STATE_EMPTY = -1;
+    public static final int STATE_ROOT = -2;
+    public static final int STATE_MOVE_BLACK = 1;
+    public static final int STATE_MOVE_WHITE = 2;
+    public static final int STATE_PASS_BLACK = 3;
+    public static final int STATE_PASS_WHITE = 4;
+    public static final int STATE_RESIGN_BLACK = 5;
+    public static final int STATE_RESIGN_WHITE = 6;
+    public static final int STATE_UNFINISHED = 7;
+    public static final int STATE_JIGO = 8;
 
     private MoveNode parent;
     private List<MoveNode> children = new ArrayList<>();
 
     private int moveX, moveY;
-    private Stone[] boardPosition;     // The stones on the board at this instance
-    private int whitePrisoners; // Number of captures made by the white player
-    private int blackPrisoners; // Number of captures made by the black player
-    private int lastKoX;        // Where the last illegal ko co-ordinate is
+    private Stone[] boardPosition;      // The stones on the board at this instance
+    private int whitePrisoners;         // Number of captures made by the white player
+    private int blackPrisoners;         // Number of captures made by the black player
+    private int lastKoX;                // Where the last illegal ko co-ordinate is
     private int lastKoY;
     private String comment;
+    private int state;                  // Icon of the current node in the game tree
 
-    private Stone[] lastCapture; // Opponent boardPosition captured by the last move
+    private Stone[] lastCapture;        // Opponent boardPosition captured by the last move
 
     // Root node initializer
     public MoveNode() {
@@ -46,6 +58,7 @@ public class MoveNode {
             this.children.add(child);
     }
 
+    // Getters and setters
     public boolean hasChildren() {
         return getChildren().size() > 0;
     }
@@ -146,5 +159,13 @@ public class MoveNode {
             length++;
         }
         return length;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
     }
 }

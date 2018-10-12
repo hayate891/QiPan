@@ -19,10 +19,11 @@ public abstract class AbstractRules {
 
         public Stone[] wobbleStones;
         public int result;
+        public int color;
         public MoveNode node;
     }
 
-    public abstract PlaceMoveResult playMove(MoveNode currentMove, int x, int y, int player, int boardWidth, int boardHeight);
+    public abstract PlaceMoveResult playMove(MoveNode currentMove, int x, int y, int boardWidth, int boardHeight);
 
     /**
      * Returns attributes pertaining to the adjacent stone chain.

@@ -5,7 +5,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 
 /*
-    The en_US (en_US) controller used to edit game data.
+    The controller used to edit game data in SgfEditorWindow.
  */
 public class SgfEditorController extends AbstractGameController {
 
@@ -26,7 +26,7 @@ public class SgfEditorController extends AbstractGameController {
 
         // TODO temporary
         if (button.equals(MouseButton.PRIMARY) && x >= 0 && y >= 0) {
-            placeMove(x, y, game.getCurrentMove().getMoveNumber() %2 == 1 ? Stone.BLACK : Stone.WHITE, null);
+            placeMove(x, y, null);
         }
     }
 

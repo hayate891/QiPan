@@ -8,9 +8,12 @@ import java.util.List;
 
 public class JapaneseRules extends AbstractRules {
 
-    public PlaceMoveResult playMove(MoveNode currentMove, int x, int y, int player, int boardWidth, int boardHeight) {
+    public PlaceMoveResult playMove(MoveNode currentMove, int x, int y, int boardWidth, int boardHeight) {
         PlaceMoveResult result = new PlaceMoveResult();
         MoveNode resultNode = new MoveNode(currentMove);
+        int color = currentMove.getMoveNumber() % 2 == 1 ? Stone.BLACK : Stone.WHITE;
+        result.color = color;
+        resultNode.setState(color == Stone.BLACK ? MoveNode.STATE_MOVE_BLACK : MoveNode.STATE_MOVE_WHITE);
         /*
             First check if the move is on the board and on an empty intersection.
             Then check for illegal ko squares.
@@ -31,7 +34,7 @@ public class JapaneseRules extends AbstractRules {
         }
         // Create a hypothetical board position with the new move in place
         Stone[] testPosition = Arrays.copyOf(currentMove.getBoardPosition(), currentMove.getBoardPosition().length);
-        testPosition[x + y * boardWidth] = new Stone(player, x, y);
+        testPosition[x + y * boardWidth] = new Stone(color, x, y);
         /*
             Next, check the liberties of opponent's adjacent currentMove.stones and check if there is a capture
             upon playing this move.
@@ -44,7 +47,7 @@ public class JapaneseRules extends AbstractRules {
 
         for (Stone adjacentStone : adjacentStones) {
             List<Integer> visited = new ArrayList<>();
-            boolean isAlly = adjacentStone.getColor() == player;
+            boolean isAlly = adjacentStone.getColor() == color;
 
             // Not checking for suicide here
             if (isAlly)

@@ -24,6 +24,7 @@ public class GameTreeUI extends BorderPane implements GameListener {
     private ScrollBar vScroll; // Vertical
     private FlowPane corner;
     private MoveNode currentMove;
+    private GameTreeNode currentTreeNode;
 
     // Scroll offsets
     private double xScroll = 0d;
@@ -142,14 +143,24 @@ public class GameTreeUI extends BorderPane implements GameListener {
     protected static final int DRAW_X_MARGIN = 10;
     protected static final int DRAW_Y_MARGIN = 10;
 
+    /**
+     * Recursively constructs an entire MoveNode branch as GameTreeNode branch. This method
+     * also handles branch collision detection.
+     *
+     * @param branchRoot The root node of the current branch.
+     * @param parent Parent GameTreeNode of the current root node.
+     * @param column The intended column the current branch reside (on the UI).
+     */
     private void createMoveBranch(MoveNode branchRoot, GameTreeNode parent, int column) {
-        // Traverse till the end
         if (branchRoot.getParent() == null) {
             // This is the root node, initialize
             columnData.putIfAbsent(0, new ArrayList<>());
+            branchRoot.setState(MoveNode.STATE_ROOT);
         }
         MoveNode current = branchRoot;
         int size = 0;
+        // The branch start is 1 less than the move number to account for collision with the branch outline
+        // on the tree UI.
         int start = branchRoot.getMoveNumber() - 1;
         List<GameTreeNode> branchNodes = new ArrayList<>();
         Stack<MoveNode> childNodes = new Stack<>();
@@ -159,7 +170,7 @@ public class GameTreeUI extends BorderPane implements GameListener {
         do {
             int moveNumber = current.getMoveNumber();
             double x = DRAW_X_MARGIN + column * GameTreeNode.DISPLAY_WIDTH;
-            double y = DRAW_Y_MARGIN + moveNumber * GameTreeNode.DISPLAY_HEIGHT;
+            double y = DRAW_Y_MARGIN + (moveNumber - 1) * GameTreeNode.DISPLAY_HEIGHT;
             GameTreeNode treeNode = new GameTreeNode(this, currentParent, x, y, current);
             nodeData.putIfAbsent(moveNumber, new ArrayList<>());
             nodeData.get(moveNumber).add(treeNode);
@@ -176,6 +187,9 @@ public class GameTreeUI extends BorderPane implements GameListener {
             currentParent = treeNode;
             size++;
             hasChild = false;
+            if (current.equals(currentMove)) {
+                currentTreeNode = treeNode;
+            }
             if (current.hasChildren()) {
                 current = current.getChildren().get(0);
                 hasChild = true;
@@ -225,6 +239,20 @@ public class GameTreeUI extends BorderPane implements GameListener {
         if (segmentData == null) {
             columnData.put(column, new ArrayList<>());
             return true;
+        }
+
+        // Avoid stepping into a column where an existing branch line extends further out
+        List<Integer[]> nextColumn;
+        int c = column;
+        while ((nextColumn = columnData.get(c + 1)) != null) {
+            for (Integer[] segment : nextColumn) {
+                if (start <= segment[0] && end >= segment[0] ||
+                        start <= segment[1] && end >= segment[1] ||
+                        start >= segment[0] && end <= segment[1])
+                    return false;
+
+            }
+            c++;
         }
 
         for (Integer[] segment : segmentData) {

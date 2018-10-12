@@ -79,7 +79,6 @@ public class BoardInputCanvas extends Canvas {
                 render();
             })).play();
         }
-
         // TODO implement later
     }
 
