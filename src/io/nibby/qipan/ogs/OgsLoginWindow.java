@@ -16,12 +16,23 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.apache.commons.io.Charsets;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class OgsLoginWindow extends Stage {
@@ -85,14 +96,32 @@ public class OgsLoginWindow extends Stage {
     }
 
     private void submitLogin(ActionEvent actionEvent) {
+        //TODO work in progress
+
         String username = fieldUsername.getText();
         String password = fieldPassword.getText();
 
+        System.out.println("Submitting action");
         // REST request to OGS
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
             HttpPost post = new HttpPost("http://online-go.com/oauth2/access_token");
-            post.setHeader("client_id", "");
+            System.out.println("Building request");
+            List<NameValuePair> parameters = new ArrayList<>();
+            parameters.add(new BasicNameValuePair("client_id", Settings.ogsToken.getClientId()));
+            parameters.add(new BasicNameValuePair("client_secret", Settings.ogsToken.getClientSecret()));
+            parameters.add(new BasicNameValuePair("grant_type", "password"));
+            parameters.add(new BasicNameValuePair("username", username));
+            parameters.add(new BasicNameValuePair("password", password));
+            post.setEntity(new UrlEncodedFormEntity(parameters));
+            System.out.println("Executing request");
             HttpResponse response = httpClient.execute(post);
+            HttpEntity entity = response.getEntity();
+            Header encodingHeader = entity.getContentEncoding();
+            Charset encoding = encodingHeader == null ? StandardCharsets.UTF_8 : Charsets.toCharset(encodingHeader.getValue());
+            String json = EntityUtils.toString(entity, StandardCharsets.UTF_8);
+            System.out.println("Received:");
+            System.out.println(response.getStatusLine().getStatusCode());
+
         } catch (IOException e) {
             // TODO error handling
             e.printStackTrace();

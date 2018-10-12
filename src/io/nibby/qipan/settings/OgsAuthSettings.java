@@ -43,6 +43,7 @@ public class OgsAuthSettings implements SettingsModule {
             alert.setHeaderText("Missing ogs client configuration!");
             alert.setContentText("The OGS client feature will not be available.");
             alert.showAndWait();
+            e.printStackTrace();
         }
 
         exists = Files.exists(FILE_PATH);
