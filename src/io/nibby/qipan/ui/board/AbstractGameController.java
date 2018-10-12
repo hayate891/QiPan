@@ -1,5 +1,6 @@
 package io.nibby.qipan.ui.board;
 
+import io.nibby.qipan.game.AbstractRules;
 import io.nibby.qipan.game.Game;
 import io.nibby.qipan.sound.Sound;
 import javafx.scene.input.KeyCode;
@@ -42,8 +43,8 @@ public abstract class AbstractGameController {
 
     }
 
-    public Game.PlaceMoveResult placeMove(int x, int y, int playerColor, Sound.ActionCallback callback) {
-        Game.PlaceMoveResult result = game.placeMove(x, y, playerColor, container.getStoneStyle(),
+    public AbstractRules.PlaceMoveResult placeMove(int x, int y, int playerColor, Sound.ActionCallback callback) {
+        AbstractRules.PlaceMoveResult result = game.playMove(x, y, playerColor, container.getStoneStyle(),
                 container.getMetrics(), callback);
         if (result.wobbleStones != null)
         for (Stone stone : result.wobbleStones)
