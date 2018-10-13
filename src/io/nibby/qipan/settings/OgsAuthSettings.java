@@ -14,8 +14,14 @@ public class OgsAuthSettings implements SettingsModule {
     private static final Path FILE_PATH = Settings.BASE_DIRECTORY.resolve("ogs_token");
 
     private boolean exists = false;
+    private boolean tokenExpired = false;
     private String authToken;
     private String reAuthToken;
+    private int tokenExpiry;
+    private long tokenAcquireTime;
+    private String tokenType;
+    private String scope;
+    private String lastUsername;
 
     private String clientId;
     private String clientSecret;
@@ -25,6 +31,12 @@ public class OgsAuthSettings implements SettingsModule {
         try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(FILE_PATH))) {
             writer.println(authToken);
             writer.println(reAuthToken);
+            writer.println(tokenExpiry);
+            writer.println(tokenAcquireTime);
+            writer.println(tokenType);
+            writer.println(scope);
+            writer.println(lastUsername);
+            writer.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -53,9 +65,24 @@ public class OgsAuthSettings implements SettingsModule {
         try (BufferedReader reader = Files.newBufferedReader(FILE_PATH)) {
             authToken = reader.readLine();
             reAuthToken = reader.readLine();
+            tokenExpiry = Integer.parseInt(reader.readLine());
+            tokenAcquireTime = Long.parseLong(reader.readLine());
+            tokenType = reader.readLine();
+            scope = reader.readLine();
+            lastUsername = reader.readLine();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        tokenExpired = System.currentTimeMillis() - tokenAcquireTime > tokenExpiry;
+    }
+
+    public String getLastUsername() {
+        return lastUsername;
+    }
+
+    public void setLastUsername(String lastUsername) {
+        this.lastUsername = lastUsername;
     }
 
     public boolean tokenExists() {
@@ -84,5 +111,41 @@ public class OgsAuthSettings implements SettingsModule {
 
     public String getClientSecret() {
         return clientSecret;
+    }
+
+    public int getTokenExpiry() {
+        return tokenExpiry;
+    }
+
+    public void setTokenExpiry(int tokenExpiry) {
+        this.tokenExpiry = tokenExpiry;
+    }
+
+    public long getTokenAcquireTime() {
+        return tokenAcquireTime;
+    }
+
+    public void setTokenAcquireTime(long tokenAcquireTime) {
+        this.tokenAcquireTime = tokenAcquireTime;
+    }
+
+    public String getTokenType() {
+        return tokenType;
+    }
+
+    public void setTokenType(String tokenType) {
+        this.tokenType = tokenType;
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
+
+    public boolean isTokenExpired() {
+        return tokenExpired;
     }
 }

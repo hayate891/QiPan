@@ -10,7 +10,20 @@
     -fx-border-width: 2;
 }
 
+.error-label {
+    -fx-text-fill: red;
+}
+
 .button {
-    -fx-background-color: rgb(46, 119, 242);
+    -fx-background-color: rgb(46, 95, 173);
     -fx-text-fill: white;
+}
+
+.button:hover {
+    -fx-background-color: rgb(61, 135, 255);
+    -fx-cursor: hand;
+}
+
+.hyperlink:focused {
+    -fx-border-width: 0;
 }

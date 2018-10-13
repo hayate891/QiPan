@@ -1,5 +1,6 @@
 package io.nibby.qipan.editor;
 
+import io.nibby.qipan.ogs.OgsLoginWindow;
 import io.nibby.qipan.settings.Settings;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -40,6 +41,19 @@ public class SgfEditorMenuBar extends MenuBar {
         getMenus().add(new Menu(bundle.getString("editor.menu.edit")));
         getMenus().add(new Menu(bundle.getString("editor.menu.view")));
         getMenus().add(new Menu(bundle.getString("editor.menu.tools")));
+
+        Menu ogs = new Menu(bundle.getString("editor.menu.ogs"));
+        getMenus().add(ogs);
+        {
+            MenuItem play = new MenuItem(bundle.getString("editor.menu.ogs.play"));
+            play.setOnAction(e -> {
+                //TODO add prmopt for user to save work if destroying window, or just hide it instead?
+                window.close();
+                OgsLoginWindow loginWindow = new OgsLoginWindow();
+                loginWindow.show();
+            });
+            ogs.getItems().add(play);
+        }
         getMenus().add(new Menu(bundle.getString("editor.menu.window")));
         getMenus().add(new Menu(bundle.getString("editor.menu.help")));
     }
