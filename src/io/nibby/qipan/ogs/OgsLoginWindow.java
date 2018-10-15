@@ -4,7 +4,6 @@ import io.nibby.qipan.Utility;
 import io.nibby.qipan.editor.SgfEditorWindow;
 import io.nibby.qipan.game.Game;
 import io.nibby.qipan.game.GameRules;
-import io.nibby.qipan.settings.OgsAuthSettings;
 import io.nibby.qipan.settings.Settings;
 import io.nibby.qipan.ui.BusyIndicator;
 import io.nibby.qipan.ui.UIStylesheets;
@@ -21,26 +20,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.apache.commons.io.Charsets;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class OgsLoginWindow extends Stage {
@@ -75,8 +59,8 @@ public class OgsLoginWindow extends Stage {
         UIStylesheets.applyTo(scene);
 
         setOnShowing(e -> {
-            if (Settings.ogsToken.tokenExists()) {
-                fieldUsername.setText(Settings.ogsToken.getLastUsername());
+            if (Settings.ogsAuth.tokenExists()) {
+                fieldUsername.setText(Settings.ogsAuth.getLastUsername());
                 fieldPassword.requestFocus();
             }
         });
@@ -187,9 +171,9 @@ public class OgsLoginWindow extends Stage {
             // Rest request to OGS
 
             try {
-                Rest.Response r = Rest.post("https://online-go.com/oauth2/token/",
-                        "client_id", Settings.ogsToken.getClientId(),
-                        "client_secret", Settings.ogsToken.getClientSecret(),
+                Rest.Response r = Rest.postParams("https://online-go.com/oauth2/token/", false,
+                        "client_id", Settings.ogsAuth.getClientId(),
+                        "client_secret", Settings.ogsAuth.getClientSecret(),
                         "grant_type", "password",
                         "username", username,
                         "password", password);
@@ -205,6 +189,8 @@ public class OgsLoginWindow extends Stage {
                     // TODO an error has occurred
                     lbError.setVisible(true);
                     lbError.setManaged(true);
+                    System.out.println("Error: " + r.getHttpResponse());
+                    System.out.println("Error Raw: " + r.getRawString());
                     return;
                 }
 
@@ -217,19 +203,36 @@ public class OgsLoginWindow extends Stage {
                 int expiry = j.getInt("expires_in");
                 String tokenType = j.getString("token_type");
 
-                Settings.ogsToken.setAuthToken(authToken);
-                Settings.ogsToken.setReAuthToken(reauthToken);
-                Settings.ogsToken.setScope(scope);
-                Settings.ogsToken.setTokenExpiry(expiry * 1000);
-                Settings.ogsToken.setTokenAcquireTime(System.currentTimeMillis());
-                Settings.ogsToken.setTokenType(tokenType);
-                Settings.ogsToken.setLastUsername(username);
-                Settings.ogsToken.save();
+                Settings.ogsAuth.setAuthToken(authToken);
+                Settings.ogsAuth.setReAuthToken(reauthToken);
+                Settings.ogsAuth.setScope(scope);
+                Settings.ogsAuth.setTokenExpiry(expiry * 1000);
+                Settings.ogsAuth.setTokenAcquireTime(System.currentTimeMillis());
+                Settings.ogsAuth.setTokenType(tokenType);
+                Settings.ogsAuth.setLastUsername(username);
+                Settings.ogsAuth.save();
+
+                // Fetch player info
+                r = Rest.get("https://online-go.com/api/v1/me/", true);
+                j = r.getJson();
+                String playerName = j.getString("username");
+                int playerRating = j.getInt("rating");
+                int playerRank = j.getInt("ranking");
+                OgsPlayer player = new OgsPlayer();
+                player.setUsername(playerName);
+                player.setRank(playerRank);
+                player.setRating(playerRating);
+
+                r = Rest.get("https://online-go.com/api/v1/me/settings/", true);
+                j = r.getJson();
+                int playerId = j.getJSONObject("profile").getInt("id");
+                player.setId(playerId);
 
                 Platform.runLater(() -> {
                     OgsLoginWindow.this.close();
 
                     OgsClientWindow window = new OgsClientWindow();
+                    window.setSessionPlayer(player);
                     window.show();
                 });
 

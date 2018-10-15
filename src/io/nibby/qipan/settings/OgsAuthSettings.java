@@ -119,6 +119,7 @@ public class OgsAuthSettings implements SettingsModule {
 
     public void setTokenExpiry(int tokenExpiry) {
         this.tokenExpiry = tokenExpiry;
+        this.tokenExpired = System.currentTimeMillis() - tokenAcquireTime > tokenExpiry;
     }
 
     public long getTokenAcquireTime() {
@@ -127,6 +128,7 @@ public class OgsAuthSettings implements SettingsModule {
 
     public void setTokenAcquireTime(long tokenAcquireTime) {
         this.tokenAcquireTime = tokenAcquireTime;
+        this.tokenExpired = System.currentTimeMillis() - tokenAcquireTime > tokenExpiry;
     }
 
     public String getTokenType() {

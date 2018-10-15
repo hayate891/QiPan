@@ -15,6 +15,5 @@ public class UIStylesheets {
 
     public static void applyTo(Scene scene) {
         scene.getStylesheets().addAll(styleSheets);
-        System.out.println("Applying: " + styleSheets);
     }
 }
