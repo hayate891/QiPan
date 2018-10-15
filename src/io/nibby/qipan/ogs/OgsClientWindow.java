@@ -70,17 +70,38 @@ public class OgsClientWindow extends Stage {
                     }
                 }
             });
+
+            socket.on(Socket.EVENT_ERROR, new Emitter.Listener() {
+                @Override
+                public void call(Object... objects) {
+                    for (Object o : objects) {
+                        System.out.println(o);
+                    }
+                }
+            });
             socket.on(Socket.EVENT_CONNECT, e -> {
-                System.out.println("Connected");
+
 
             });
             socket.connect();
 
             int game =14849657;
+            Rest.Response rr = Rest.get("https://online-go.com/api/v1/games/" + game, true);
+            JSONObject obj = rr.getJson();
+            String auth = obj.getString("auth");
+            String chatAuth = obj.getString("game_chat_auth");
+
+            JSONObject jj = new JSONObject();
+            jj.put("player_id", player.getId());
+            jj.put("username", player.getUsername());
+            jj.put("auth", auth);
+            socket.emit("authenticate", jj);
+
+
             JSONObject json = new JSONObject();
             json.put("game_id", game);
-//            json.put("player_id", player.getId());
-//            json.put("auth", Settings.ogsAuth.getAuthToken());
+            json.put("player_id", player.getId());
+//            json.put("auth", auth);
             json.put("chat", false);
             socket.on("game/" + game + "/gamedata", objs -> {
                 for (Object o : objs) {
@@ -92,18 +113,33 @@ public class OgsClientWindow extends Stage {
                     System.out.println(o.toString());
                 }
             });
+
             socket.emit("game/connect", json);
-//
+
             JSONObject j = new JSONObject();
             j.put("player_id", player.getId());
-            j.put("auth", Settings.ogsAuth.getAuthToken());
+            j.put("auth", auth);
             j.put("game_id", game);
             j.put("move", "ab");
-            socket.emit("game/move", json);
+            socket.emit("game/move", j);
+
+            JSONObject j2 = new JSONObject();
+            j2.put("auth", chatAuth);
+            j2.put("game_id", game);
+            j2.put("player_id", player.getId());
+            j2.put("body", "test_message");
+            j2.put("type", "discussion");
+            j2.put("move_number", 3);
+            j2.put("username", player.getUsername());
+            j2.put("is_player", true);
+            j2.put("ranking", player.getRank());
+            j2.put("ui_class", "blah?");
+
+            socket.emit("game/chat", j2);
 
 //            JSONObject j = new JSONObject();
 //            j.put("move", "ab");
-//            Rest.Response r = Rest.postBody("https://online-go.com/api/v1/games/"+ game + "/move/", true, j.toString());
+//            Rest.Response r = Rest.postBody("https://online-go.com/api/v1/games/"+ game + "/resign/", true, "");
 //            System.out.println("Got: " + r.getRawString());
 //            System.out.println("R: " + r.getHttpResponse());
         } catch (URISyntaxException e) {
