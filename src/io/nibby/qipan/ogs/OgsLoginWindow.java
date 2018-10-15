@@ -178,13 +178,6 @@ public class OgsLoginWindow extends Stage {
                         "username", username,
                         "password", password);
 
-                buttonLogin.setDisable(false);
-                buttonLogin.setManaged(true);
-                buttonLogin.setVisible(true);
-                indicator.stop();
-                indicator.setVisible(false);
-                indicator.setManaged(false);
-
                 if (r.getHttpResponse().getStatusLine().getStatusCode() != 200) {
                     // TODO an error has occurred
                     lbError.setVisible(true);
@@ -229,6 +222,13 @@ public class OgsLoginWindow extends Stage {
                 player.setId(playerId);
 
                 Platform.runLater(() -> {
+                    buttonLogin.setDisable(false);
+                    buttonLogin.setManaged(true);
+                    buttonLogin.setVisible(true);
+                    indicator.stop();
+                    indicator.setVisible(false);
+                    indicator.setManaged(false);
+
                     OgsLoginWindow.this.close();
 
                     OgsClientWindow window = new OgsClientWindow();
