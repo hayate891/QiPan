@@ -95,6 +95,8 @@ public class OgsAuthSettings implements SettingsModule {
 
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
+        if (authToken != null && !authToken.isEmpty())
+            exists = true;
     }
 
     public String getReAuthToken() {

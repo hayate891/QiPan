@@ -62,7 +62,7 @@ public class Game {
     public AbstractRules.PlaceMoveResult clientPlayMove(int x, int y, StoneStyle style, BoardMetrics metrics,
                                                         Sound.ActionCallback callback) {
 
-        AbstractRules.PlaceMoveResult result = playMove(x, y);;
+        AbstractRules.PlaceMoveResult result = playMove(x, y);
         if (result.result == AbstractRules.PlaceMoveResult.PLACE_OK) {
             int color = result.color;
             Stone[] position = result.node.getBoardPosition();

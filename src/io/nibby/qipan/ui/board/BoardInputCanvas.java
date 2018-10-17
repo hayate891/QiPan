@@ -74,7 +74,6 @@ public class BoardInputCanvas extends Canvas {
                     i++;
                 }
             }
-            System.out.println("Rendering wobble");
             render();
         }
         // TODO implement later

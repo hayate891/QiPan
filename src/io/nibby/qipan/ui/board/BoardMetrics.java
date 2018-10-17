@@ -40,7 +40,7 @@ public class BoardMetrics {
         drawHeight = container.getHeight() - margin;
         minSize = Math.min(drawWidth, drawHeight);
         stoneSize = (minSize - 50) / Math.max(boardWidth, boardHeight);
-        stoneGap = stoneSize / 12d;
+        stoneGap = stoneSize / 30d;
         gridSize = stoneSize + stoneGap;
 
         // TODO potentially want to shift these according to arrangement of nearby panes

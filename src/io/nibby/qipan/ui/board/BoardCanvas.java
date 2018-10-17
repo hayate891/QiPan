@@ -125,6 +125,25 @@ public class BoardCanvas extends Canvas {
                 continue;
 
             stone.render(g, container.getMetrics(), container.getStoneStyle());
+            if (stone.getX() == game.getCurrentMove().getMoveX()
+                    && stone.getY() == game.getCurrentMove().getMoveY()) {
+                // TODO temporary move highlighter
+
+                double size = metrics.stoneSize / 2;
+
+                double x = metrics.getBoardStoneX(stone.getX()) + stone.wobbleX + metrics.stoneSize / 2 - size / 2;
+                double y = metrics.getBoardStoneY(stone.getY()) + stone.wobbleY + metrics.stoneSize / 2 - size / 2;
+                if (container.getStoneStyle().fuzzyPlacement()) {
+                    double o = metrics.stoneSize / 16;
+                    x += stone.fuzzyX + o;
+                    y += stone.fuzzyY + o;
+                }
+                Color color = container.getStoneStyle().annotationColor(stone);
+                g.setStroke(color);
+                g.setLineWidth(2);
+                g.strokeOval(x, y, size, size);
+                g.setLineWidth(1);
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 package io.nibby.qipan.ui.board;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 import java.util.Random;
 
@@ -91,6 +92,10 @@ public class Stone {
 
     public boolean shouldWobble() {
         return wobble > 0d;
+    }
+
+    public Color getAnnotationColor(StoneStyle style) {
+        return style.annotationColor(this);
     }
 
 }

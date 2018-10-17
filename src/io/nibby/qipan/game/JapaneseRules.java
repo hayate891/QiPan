@@ -96,6 +96,8 @@ public class JapaneseRules extends AbstractRules {
         testPosition[x + y * boardWidth] = stone;
         resultNode.setBoardPosition(Arrays.copyOf(testPosition, testPosition.length));
         result.node = resultNode;
+        result.node.setMoveX(x);
+        result.node.setMoveY(y);
 
         return result;
     }

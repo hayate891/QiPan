@@ -42,6 +42,11 @@ public enum StoneStyle {
         public boolean fuzzyPlacement() {
             return false;
         }
+
+        @Override
+        public Color annotationColor(Stone stone) {
+            return stone.getColor() == Stone.BLACK ? Color.WHITE : Color.BLACK;
+        }
     },
 
     // CERAMIC bi-convex
@@ -76,7 +81,7 @@ public enum StoneStyle {
                     gradient = new RadialGradient(stone.rgFocusAngle, stone.rgFocusDistance, stone.rgCenterX, stone.rgCenterY,
                             stone.rgRadius, true, CycleMethod.NO_CYCLE,
                             new Stop(0d, Color.color(0.99d, 0.99d, 0.99d, 1d)),
-                            new Stop(0.99d, Color.color(0.87d, 0.87d, 0.87d, 1d)));
+                            new Stop(0.99d, Color.color(0.90d, 0.90d, 0.90d, 1d)));
                     g.setFill(gradient);
 
                     g.setEffect(shadow);
@@ -96,6 +101,11 @@ public enum StoneStyle {
         public boolean fuzzyPlacement() {
             return true;
         }
+
+        @Override
+        public Color annotationColor(Stone stone) {
+            return stone.getColor() == Stone.BLACK ? Color.WHITE : Color.BLACK;
+        }
     },
 
     YUNZI("Yun Zi") {
@@ -113,6 +123,11 @@ public enum StoneStyle {
         public boolean fuzzyPlacement() {
             return true;
         }
+
+        @Override
+        public Color annotationColor(Stone stone) {
+            return null;
+        }
     };
 
     private String name;
@@ -124,6 +139,7 @@ public enum StoneStyle {
     public abstract void render(GraphicsContext g, Stone stone, BoardMetrics metrics);
     public abstract double wobbleMargin();
     public abstract boolean fuzzyPlacement();
+    public abstract Color annotationColor(Stone stone);
 
     public static StoneStyle getDefault() {
         return CERAMIC;
