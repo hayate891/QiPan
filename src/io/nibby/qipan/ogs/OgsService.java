@@ -7,6 +7,7 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import io.socket.engineio.client.Transport;
 import javafx.application.Platform;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -150,13 +151,18 @@ public class OgsService {
         });
 
         on("game/" + gameId + "/move", objs -> {
-            JSONObject gameMove = new JSONObject(objs[0].toString());
-            game.parseMove(gameMove);
+            Platform.runLater(() -> {
+                JSONObject gameMove = new JSONObject(objs[0].toString());
+                JSONArray moveDataRaw = gameMove.getJSONArray("move");
+                int x = moveDataRaw.getInt(0);
+                int y = moveDataRaw.getInt(1);
+                int timeMs = moveDataRaw.getInt(2);
+                window.onMovePlayed(x, y, timeMs);
+            });
         });
 
         on("game/" + gameId + "/error", objs -> {
             JSONObject gameErr = new JSONObject(objs[0].toString());
-            game.parseError(gameErr);
         });
 
         emit("game/connect", j);

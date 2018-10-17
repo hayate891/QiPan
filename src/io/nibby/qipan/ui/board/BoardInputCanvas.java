@@ -74,10 +74,8 @@ public class BoardInputCanvas extends Canvas {
                     i++;
                 }
             }
-
-            new Timeline(new KeyFrame(Duration.millis(20), e -> {
-                render();
-            })).play();
+            System.out.println("Rendering wobble");
+            render();
         }
         // TODO implement later
     }

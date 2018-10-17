@@ -1,5 +1,6 @@
 package io.nibby.qipan.ogs;
 
+import io.nibby.qipan.sound.Sound;
 import io.nibby.qipan.ui.board.BoardUI;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -47,7 +48,12 @@ public class OgsGameWindow extends Stage {
      * @param time Time in milliseconds for this move to be played since last move.
      */
     public void onMovePlayed(int x, int y, int time) {
+        controller.placeMove(x, y, new Sound.ActionCallback() {
+            @Override
+            public void performAction() {
 
+            }
+        });
     }
 
 }

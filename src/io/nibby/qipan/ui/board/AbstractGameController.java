@@ -46,9 +46,11 @@ public abstract class AbstractGameController {
     public AbstractRules.PlaceMoveResult placeMove(int x, int y, Sound.ActionCallback callback) {
         AbstractRules.PlaceMoveResult result = game.clientPlayMove(x, y, container.getStoneStyle(),
                 container.getMetrics(), callback);
-        if (result.wobbleStones != null)
-        for (Stone stone : result.wobbleStones)
-            container.getBoardInputView().addWobbleStone(stone);
+        if (result.wobbleStones != null) {
+            for (Stone stone : result.wobbleStones)
+                container.getBoardInputView().addWobbleStone(stone);
+            container.getBoardInputView().render();
+        }
         return result;
     }
 

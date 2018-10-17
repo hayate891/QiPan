@@ -172,7 +172,7 @@ public class OgsClientWindow extends Stage {
 
                 // TODO testing
                 Platform.runLater(() -> {
-                    OgsGameWindow window = ogs.openGame(14881591);
+                    OgsGameWindow window = ogs.openGame(14882284);
                     window.show();
                 });
             } catch (IOException e) {

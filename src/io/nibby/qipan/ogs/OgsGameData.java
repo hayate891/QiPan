@@ -76,7 +76,8 @@ public class OgsGameData {
         handicap = gamedata.getInt("handicap");
         ranked = gamedata.getBoolean("ranked");
         allowSuperKo = gamedata.getBoolean("allow_superko");
-        outcome = gamedata.getString("outcome");
+        if (gamedata.has("outcome"))
+            outcome = gamedata.getString("outcome");
         disableAnalysis = gamedata.getBoolean("disable_analysis");
         boardHeight = gamedata.getInt("height");
         id = gamedata.getInt("game_id");
@@ -91,7 +92,8 @@ public class OgsGameData {
         scorePrisoners = gamedata.getBoolean("score_prisoners");
         superkoAlgorithm = gamedata.getString("superko_algorithm");
         handicap = gamedata.getInt("handicap");
-        endTime = gamedata.getLong("end_time");
+        if (gamedata.has("end_time"))
+            endTime = gamedata.getLong("end_time");
         pauseOnWeekends = gamedata.getBoolean("pause_on_weekends");
         scoreTerritoryInSeki = gamedata.getBoolean("score_territory_in_seki");
         agaHandicapScoring = gamedata.getBoolean("aga_handicap_scoring");
@@ -100,7 +102,8 @@ public class OgsGameData {
         freeHandicapPlacement = gamedata.getBoolean("free_handicap_placement");
         startTime = gamedata.getLong("start_time");
         komi = gamedata.getFloat("komi");
-        winnerId = gamedata.getInt("winner");
+        if (gamedata.has("winner"))
+            winnerId = gamedata.getInt("winner");
         whiteMustPastLast = gamedata.getBoolean("white_must_pass_last");
         boardWidth = gamedata.getInt("width");
         originalDisableAnalysis = gamedata.getBoolean("original_disable_analysis");
@@ -126,14 +129,6 @@ public class OgsGameData {
             }
         } else
             throw new RuntimeException("Unsupported game rules: " + rulesRaw);
-    }
-
-    protected void parseMove(JSONObject gamedata) {
-
-    }
-
-    protected void parseError(JSONObject gamedata) {
-
     }
 
     // Getters and setters
