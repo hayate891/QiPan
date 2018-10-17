@@ -7,7 +7,7 @@ import javafx.scene.layout.BorderPane;
 /*
     This is the window that displays a single OGS game.
  */
-public class OgsGameWindow extends BorderPane {
+public class OgsGamePane extends BorderPane {
 
     private OgsGameData ogsGame;
     private OgsGameController controller;
@@ -15,7 +15,7 @@ public class OgsGameWindow extends BorderPane {
     private BoardUI goban;
     private BorderPane root;
 
-    public OgsGameWindow() {
+    public OgsGamePane() {
         root = new BorderPane();
         root.setCenter(goban);
         setCenter(root);

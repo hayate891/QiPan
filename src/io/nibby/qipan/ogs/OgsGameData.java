@@ -8,9 +8,9 @@ import org.json.JSONObject;
 
 public class OgsGameData {
 
-    private static final int GAME_PHASE_PLAYING = 0;
-    private static final int GAME_PHASE_STONE_REMOVAL = 1;
-    private static final int GAME_PHASE_FINISHED = 2;
+    public static final int GAME_PHASE_PLAYING = 0;
+    public static final int GAME_PHASE_STONE_REMOVAL = 1;
+    public static final int GAME_PHASE_FINISHED = 2;
     private Game game;
 
     String initialPlayer;

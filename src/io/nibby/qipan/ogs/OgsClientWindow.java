@@ -45,10 +45,12 @@ public class OgsClientWindow extends Stage {
     private Button buttonLogout;
     private ToggleGroup toggleGroup;
 
-    private OgsGameListPane gameListPane;
+    private OgsDashboardPane dashboardPane;
+    private OgsSpectatePane spectatePane;
+    private OgsSettingsPane settingsPane;
 
     public OgsClientWindow() {
-        ogs = new OgsService();
+        ogs = new OgsService(this);
         ResourceBundle bundle = Settings.language.getLocale().getBundle("OgsClient");
         {
             sidebar = new BorderPane();
@@ -63,7 +65,7 @@ public class OgsClientWindow extends Stage {
             {
                 // Placeholder logo
                 textLogoTemp = new Text();
-                textLogoTemp.setStyle("-fx-font-weight: bold; -fx-font-size: 26px; -fx-fill: black;");
+                textLogoTemp.getStyleClass().add("ogs-logo-text");
                 textLogoTemp.setText("OGS");
                 textLogoTemp.applyCss();
                 HBox.setMargin(textLogoTemp, new Insets(0, 10, 0, 0));
@@ -92,11 +94,13 @@ public class OgsClientWindow extends Stage {
                 buttonDashboard = new ToggleButton(bundle.getString("client.sidebar.dashboard"));
                 buttonDashboard.setSelected(true);
                 buttonDashboard.setOnAction(evt -> {
+                    setContentPane(dashboardPane);
                 });
                 addMenuButton(topVbox, buttonDashboard, "home");
 
                 buttonSpectate = new ToggleButton(bundle.getString("client.sidebar.spectate"));
                 buttonSpectate.setOnAction(evt -> {
+                    setContentPane(spectatePane);
                 });
                 addMenuButton(topVbox, buttonSpectate, "spectate");
             }
@@ -111,6 +115,7 @@ public class OgsClientWindow extends Stage {
             {
                 buttonSettings = new ToggleButton(bundle.getString("client.sidebar.settings"));
                 buttonSettings.setOnAction(evt -> {
+                    setContentPane(settingsPane);
                 });
                 addMenuButton(botVbox, buttonSettings, "settings");
 
@@ -132,8 +137,11 @@ public class OgsClientWindow extends Stage {
 
         contentPane = new BorderPane();
         {
-            gameListPane = new OgsGameListPane(this);
-            setContentPane(gameListPane);
+            dashboardPane = new OgsDashboardPane(this);
+            setContentPane(dashboardPane);
+
+            spectatePane = new OgsSpectatePane(this);
+            settingsPane = new OgsSettingsPane(this);
 
         }
         rootPane.setCenter(contentPane);
@@ -143,10 +151,11 @@ public class OgsClientWindow extends Stage {
         setTitle("QiPan: OGS");
         setScene(scene);
         setResizable(true);
+        setMinWidth(800);
+        setMinHeight(600);
 
         setOnShowing(this::startService);
         setOnCloseRequest(this::stopService);
-
     }
 
     private void setContentPane(Pane pane) {
@@ -157,6 +166,9 @@ public class OgsClientWindow extends Stage {
         contentPane.setCenter(pane);
         if (pane instanceof OgsContentPane) {
             ((OgsContentPane) pane).updateContent();
+            if (!contentPane.getStyleClass().contains("ogs-content-pane")) {
+                contentPane.getStyleClass().add("ogs-content-pane");
+            }
         }
     }
 
@@ -170,11 +182,11 @@ public class OgsClientWindow extends Stage {
             try {
                 ogs.initialize();
 
-                // TODO testing
-                Platform.runLater(() -> {
-                    OgsGameWindow window = ogs.openGame(14882508);
-                    setContentPane(window);
-                });
+//                // TODO testing
+//                Platform.runLater(() -> {
+//                    OgsGamePane window = ogs.openGame(14882508);
+//                    setContentPane(window);
+//                });
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -192,7 +204,8 @@ public class OgsClientWindow extends Stage {
         }
         b.setGraphicTextGap(10);
         b.getStyleClass().add("sidebar-item");
-        b.setMinWidth(80);
+        if (!b.getText().isEmpty())
+            b.setMinWidth(80);
         b.setAlignment(Pos.CENTER_LEFT);
         b.setTextAlignment(TextAlignment.LEFT);
         VBox.setMargin(b, new Insets(0, 20, 0, 20));
@@ -317,4 +330,15 @@ public class OgsClientWindow extends Stage {
         return ogs;
     }
 
+    public OgsDashboardPane getDashboardPane() {
+        return dashboardPane;
+    }
+
+    public OgsSpectatePane getSpectatePane() {
+        return spectatePane;
+    }
+
+    public OgsSettingsPane getSettingsPane() {
+        return settingsPane;
+    }
 }

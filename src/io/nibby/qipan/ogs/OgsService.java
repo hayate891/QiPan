@@ -23,8 +23,10 @@ public class OgsService {
     private static final String SERVER = "https://online-go.com";
     private Socket socket;
     private OgsPlayer sessionPlayer;
+    private OgsClientWindow client;
 
-    public OgsService() {
+    public OgsService(OgsClientWindow client) {
+        this.client = client;
         IO.Options options = new IO.Options();
         options.reconnection = true;
         options.reconnectionDelay = 500;
@@ -133,7 +135,7 @@ public class OgsService {
         }
     }
 
-    private OgsGameData connectToGame(int gameId, OgsGameWindow window) {
+    private OgsGameData connectToGame(int gameId, OgsGamePane window) {
         JSONObject j = new JSONObject();
 //        j.put("auth", sessionPlayer);
         j.put("player_id", sessionPlayer.getId());
@@ -178,8 +180,8 @@ public class OgsService {
         off("game/" + gameId + "/move");
     }
 
-    public OgsGameWindow openGame(int gameId) {
-        OgsGameWindow window = new OgsGameWindow();
+    public OgsGamePane openGame(int gameId) {
+        OgsGamePane window = new OgsGamePane();
         OgsGameData game = connectToGame(gameId, window);
         return window;
     }
@@ -214,7 +216,32 @@ public class OgsService {
 
     private void onActiveGameReceive(Object[] args) {
         JSONObject gameObj = new JSONObject(args[0].toString());
-        System.out.println("Active game");
+        OgsDashboardPane.GameInfo info = new OgsDashboardPane.GameInfo();
+        String phaseRaw = gameObj.getString("phase");
+        if (phaseRaw.contains("play")) {
+            info.gamePhase = OgsGameData.GAME_PHASE_PLAYING;
+        } else if (phaseRaw.contains("removal")) {
+            info.gamePhase = OgsGameData.GAME_PHASE_STONE_REMOVAL;
+        } else if (phaseRaw.contains("finish")) {
+            info.gamePhase = OgsGameData.GAME_PHASE_FINISHED;
+        } else throw new IllegalArgumentException("Bad active game phase: " + phaseRaw);
+
+        info.paused = gameObj.getLong("paused");
+        info.privateGame = gameObj.getBoolean("private");
+        info.playerIdToMove = gameObj.getInt("player_to_move");
+        info.playerWhite = OgsPlayer.parse(gameObj.getJSONObject("white"));
+        info.moveNumber = gameObj.getInt("move_number");
+        info.gameName = gameObj.getString("name");
+        info.boardWidth = gameObj.getInt("width");
+        info.playerBlack = OgsPlayer.parse(gameObj.getJSONObject("black"));
+        info.gameId = gameObj.getInt("id");
+        info.boardHeight = gameObj.getInt("height");
+        if (gameObj.has("time_per_move"))
+            info.timePerMove = gameObj.getInt("time_per_move");
+
+        Platform.runLater(() -> {
+            client.getDashboardPane().addActiveGame(info);
+        });
     }
 
     public void shutdown() {
@@ -222,5 +249,9 @@ public class OgsService {
             socket.disconnect();
             socket.close();
         }
+    }
+
+    public OgsPlayer getSessionPlayer() {
+        return sessionPlayer;
     }
 }

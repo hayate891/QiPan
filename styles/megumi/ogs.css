@@ -1,5 +1,21 @@
+.ogs-content-pane {
+    -fx-background-color: white;
+}
+
 .ogs-login {
     -fx-background-color: white;
+}
+
+.ogs-logo-text {
+    -fx-font-weight: bold;
+    -fx-font-size: 26px;
+    -fx-fill: black;
+}
+
+.ogs-client-header {
+    -fx-font-weight: bold;
+    -fx-font-size: 26px;
+    -fx-fill: rgb(140, 140, 140);
 }
 
 .client-sidebar {
