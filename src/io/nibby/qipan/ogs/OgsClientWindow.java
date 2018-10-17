@@ -11,10 +11,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -57,22 +54,22 @@ public class OgsClientWindow extends Stage {
             sidebar = new BorderPane();
             sidebar.getStyleClass().add("client-sidebar");
 
-            VBox topVbox = new VBox();
-            topVbox.setAlignment(Pos.TOP_LEFT);
+            HBox topVbox = new HBox();
+            topVbox.setAlignment(Pos.CENTER_LEFT);
             topVbox.getStyleClass().add("client-sidebar");
-            topVbox.setFillWidth(true);
-            topVbox.setSpacing(5);
+            topVbox.setFillHeight(true);
+            topVbox.setSpacing(3);
+            topVbox.setPadding(new Insets(0, 0, 0, 15));
             {
                 // Placeholder logo
                 textLogoTemp = new Text();
                 textLogoTemp.setStyle("-fx-font-weight: bold; -fx-font-size: 26px; -fx-fill: black;");
                 textLogoTemp.setText("OGS");
                 textLogoTemp.applyCss();
-                VBox.setMargin(textLogoTemp, new Insets(20, 20, 15, 20));
+                HBox.setMargin(textLogoTemp, new Insets(0, 10, 0, 0));
                 topVbox.getChildren().add(textLogoTemp);
 
                 // TODO user topVbox info module
-
                 toggleGroup = new ToggleGroup();
 
                 // Menu buttons
@@ -90,45 +87,48 @@ public class OgsClientWindow extends Stage {
                     MenuItem playCustom = new MenuItem(bundle.getString("client.sidebar.play.custom"));
                     buttonPlay.getItems().addAll(playCustom);
                 }
-                addSidebarButton(topVbox, buttonPlay, "play");
+                addMenuButton(topVbox, buttonPlay, "play");
 
                 buttonDashboard = new ToggleButton(bundle.getString("client.sidebar.dashboard"));
                 buttonDashboard.setSelected(true);
                 buttonDashboard.setOnAction(evt -> {
                 });
-                addSidebarButton(topVbox, buttonDashboard, "home");
+                addMenuButton(topVbox, buttonDashboard, "home");
 
                 buttonSpectate = new ToggleButton(bundle.getString("client.sidebar.spectate"));
                 buttonSpectate.setOnAction(evt -> {
                 });
-                addSidebarButton(topVbox, buttonSpectate, "spectate");
+                addMenuButton(topVbox, buttonSpectate, "spectate");
             }
-            sidebar.setCenter(topVbox);
+            sidebar.setLeft(topVbox);
 
-            VBox botVbox = new VBox();
-            botVbox.setAlignment(Pos.TOP_LEFT);
+            HBox botVbox = new HBox();
+            botVbox.setAlignment(Pos.CENTER_RIGHT);
             botVbox.getStyleClass().add("client-sidebar");
-            botVbox.setFillWidth(true);
-            botVbox.setSpacing(5);
+            botVbox.setFillHeight(true);
+            botVbox.setSpacing(3);
+            botVbox.setPadding(new Insets(0, 0, 0, 0));
             {
                 buttonSettings = new ToggleButton(bundle.getString("client.sidebar.settings"));
                 buttonSettings.setOnAction(evt -> {
                 });
-                addSidebarButton(botVbox, buttonSettings, "settings");
+                addMenuButton(botVbox, buttonSettings, "settings");
 
                 buttonLogout = new Button(bundle.getString("client.sidebar.logout"));
-                addSidebarButton(botVbox, buttonLogout, "logout");
+                addMenuButton(botVbox, buttonLogout, "logout");
 
                 // Gap
                 VBox gap = new VBox();
                 gap.setMinHeight(25);
                 botVbox.getChildren().add(gap);
             }
-            sidebar.setBottom(botVbox);
+            sidebar.setRight(botVbox);
+            sidebar.setPadding(new Insets(0, 0, 0, 0));
         }
 
         rootPane = new BorderPane();
-        rootPane.setLeft(sidebar);
+        rootPane.setPadding(new Insets(0, 0, 0, 0));
+        rootPane.setTop(sidebar);
 
         contentPane = new BorderPane();
         {
@@ -173,7 +173,7 @@ public class OgsClientWindow extends Stage {
                 // TODO testing
                 Platform.runLater(() -> {
                     OgsGameWindow window = ogs.openGame(14882508);
-                    window.show();
+                    setContentPane(window);
                 });
             } catch (IOException e) {
                 e.printStackTrace();
@@ -181,7 +181,7 @@ public class OgsClientWindow extends Stage {
         }).start();
     }
 
-    private void addSidebarButton(VBox vbox, ButtonBase b, String icon) {
+    private void addMenuButton(HBox vbox, ButtonBase b, String icon) {
         String iconPath = "/ogs/" + icon + ".png";
         URL iconUrl = OgsClientWindow.class.getResource(iconPath);
         if (iconUrl != null) {
@@ -192,7 +192,7 @@ public class OgsClientWindow extends Stage {
         }
         b.setGraphicTextGap(10);
         b.getStyleClass().add("sidebar-item");
-        b.setMinWidth(180);
+        b.setMinWidth(80);
         b.setAlignment(Pos.CENTER_LEFT);
         b.setTextAlignment(TextAlignment.LEFT);
         VBox.setMargin(b, new Insets(0, 20, 0, 20));

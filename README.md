@@ -2,6 +2,7 @@
 An **elegant** Go SGF editor, formerly known as _WeiqiTool_.
 
 ![Screenshot](/screenshots/2.png "QiPan v0.2")
+![Screenshot](/screenshots/3.png "QiPan OGS Client")
 
 ## Current Progress
 QiPan is a long way from v1.0.

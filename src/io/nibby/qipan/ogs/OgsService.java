@@ -214,6 +214,7 @@ public class OgsService {
 
     private void onActiveGameReceive(Object[] args) {
         JSONObject gameObj = new JSONObject(args[0].toString());
+        System.out.println("Active game");
     }
 
     public void shutdown() {

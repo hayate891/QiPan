@@ -2,14 +2,12 @@ package io.nibby.qipan.ogs;
 
 import io.nibby.qipan.sound.Sound;
 import io.nibby.qipan.ui.board.BoardUI;
-import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
 
 /*
     This is the window that displays a single OGS game.
  */
-public class OgsGameWindow extends Stage {
+public class OgsGameWindow extends BorderPane {
 
     private OgsGameData ogsGame;
     private OgsGameController controller;
@@ -20,10 +18,7 @@ public class OgsGameWindow extends Stage {
     public OgsGameWindow() {
         root = new BorderPane();
         root.setCenter(goban);
-
-        Scene scene = new Scene(root, 800, 600);
-        setScene(scene);
-        setResizable(true);
+        setCenter(root);
     }
 
     /**
@@ -36,8 +31,6 @@ public class OgsGameWindow extends Stage {
         controller = new OgsGameController();
         goban = new BoardUI(ogsGame.getGame(), controller);
         root.setCenter(goban);
-
-        setTitle("Game " + ogsGame.getId() + ": " + ogsGame.getGame().getName());
     }
 
     /**
