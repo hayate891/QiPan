@@ -205,22 +205,6 @@ public class OgsLoginWindow extends Stage {
                 Settings.ogsAuth.setLastUsername(username);
                 Settings.ogsAuth.save();
 
-                // Fetch player info
-                r = Rest.get("https://online-go.com/api/v1/me/", true);
-                j = r.getJson();
-                String playerName = j.getString("username");
-                int playerRating = j.getInt("rating");
-                int playerRank = j.getInt("ranking");
-                OgsPlayer player = new OgsPlayer();
-                player.setUsername(playerName);
-                player.setRank(playerRank);
-                player.setRating(playerRating);
-
-                r = Rest.get("https://online-go.com/api/v1/me/settings/", true);
-                j = r.getJson();
-                int playerId = j.getJSONObject("profile").getInt("id");
-                player.setId(playerId);
-
                 Platform.runLater(() -> {
                     buttonLogin.setDisable(false);
                     buttonLogin.setManaged(true);
@@ -232,7 +216,6 @@ public class OgsLoginWindow extends Stage {
                     OgsLoginWindow.this.close();
 
                     OgsClientWindow window = new OgsClientWindow();
-                    window.setSessionPlayer(player);
                     window.show();
                 });
 

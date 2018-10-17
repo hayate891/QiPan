@@ -15,6 +15,9 @@ public class Game {
     private AbstractRules rules;
     private MoveNode gameTreeRoot;
     private MoveNode currentMove;
+    private float komi;
+    private String name;
+    private String eventName;
 
     public Game(int bWidth, int bHeight, AbstractRules rules) {
         this.boardWidth = bWidth;
@@ -56,10 +59,10 @@ public class Game {
      * @param style Stone styling option, used to determine the wobble margin.
      * @param metrics Sizing information to calculate stone setWobble and placement offset.
      */
-    public AbstractRules.PlaceMoveResult playMove(int x, int y, StoneStyle style, BoardMetrics metrics,
-                                                  Sound.ActionCallback callback) {
+    public AbstractRules.PlaceMoveResult clientPlayMove(int x, int y, StoneStyle style, BoardMetrics metrics,
+                                                        Sound.ActionCallback callback) {
 
-        AbstractRules.PlaceMoveResult result = rules.playMove(currentMove, x, y, boardWidth, boardHeight);
+        AbstractRules.PlaceMoveResult result = playMove(x, y);;
         if (result.result == AbstractRules.PlaceMoveResult.PLACE_OK) {
             int color = result.color;
             Stone[] position = result.node.getBoardPosition();
@@ -101,10 +104,17 @@ public class Game {
                 }
             }
             result.wobbleStones = wobbles.toArray(new Stone[wobbles.size()]);
-            currentMove.addChild(result.node);
-            setCurrentMove(result.node);
             Sound.playMove(color, adjacent.length, snap, bigCollision, callback);
             fireMovePlayedEvent(x, y, color);
+        }
+        return result;
+    }
+
+    public AbstractRules.PlaceMoveResult playMove(int x, int y) {
+        AbstractRules.PlaceMoveResult result = rules.playMove(currentMove, x, y, boardWidth, boardHeight);
+        if (result.result == AbstractRules.PlaceMoveResult.PLACE_OK) {
+            currentMove.addChild(result.node);
+            setCurrentMove(result.node);
         }
         return result;
     }
@@ -159,5 +169,37 @@ public class Game {
 
     public void removeMoveListener(GameListener l) {
         listeners.remove(l);
+    }
+
+    public void setKomi(float komi) {
+        this.komi = komi;
+    }
+
+    public float getKomi() {
+        return komi;
+    }
+
+    public AbstractRules getRules() {
+        return rules;
+    }
+
+    public void setRules(AbstractRules rules) {
+        this.rules = rules;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
     }
 }

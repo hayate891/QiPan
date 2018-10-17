@@ -1,6 +1,5 @@
 package io.nibby.qipan.ogs;
 
-import com.sun.istack.internal.NotNull;
 import io.nibby.qipan.settings.Settings;
 import io.nibby.qipan.ui.UIStylesheets;
 import javafx.animation.FadeTransition;
@@ -24,18 +23,19 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class OgsClientWindow extends Stage {
 
-    private OgsPlayer player;
     private OgsService ogs;
 
     private Rectangle dialogBackground;
     private Pane dialogObject;
     private Scene scene;
-    private BorderPane root;
+    private BorderPane rootPane;
+    private BorderPane contentPane;
 
     private BorderPane sidebar;
     private Text textLogoTemp;
@@ -47,6 +47,8 @@ public class OgsClientWindow extends Stage {
     private ToggleButton buttonSettings;
     private Button buttonLogout;
     private ToggleGroup toggleGroup;
+
+    private OgsGameListPane gameListPane;
 
     public OgsClientWindow() {
         ogs = new OgsService();
@@ -63,7 +65,7 @@ public class OgsClientWindow extends Stage {
             {
                 // Placeholder logo
                 textLogoTemp = new Text();
-                textLogoTemp.setStyle("-fx-font-weight: bold; -fx-font-size: 26px; -fx-fill: rgb(200, 200, 200);");
+                textLogoTemp.setStyle("-fx-font-weight: bold; -fx-font-size: 26px; -fx-fill: black;");
                 textLogoTemp.setText("OGS");
                 textLogoTemp.applyCss();
                 VBox.setMargin(textLogoTemp, new Insets(20, 20, 15, 20));
@@ -75,33 +77,29 @@ public class OgsClientWindow extends Stage {
 
                 // Menu buttons
                 buttonPlay = new MenuButton(bundle.getString("client.sidebar.play"));
-//                buttonPlay.getStyleClass().add("play-button");
                 {
-//                    MenuItem playStandard = new MenuItem(bundle.getString("client.topVbox.play"));
-//                    playStandard.setOnAction(evt -> {
-//                        showDialogPane(new CreateGameStandardPane(), false);
-//                    });
+                    MenuItem play19 = new MenuItem(bundle.getString("client.sidebar.play.19"));
+                    buttonPlay.getItems().addAll(play19);
 
-//                    MenuItem playDemo = new MenuItem(Localization.getBundle().getString("core.topVbox.button.play.demo"));
-//                    playDemo.setOnAction(evt -> {
-//                    screen.setContentView(new CreateGameDemoPane());
-//                        showDialogPane(new CreateGameDemoPane(screen), false);
-//                    });
+                    MenuItem play13 = new MenuItem(bundle.getString("client.sidebar.play.13"));
+                    buttonPlay.getItems().addAll(play13);
 
-//                    buttonPlay.getItems().addAll(playStandard, playDemo);
+                    MenuItem play9 = new MenuItem(bundle.getString("client.sidebar.play.9"));
+                    buttonPlay.getItems().addAll(play9);
+
+                    MenuItem playCustom = new MenuItem(bundle.getString("client.sidebar.play.custom"));
+                    buttonPlay.getItems().addAll(playCustom);
                 }
                 addSidebarButton(topVbox, buttonPlay, "play");
 
                 buttonDashboard = new ToggleButton(bundle.getString("client.sidebar.dashboard"));
                 buttonDashboard.setSelected(true);
                 buttonDashboard.setOnAction(evt -> {
-//                    setContentView(getDashboardView());
                 });
                 addSidebarButton(topVbox, buttonDashboard, "home");
 
                 buttonSpectate = new ToggleButton(bundle.getString("client.sidebar.spectate"));
                 buttonSpectate.setOnAction(evt -> {
-//                    screen.setContentView(new SpectateGameView());
                 });
                 addSidebarButton(topVbox, buttonSpectate, "spectate");
             }
@@ -113,15 +111,8 @@ public class OgsClientWindow extends Stage {
             botVbox.setFillWidth(true);
             botVbox.setSpacing(5);
             {
-//                buttonProfile = new ToggleButton(Localization.getBundle().getString("core.topVbox.button.profile"));
-//                buttonProfile.setOnAction(evt -> {
-//                    screen.setContentView(new UserProfileView());
-//                });
-//                addSidebarButton(botVbox, buttonProfile, "profile");
-
                 buttonSettings = new ToggleButton(bundle.getString("client.sidebar.settings"));
                 buttonSettings.setOnAction(evt -> {
-//                    screen.setContentView(new SettingsView());
                 });
                 addSidebarButton(botVbox, buttonSettings, "settings");
 
@@ -136,9 +127,18 @@ public class OgsClientWindow extends Stage {
             sidebar.setBottom(botVbox);
         }
 
-        root = new BorderPane();
-        root.setLeft(sidebar);
-        scene = new Scene(root, 800, 600);
+        rootPane = new BorderPane();
+        rootPane.setLeft(sidebar);
+
+        contentPane = new BorderPane();
+        {
+            gameListPane = new OgsGameListPane(this);
+            setContentPane(gameListPane);
+
+        }
+        rootPane.setCenter(contentPane);
+
+        scene = new Scene(rootPane, 800, 600);
         UIStylesheets.applyTo(scene);
         setTitle("QiPan: OGS");
         setScene(scene);
@@ -149,13 +149,36 @@ public class OgsClientWindow extends Stage {
 
     }
 
+    private void setContentPane(Pane pane) {
+        if (contentPane.getCenter() != null) {
+            contentPane.getChildren().remove(contentPane.getCenter());
+        }
+
+        contentPane.setCenter(pane);
+        if (pane instanceof OgsContentPane) {
+            ((OgsContentPane) pane).updateContent();
+        }
+    }
+
     private void stopService(WindowEvent windowEvent) {
-        ogs.disconnect();
+        ogs.shutdown();
         System.exit(0);
     }
 
     private void startService(WindowEvent windowEvent) {
-        ogs.connect();
+        new Thread(() -> {
+            try {
+                ogs.initialize();
+
+                // TODO testing
+                Platform.runLater(() -> {
+                    OgsGameWindow window = ogs.openGame(14881591);
+                    window.show();
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     private void addSidebarButton(VBox vbox, ButtonBase b, String icon) {
@@ -192,8 +215,6 @@ public class OgsClientWindow extends Stage {
 
                     if (!hasSelection) {
                         toggle.setSelected(true);
-
-                        // screen.setContentView(null);
                     }
                 }
             });
@@ -202,8 +223,8 @@ public class OgsClientWindow extends Stage {
 
     public void showDialogPane(Pane pane, boolean modal) {
         dialogBackground = new Rectangle(scene.getWidth(), scene.getHeight());
-        dialogBackground.widthProperty().bind(root.widthProperty());
-        dialogBackground.heightProperty().bind(root.heightProperty());
+        dialogBackground.widthProperty().bind(rootPane.widthProperty());
+        dialogBackground.heightProperty().bind(rootPane.heightProperty());
         dialogBackground.setFill(Color.BLACK);
 
         this.dialogObject = pane;
@@ -217,8 +238,8 @@ public class OgsClientWindow extends Stage {
         StackPane.setAlignment(dialogBackground, Pos.CENTER);
         StackPane.setAlignment(pane, Pos.CENTER);
 
-        root.getChildren().add(dialogBackground);
-        root.getChildren().add(pane);
+        rootPane.getChildren().add(dialogBackground);
+        rootPane.getChildren().add(pane);
 
         FadeTransition fadeRect = new FadeTransition(Duration.millis(500), dialogBackground);
         fadeRect.setFromValue(0d);
@@ -259,7 +280,7 @@ public class OgsClientWindow extends Stage {
             fadeRect.setAutoReverse(false);
             fadeRect.setInterpolator(Interpolator.EASE_IN);
             fadeRect.setOnFinished(evt -> {
-                root.getChildren().remove(dialogBackground);
+                rootPane.getChildren().remove(dialogBackground);
             });
             fadeRect.play();
 
@@ -283,118 +304,17 @@ public class OgsClientWindow extends Stage {
             fadePane.setAutoReverse(false);
             fadePane.setInterpolator(Interpolator.EASE_OUT);
             fadePane.setOnFinished(evt -> {
-                root.getChildren().remove(dialogObject);
+                rootPane.getChildren().remove(dialogObject);
             });
             fadePane.play();
         } else {
-            root.getChildren().remove(dialogObject);
-            root.getChildren().remove(dialogBackground);
+            rootPane.getChildren().remove(dialogObject);
+            rootPane.getChildren().remove(dialogBackground);
         }
     }
 
     public OgsService getOgsService() {
         return ogs;
-    }
-
-    //
-//    private void openSocket(WindowEvent windowEvent) {
-//        try {
-
-//            Socket socket = IO.socket(new URL("https://online-go.com").toURI().toString(), options);
-//
-//            socket.on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
-//                @Override
-//                public void call(Object... objects) {
-//                    System.out.println("Error");
-//                    if (objects[0] instanceof Exception) {
-//                        ((Exception) objects[0]).printStackTrace();
-//                    }
-//                }
-//            });
-//
-//            socket.on(Socket.EVENT_ERROR, new Emitter.Listener() {
-//                @Override
-//                public void call(Object... objects) {
-//                    for (Object o : objects) {
-//                        System.out.println(o);
-//                    }
-//                }
-//            });
-//            socket.on(Socket.EVENT_CONNECT, e -> {
-//
-//
-//            });
-//            socket.connect();
-//
-//            int game =14849657;
-//            Rest.Response rr = Rest.get("https://online-go.com/api/v1/games/" + game, true);
-//            JSONObject obj = rr.getJson();
-//            String auth = obj.getString("auth");
-//            String chatAuth = obj.getString("game_chat_auth");
-//
-//            JSONObject jj = new JSONObject();
-//            jj.put("player_id", player.getId());
-//            jj.put("username", player.getUsername());
-//            jj.put("auth", auth);
-//            socket.emit("authenticate", jj);
-//
-//
-//            JSONObject json = new JSONObject();
-//            json.put("game_id", game);
-//            json.put("player_id", player.getId());
-////            json.put("auth", auth);
-//            json.put("chat", false);
-//            socket.on("game/" + game + "/gamedata", objs -> {
-//                for (Object o : objs) {
-//                    System.out.println(o.toString());
-//                }
-//            });
-//            socket.on("game/" + game + "/move", objs -> {
-//                for (Object o : objs) {
-//                    System.out.println(o.toString());
-//                }
-//            });
-//
-//            socket.emit("game/connect", json);
-//
-//            JSONObject j = new JSONObject();
-//            j.put("player_id", player.getId());
-//            j.put("auth", auth);
-//            j.put("game_id", game);
-//            j.put("move", "ab");
-//            socket.emit("game/move", j);
-//
-//            JSONObject j2 = new JSONObject();
-//            j2.put("auth", chatAuth);
-//            j2.put("game_id", game);
-//            j2.put("player_id", player.getId());
-//            j2.put("body", "test_message");
-//            j2.put("type", "discussion");
-//            j2.put("move_number", 3);
-//            j2.put("username", player.getUsername());
-//            j2.put("is_player", true);
-//            j2.put("ranking", player.getRank());
-//            j2.put("ui_class", "blah?");
-//
-//            socket.emit("game/chat", j2);
-
-//            JSONObject j = new JSONObject();
-//            j.put("move", "ab");
-//            Rest.Response r = Rest.postBody("https://online-go.com/api/v1/games/"+ game + "/resign/", true, "");
-//            System.out.println("Got: " + r.getRawString());
-//            System.out.println("R: " + r.getHttpResponse());
-//        } catch (URISyntaxException e) {
-//            e.printStackTrace();
-//        } catch (MalformedURLException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
-//    }
-
-    public void setSessionPlayer(@NotNull  OgsPlayer player) {
-        this.player = player;
     }
 
 }

@@ -33,14 +33,11 @@ public class Rest {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpPost post = new HttpPost(uri);
         post.setEntity(entity);
-        System.out.println("AUTH BEFORE IF: " + auth);
         if (auth) {
-            System.out.println("- INSIDE IF STATEMENT: " + auth);
             if (!Settings.ogsAuth.tokenExists() || Settings.ogsAuth.isTokenExpired())
                 throw new RuntimeException("Cannot add authentication header when token is invalid!");
             String authMethod = Settings.ogsAuth.getTokenType();
             String authToken = Settings.ogsAuth.getAuthToken();
-            System.out.println("- ADDING HEADERS: " + auth);
             post.addHeader("Authorization", authMethod + " " + authToken);
         }
 
@@ -66,8 +63,6 @@ public class Rest {
         r.rawString = jsonRaw;
         r.json = json;
         httpClient.close();
-        System.out.println("HAS AUTH? " + auth);
-        System.out.println(httpPostToString(post));
         return r;
     }
 
@@ -83,7 +78,6 @@ public class Rest {
     }
 
     public static Response postBody(String uri, boolean auth, String body) throws IOException {
-        System.out.println("AUTH IN POST BODY: " + auth);
         StringEntity entity = new StringEntity(body);
         return post(uri, auth, entity, TYPE_POST_BODY);
     }

@@ -80,7 +80,7 @@ public class CDL {
                     }
                 }
                 if (c == 0 || c == '\n' || c == '\r') {
-                    throw x.syntaxError("Missing close quote '" + q + "'.");
+                    throw x.syntaxError("Missing shutdown quote '" + q + "'.");
                 }
                 sb.append(c);
             }

@@ -264,7 +264,7 @@ public class JSONWriter {
 
     /**
      * Pop an array or object scope.
-     * @param c The scope to close.
+     * @param c The scope to shutdown.
      * @throws JSONException If nesting is wrong.
      */
     private void pop(char c) throws JSONException {

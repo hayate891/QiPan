@@ -3,17 +3,17 @@
 }
 
 .client-sidebar {
-    -fx-background-color: white;
+    -fx-background-color: rgb(230, 230, 230);
 }
 
 .sidebar-item {
-    -fx-background-color: white;
+    -fx-background-color: rgb(230, 230, 230);
     -fx-text-fill: black;
     -fx-cursor: hand;
 }
 
 .client-sidebar .toggle-button:selected {
-    -fx-background-color: rgb(224, 235, 255);
+    -fx-background-color: rgb(255, 255, 255);
 }
 
 .client-sidebar .play-button {

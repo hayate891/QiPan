@@ -58,7 +58,7 @@ public class JSONTokener {
 
 
     /**
-     * Construct a JSONTokener from a Reader. The caller must close the Reader.
+     * Construct a JSONTokener from a Reader. The caller must shutdown the Reader.
      *
      * @param reader     A reader.
      */
@@ -77,7 +77,7 @@ public class JSONTokener {
 
 
     /**
-     * Construct a JSONTokener from an InputStream. The caller must close the input stream.
+     * Construct a JSONTokener from an InputStream. The caller must shutdown the input stream.
      * @param inputStream The source.
      */
     public JSONTokener(InputStream inputStream) {
@@ -298,7 +298,7 @@ public class JSONTokener {
 
 
     /**
-     * Return the characters up to the next close quote character.
+     * Return the characters up to the next shutdown quote character.
      * Backslash processing is done. The formal JSON format does not
      * allow strings in single quotes, but an implementation is allowed to
      * accept them.

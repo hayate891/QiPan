@@ -238,7 +238,7 @@ public class XML {
      *            The JSONObject that will include the new material.
      * @param name
      *            The tag name.
-     * @return true if the close tag is processed.
+     * @return true if the shutdown tag is processed.
      * @throws JSONException
      */
     private static boolean parse(XMLTokener x, JSONObject context, String name, boolean keepStrings)
@@ -308,13 +308,13 @@ public class XML {
 
             token = x.nextToken();
             if (name == null) {
-                throw x.syntaxError("Mismatched close tag " + token);
+                throw x.syntaxError("Mismatched shutdown tag " + token);
             }
             if (!token.equals(name)) {
                 throw x.syntaxError("Mismatched " + name + " and " + token);
             }
             if (x.nextToken() != GT) {
-                throw x.syntaxError("Misshaped close tag");
+                throw x.syntaxError("Misshaped shutdown tag");
             }
             return true;
 
@@ -647,7 +647,7 @@ public class XML {
             }
             if (tagName != null) {
 
-                // Emit the </tagname> close tag
+                // Emit the </tagname> shutdown tag
                 sb.append("</");
                 sb.append(tagName);
                 sb.append('>');

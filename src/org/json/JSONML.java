@@ -83,7 +83,7 @@ public class JSONML {
                                     token + "'.");
                         }
                         if (x.nextToken() != XML.GT) {
-                            throw x.syntaxError("Misshaped close tag");
+                            throw x.syntaxError("Misshaped shutdown tag");
                         }
                         return token;
                     } else if (token == XML.BANG) {

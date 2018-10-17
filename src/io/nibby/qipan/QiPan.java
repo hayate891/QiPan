@@ -27,7 +27,7 @@ public class QiPan extends Application {
 
 ////        //TODO TEMPORARY FOR NOW
 //        if (Settings.ogsAuth.tokenExists() && !Settings.ogsAuth.isTokenExpired()) {
-//            ogs.close();
+//            ogs.shutdown();
 //
 //            OgsClientWindow window = new OgsClientWindow();
 //            window.show();

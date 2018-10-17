@@ -1287,7 +1287,7 @@ public class JSONArray implements Iterable<Object> {
     }
 
     /**
-     * Remove an index and close the hole.
+     * Remove an index and shutdown the hole.
      *
      * @param index
      *            The index of the element to be removed.
