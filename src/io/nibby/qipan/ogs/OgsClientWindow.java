@@ -158,7 +158,7 @@ public class OgsClientWindow extends Stage {
         setOnCloseRequest(this::stopService);
     }
 
-    private void setContentPane(Pane pane) {
+    public void setContentPane(Pane pane) {
         if (contentPane.getCenter() != null) {
             contentPane.getChildren().remove(contentPane.getCenter());
         }
@@ -181,12 +181,6 @@ public class OgsClientWindow extends Stage {
         new Thread(() -> {
             try {
                 ogs.initialize();
-
-//                // TODO testing
-//                Platform.runLater(() -> {
-//                    OgsGamePane window = ogs.openGame(14882508);
-//                    setContentPane(window);
-//                });
             } catch (IOException e) {
                 e.printStackTrace();
             }
