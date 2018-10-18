@@ -19,6 +19,7 @@ public class OgsService {
     private static final int HEARTBEAT_PERIOD = 15000;
     private String chatAuth;
     private String notificationAuth;
+    private List<Integer> activeGames = new ArrayList<>();
 
     private static final String SERVER = "https://online-go.com";
     private Socket socket;
@@ -136,6 +137,9 @@ public class OgsService {
     }
 
     private OgsGameData connectToGame(int gameId, OgsGamePane window) {
+        if (activeGames.contains(gameId))
+            return null;
+
         JSONObject j = new JSONObject();
 //        j.put("auth", sessionPlayer);
         j.put("player_id", sessionPlayer.getId());
@@ -165,9 +169,11 @@ public class OgsService {
 
         on("game/" + gameId + "/error", objs -> {
             JSONObject gameErr = new JSONObject(objs[0].toString());
+            System.err.println("Error in " + gameId + ": " + gameErr);
         });
 
         emit("game/connect", j);
+        activeGames.add(gameId);
         return game;
     }
 
@@ -178,12 +184,28 @@ public class OgsService {
     public void disconnectFromGame(int gameId) {
         off("game/" + gameId + "/gamedata");
         off("game/" + gameId + "/move");
+        off("game/" + gameId + "/error");
+
+        activeGames.remove((Object) gameId);
     }
 
     public OgsGamePane openGame(int gameId) {
+        if (hasActiveGame(gameId))
+            return null;
+
         OgsGamePane window = new OgsGamePane();
-        OgsGameData game = connectToGame(gameId, window);
+        connectToGame(gameId, window);
+
         return window;
+    }
+
+    /**
+     * Returns whether or not a connection to the designated gameId has already been established.
+     * @param gameId Game ID to be checked.
+     * @return
+     */
+    public boolean hasActiveGame(int gameId) {
+        return activeGames.contains(gameId);
     }
 
     private void onNotificationReceive(Object... objects) {

@@ -163,8 +163,14 @@ public class OgsDashboardPane extends BorderPane implements OgsContentPane {
             // TODO Bring up a sidebar and show the game preview before entering game
 
             // TODO adjust this temporary code
-            OgsGamePane pane = client.getOgsService().openGame(info.gameId);
-            client.setContentPane(pane);
+            if (!client.getOgsService().hasActiveGame(info.gameId)) {
+                OgsGamePane pane = client.getOgsService().openGame(info.gameId);
+                client.getActiveGamePane().addGame(info, pane);
+                client.setContentView(OgsClientWindow.VIEW_ACTIVE_GAMES);
+            } else {
+                client.setContentView(OgsClientWindow.VIEW_ACTIVE_GAMES);
+                client.getActiveGamePane().showGameTab(info.gameId);
+            }
         }
 
         private void mouseExit(MouseEvent mouseEvent) {

@@ -5,7 +5,6 @@ import io.nibby.qipan.ui.UIStylesheets;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -26,6 +25,11 @@ import java.util.ResourceBundle;
 
 public class OgsClientWindow extends Stage {
 
+    public static final int VIEW_DASHBOARD = 0;
+    public static final int VIEW_ACTIVE_GAMES = 1;
+    public static final int VIEW_SPECTATE = 2;
+    public static final int VIEW_SETTINGS = 3;
+
     private OgsService ogs;
 
     private Rectangle dialogBackground;
@@ -38,6 +42,7 @@ public class OgsClientWindow extends Stage {
     private Text textLogoTemp;
     private ToggleButton buttonDashboard;
     private MenuButton buttonPlay;
+    private ToggleButton buttonActiveGame;
     private ToggleButton buttonSpectate;
     private ToggleButton buttonChat;
     private ToggleButton buttonWebsite;
@@ -46,6 +51,7 @@ public class OgsClientWindow extends Stage {
     private ToggleGroup toggleGroup;
 
     private OgsDashboardPane dashboardPane;
+    private OgsActiveGamePane activeGamePane;
     private OgsSpectatePane spectatePane;
     private OgsSettingsPane settingsPane;
 
@@ -98,6 +104,12 @@ public class OgsClientWindow extends Stage {
                 });
                 addMenuButton(topVbox, buttonDashboard, "home");
 
+                buttonActiveGame = new ToggleButton(bundle.getString("client.sidebar.active-games"));
+                buttonActiveGame.setOnAction(evt -> {
+                    setContentPane(activeGamePane);
+                });
+                addMenuButton(topVbox, buttonActiveGame, "game");
+
                 buttonSpectate = new ToggleButton(bundle.getString("client.sidebar.spectate"));
                 buttonSpectate.setOnAction(evt -> {
                     setContentPane(spectatePane);
@@ -140,9 +152,9 @@ public class OgsClientWindow extends Stage {
             dashboardPane = new OgsDashboardPane(this);
             setContentPane(dashboardPane);
 
+            activeGamePane = new OgsActiveGamePane(this);
             spectatePane = new OgsSpectatePane(this);
             settingsPane = new OgsSettingsPane(this);
-
         }
         rootPane.setCenter(contentPane);
 
@@ -158,7 +170,7 @@ public class OgsClientWindow extends Stage {
         setOnCloseRequest(this::stopService);
     }
 
-    public void setContentPane(Pane pane) {
+    private void setContentPane(Pane pane) {
         if (contentPane.getCenter() != null) {
             contentPane.getChildren().remove(contentPane.getCenter());
         }
@@ -320,6 +332,23 @@ public class OgsClientWindow extends Stage {
         }
     }
 
+    public void setContentView(int view) {
+        switch(view) {
+            case VIEW_DASHBOARD:
+                buttonDashboard.fire();
+                break;
+            case VIEW_ACTIVE_GAMES:
+                buttonActiveGame.fire();
+                break;
+            case VIEW_SPECTATE:
+                buttonSpectate.fire();
+                break;
+            case VIEW_SETTINGS:
+                buttonSettings.fire();
+                break;
+        }
+    }
+
     public OgsService getOgsService() {
         return ogs;
     }
@@ -334,5 +363,9 @@ public class OgsClientWindow extends Stage {
 
     public OgsSettingsPane getSettingsPane() {
         return settingsPane;
+    }
+
+    public OgsActiveGamePane getActiveGamePane() {
+        return activeGamePane;
     }
 }

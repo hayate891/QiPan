@@ -45,3 +45,9 @@
 .sidebar-item:hover {
     -fx-background-color: rgb(240, 240, 240);
 }
+
+.active-games-tabpane .tab {
+    -fx-padding: 3 3 3 3;
+    -fx-background-color: yellow;
+    -fx-min-width: 75px;
+}
