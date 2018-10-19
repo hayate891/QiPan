@@ -20,7 +20,7 @@ public class CanvasContainer extends Pane {
         });
     }
 
-    private void updateSize(double width, double height) {
+    public void updateSize(double width, double height) {
         super.setPrefSize(width, height);
         canvas.setWidth(width);
         canvas.setHeight(height);

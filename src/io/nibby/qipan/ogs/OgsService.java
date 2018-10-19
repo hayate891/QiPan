@@ -138,8 +138,10 @@ public class OgsService {
     }
 
     private OgsGameData connectToGame(int gameId, OgsGamePane window) {
-        if (activeGames.contains(gameId))
+        if (activeGames.contains(gameId)) {
+            System.err.println("Active game already exists: " + gameId);
             return null;
+        }
 
         JSONObject j = new JSONObject();
 //        j.put("auth", sessionPlayer);
@@ -184,6 +186,9 @@ public class OgsService {
     }
 
     public void disconnectFromGame(int gameId) {
+        JSONObject j = new JSONObject();
+        j.put("game_id", gameId);
+        emit("game/disconnect", j);
         off("game/" + gameId + "/gamedata");
         off("game/" + gameId + "/move");
         off("game/" + gameId + "/error");
@@ -191,7 +196,7 @@ public class OgsService {
         activeGames.remove((Object) gameId);
     }
 
-    public OgsGamePane openGame(int gameId) {
+    public OgsGamePane connectToGame(int gameId) {
         if (hasActiveGame(gameId))
             return null;
 

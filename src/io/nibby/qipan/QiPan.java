@@ -25,13 +25,13 @@ public class QiPan extends Application {
         OgsLoginWindow ogs = new OgsLoginWindow();
         ogs.show();
 
-        //TODO TEMPORARY FOR NOW
-        if (Settings.ogsAuth.tokenExists() && !Settings.ogsAuth.isTokenExpired()) {
-            ogs.close();
-
-            OgsClientWindow window = new OgsClientWindow();
-            window.show();
-        }
+//        //TODO TEMPORARY FOR NOW
+//        if (Settings.ogsAuth.tokenExists() && !Settings.ogsAuth.isTokenExpired()) {
+//            ogs.close();
+//
+//            OgsClientWindow window = new OgsClientWindow();
+//            window.show();
+//        }
     }
 
     public static void main(String[] args) {

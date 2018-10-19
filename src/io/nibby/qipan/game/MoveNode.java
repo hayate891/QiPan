@@ -168,4 +168,8 @@ public class MoveNode {
     public void setState(int state) {
         this.state = state;
     }
+
+    public void putStone(int position, Stone stone) {
+        boardPosition[position] = stone;
+    }
 }

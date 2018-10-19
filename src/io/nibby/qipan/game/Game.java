@@ -18,6 +18,7 @@ public class Game {
     private float komi;
     private String name;
     private String eventName;
+    private int firstMove = Stone.BLACK;
 
     public Game(int bWidth, int bHeight, AbstractRules rules) {
         this.boardWidth = bWidth;
@@ -111,7 +112,7 @@ public class Game {
     }
 
     public AbstractRules.PlaceMoveResult playMove(int x, int y) {
-        AbstractRules.PlaceMoveResult result = rules.playMove(currentMove, x, y, boardWidth, boardHeight);
+        AbstractRules.PlaceMoveResult result = rules.playMove(currentMove, x, y, boardWidth, boardHeight, firstMove);
         if (result.result == AbstractRules.PlaceMoveResult.PLACE_OK) {
             currentMove.addChild(result.node);
             setCurrentMove(result.node);
@@ -201,5 +202,13 @@ public class Game {
 
     public void setEventName(String eventName) {
         this.eventName = eventName;
+    }
+
+    public int getFirstMove() {
+        return firstMove;
+    }
+
+    public void setFirstMove(int firstMove) {
+        this.firstMove = firstMove;
     }
 }

@@ -13,55 +13,53 @@ import static io.nibby.qipan.ui.board.Stone.WHITE;
 
 public enum StoneStyle {
 
-    PLAIN("Plain") {
-        @Override
-        public void render(GraphicsContext g, Stone stone, BoardMetrics metrics) {
-            // TODO make this customizable
-            double x = metrics.getBoardStoneX(stone.getX());
-            double y = metrics.getBoardStoneY(stone.getY());
-            switch(stone.getColor()) {
-                case BLACK:
-                    g.setFill(Color.BLACK);
-                    g.fillOval(x, y, metrics.stoneSize, metrics.stoneSize);
-                    break;
-                case WHITE:
-                    g.setFill(Color.WHITE);
-                    g.fillOval(x, y, metrics.stoneSize / 20 * 19, metrics.stoneSize / 20 * 19);
-                    g.setStroke(Color.BLACK);
-                    g.strokeOval(x, y, metrics.stoneSize / 20 * 19, metrics.stoneSize / 20 * 19);
-                    break;
-            }
-        }
-
-        @Override
-        public double wobbleMargin() {
-            return 0;
-        }
-
-        @Override
-        public boolean fuzzyPlacement() {
-            return false;
-        }
-
-        @Override
-        public Color annotationColor(Stone stone) {
-            return stone.getColor() == Stone.BLACK ? Color.WHITE : Color.BLACK;
-        }
-    },
+//    PLAIN("Plain") {
+//        @Override
+//        public void render(GraphicsContext g, Stone stone, BoardMetrics metrics) {
+//            // TODO make this customizable
+//            double x = metrics.getBoardStoneX(stone.getX());
+//            double y = metrics.getBoardStoneY(stone.getY());
+//            switch(stone.getColor()) {
+//                case BLACK:
+//                    g.setFill(Color.BLACK);
+//                    g.fillOval(x, y, metrics.stoneSize, metrics.stoneSize);
+//                    break;
+//                case WHITE:
+//                    g.setFill(Color.WHITE);
+//                    g.fillOval(x, y, metrics.stoneSize / 20 * 19, metrics.stoneSize / 20 * 19);
+//                    g.setStroke(Color.BLACK);
+//                    g.strokeOval(x, y, metrics.stoneSize / 20 * 19, metrics.stoneSize / 20 * 19);
+//                    break;
+//            }
+//        }
+//
+//        @Override
+//        public double wobbleMargin() {
+//            return 0;
+//        }
+//
+//        @Override
+//        public boolean fuzzyPlacement() {
+//            return false;
+//        }
+//
+//        @Override
+//        public Color annotationColor(Stone stone) {
+//            return stone.getColor() == Stone.BLACK ? Color.WHITE : Color.BLACK;
+//        }
+//    },
 
     // CERAMIC bi-convex
     CERAMIC("Ceramic") {
 
         @Override
-        public void render(GraphicsContext g, Stone stone, BoardMetrics metrics) {
-            double o = metrics.stoneSize / 16;
-            double x = metrics.getBoardStoneX(stone.getX()) + stone.wobbleX + stone.fuzzyX + o;
-            double y = metrics.getBoardStoneY(stone.getY()) + stone.wobbleY + stone.fuzzyY + o;
+        public void render(GraphicsContext g, double x, double y, double size, Stone stone) {
+
             RadialGradient gradient;
             DropShadow shadow = new DropShadow();
-            shadow.setRadius(metrics.stoneSize / 8);
-            shadow.setOffsetX(metrics.stoneSize / 12);
-            shadow.setOffsetY(metrics.stoneSize / 12);
+            shadow.setRadius(size / 8);
+            shadow.setOffsetX(size / 12);
+            shadow.setOffsetY(size / 12);
             shadow.setBlurType(BlurType.GAUSSIAN);
             shadow.setColor(Color.color(0.15f, 0.15f, 0.15f, 0.5f));
             g.setEffect(shadow);
@@ -75,7 +73,7 @@ public enum StoneStyle {
                     g.setFill(gradient);
 
                     g.setEffect(shadow);
-                    g.fillOval(x, y, metrics.stoneSize, metrics.stoneSize);
+                    g.fillOval(x, y, size, size);
                     break;
                 case WHITE:
                     gradient = new RadialGradient(stone.rgFocusAngle, stone.rgFocusDistance, stone.rgCenterX, stone.rgCenterY,
@@ -85,7 +83,7 @@ public enum StoneStyle {
                     g.setFill(gradient);
 
                     g.setEffect(shadow);
-                    g.fillOval(x, y, metrics.stoneSize / 20 * 19, metrics.stoneSize / 20 * 19);
+                    g.fillOval(x, y, size / 20 * 19, size / 20 * 19);
                     g.setEffect(null);
                     break;
             }
@@ -106,29 +104,7 @@ public enum StoneStyle {
         public Color annotationColor(Stone stone) {
             return stone.getColor() == Stone.BLACK ? Color.WHITE : Color.BLACK;
         }
-    },
-
-    YUNZI("Yun Zi") {
-        @Override
-        public void render(GraphicsContext g, Stone stone, BoardMetrics metrics) {
-
-        }
-
-        @Override
-        public double wobbleMargin() {
-            return 0d;
-        }
-
-        @Override
-        public boolean fuzzyPlacement() {
-            return true;
-        }
-
-        @Override
-        public Color annotationColor(Stone stone) {
-            return null;
-        }
-    };
+    },;
 
     private String name;
 
@@ -136,7 +112,15 @@ public enum StoneStyle {
         this.name = name;
     }
 
-    public abstract void render(GraphicsContext g, Stone stone, BoardMetrics metrics);
+    public void render(GraphicsContext g, Stone stone, BoardMetrics metrics) {
+        double o = metrics.stoneSize / 16;
+        double x = metrics.getBoardStoneX(stone.getX()) + stone.wobbleX + stone.fuzzyX + o;
+        double y = metrics.getBoardStoneY(stone.getY()) + stone.wobbleY + stone.fuzzyY + o;
+        render(g, x, y, metrics.stoneSize, stone);
+    }
+
+    public abstract void render(GraphicsContext g, double x, double y, double size, Stone stone);
+
     public abstract double wobbleMargin();
     public abstract boolean fuzzyPlacement();
     public abstract Color annotationColor(Stone stone);

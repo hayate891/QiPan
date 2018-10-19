@@ -23,7 +23,7 @@ public abstract class AbstractRules {
         public MoveNode node;
     }
 
-    public abstract PlaceMoveResult playMove(MoveNode currentMove, int x, int y, int boardWidth, int boardHeight);
+    public abstract PlaceMoveResult playMove(MoveNode currentMove, int x, int y, int boardWidth, int boardHeight, int firstMove);
 
     /**
      * Returns attributes pertaining to the adjacent stone chain.

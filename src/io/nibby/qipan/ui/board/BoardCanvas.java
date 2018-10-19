@@ -53,7 +53,7 @@ public class BoardCanvas extends Canvas {
         g.clearRect(0, 0, getWidth(), getHeight());
         {
             // Draw the backdrop
-            g.drawImage(backgroundStyle.getTexture(), 0, 0, getWidth(), getHeight());
+//            g.drawImage(backgroundStyle.getTexture(), 0, 0, getWidth(), getHeight());
 //            g.setFill(new Color(0.941d, 0.941d, 0.941d, 1.0d));
 //            g.fillRect(0, 0, getWidth(), getHeight());
             // Draw the board

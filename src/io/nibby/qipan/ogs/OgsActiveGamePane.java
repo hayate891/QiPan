@@ -1,7 +1,6 @@
 package io.nibby.qipan.ogs;
 
 import io.nibby.qipan.settings.Settings;
-import javafx.geometry.Side;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
@@ -32,18 +31,18 @@ public class OgsActiveGamePane extends BorderPane implements OgsContentPane {
 
     }
 
-    public void addGame(OgsDashboardPane.GameInfo info, OgsGamePane pane, boolean select) {
+    public void addGame(int id, OgsGamePane pane, boolean select) {
         ResourceBundle bundle = Settings.language.getLocale().getBundle("OgsClient");
-        String title = bundle.getString("client.game.game") + " " + info.gameId;
+        String title = bundle.getString("client.game.game") + " " + id;
         Tab tab = new Tab(title, pane);
         tab.setOnClosed(evt -> {
-            ogs.disconnectFromGame(info.gameId);
+            client.leaveGame(id);
         });
         gameTabs.getTabs().add(tab);
-        tabData.put(info.gameId, tab);
+        tabData.put(id, tab);
 
         if (select)
-            showGameTab(info.gameId);
+            showGameTab(id);
     }
 
     public void showGameTab(int gameId) {
@@ -51,5 +50,9 @@ public class OgsActiveGamePane extends BorderPane implements OgsContentPane {
         if (tab != null) {
             gameTabs.getSelectionModel().select(tab);
         }
+    }
+
+    public void removeGame(int id) {
+        tabData.remove(id);
     }
 }

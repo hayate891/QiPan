@@ -4,6 +4,7 @@ import io.nibby.qipan.game.AbstractRules;
 import io.nibby.qipan.game.Game;
 import io.nibby.qipan.game.GameClock;
 import io.nibby.qipan.game.GameRules;
+import io.nibby.qipan.ui.board.Stone;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -122,7 +123,28 @@ public class OgsGameData {
             game = new Game(boardWidth, boardHeight, rules);
             game.setKomi(komi);
             game.setName(gameName);
+            game.setFirstMove(initialPlayer.equals("black") ? Stone.BLACK : Stone.WHITE);
 
+            // Process handicap stones
+            JSONObject handicaps = gamedata.getJSONObject("initial_state");
+            String whiteHandicap = handicaps.getString("white");
+            String blackHandicap = handicaps.getString("black");
+            int handis = blackHandicap.length() / 2;
+            String coordMap = "abcdefghijklmnopqrstuvwxyz";
+            for (int i = 0; i < handis; i++) {
+                int x = coordMap.indexOf(blackHandicap.charAt(i * 2));
+                int y = coordMap.indexOf(blackHandicap.charAt(i * 2 + 1));
+                int pos = boardWidth * y + x;
+                game.getGameTreeRoot().putStone(pos, new Stone(Stone.BLACK, x, y));
+            }
+            handis = whiteHandicap.length() / 2;
+            for (int i = 0; i < handis; i++) {
+                int x = coordMap.indexOf(whiteHandicap.charAt(i * 2));
+                int y = coordMap.indexOf(whiteHandicap.charAt(i * 2 + 1));
+                int pos = boardWidth * y + x;
+                game.getGameTreeRoot().putStone(pos, new Stone(Stone.WHITE, x, y));
+            }
+            
             // Parse moves
             JSONArray movesRaw = gamedata.getJSONArray("moves");
             for (int i = 0; i < movesRaw.length(); i++) {

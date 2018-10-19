@@ -349,6 +349,21 @@ public class OgsClientWindow extends Stage {
         }
     }
 
+    public void leaveGame(int id) {
+        ogs.disconnectFromGame(id);
+        getActiveGamePane().removeGame(id);
+    }
+
+    public void joinGame(int id) {
+        if (!ogs.hasActiveGame(id)) {
+            OgsGamePane pane = ogs.connectToGame(id);
+            getActiveGamePane().addGame(id, pane, true);
+        } else {
+            getActiveGamePane().showGameTab(id);
+        }
+        setContentView(VIEW_ACTIVE_GAMES);
+    }
+
     public OgsService getOgsService() {
         return ogs;
     }
@@ -368,4 +383,5 @@ public class OgsClientWindow extends Stage {
     public OgsActiveGamePane getActiveGamePane() {
         return activeGamePane;
     }
+
 }

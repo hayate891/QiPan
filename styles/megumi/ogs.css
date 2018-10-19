@@ -18,6 +18,7 @@
     -fx-fill: rgb(140, 140, 140);
 }
 
+/* */
 .client-sidebar {
     -fx-background-color: white;
 }
@@ -46,6 +47,7 @@
     -fx-background-color: rgb(240, 240, 240);
 }
 
+/* Active game tab pane */
 .active-games-tabpane *.tab-header-area {
     -fx-padding: 2 15 0 15;
     -fx-focus-color: transparent;
@@ -70,5 +72,9 @@
     -fx-focus-color: transparent;
     -fx-border-color: rgb(224, 235, 255);
     -fx-border-width: 0 0 3 0;
+}
+/* End of game tab pane */
 
+.ogs-gamepane-sidebar {
+    -fx-background-color: transparent;
 }

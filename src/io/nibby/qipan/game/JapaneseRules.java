@@ -8,10 +8,12 @@ import java.util.List;
 
 public class JapaneseRules extends AbstractRules {
 
-    public PlaceMoveResult playMove(MoveNode currentMove, int x, int y, int boardWidth, int boardHeight) {
+    public PlaceMoveResult playMove(MoveNode currentMove, int x, int y, int boardWidth, int boardHeight, int firstMove) {
         PlaceMoveResult result = new PlaceMoveResult();
         MoveNode resultNode = new MoveNode(currentMove);
-        int color = currentMove.getMoveNumber() % 2 == 1 ? Stone.BLACK : Stone.WHITE;
+        int oddMove = firstMove == Stone.BLACK ? Stone.BLACK : Stone.WHITE;
+        int evenMove = firstMove == Stone.BLACK ? Stone.WHITE : Stone.BLACK;
+        int color = currentMove.getMoveNumber() % 2 == 1 ? oddMove : evenMove;
         result.color = color;
         resultNode.setState(color == Stone.BLACK ? MoveNode.STATE_MOVE_BLACK : MoveNode.STATE_MOVE_WHITE);
         /*
