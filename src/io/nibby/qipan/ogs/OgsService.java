@@ -1,5 +1,6 @@
 package io.nibby.qipan.ogs;
 
+import io.nibby.qipan.game.GameClock;
 import io.nibby.qipan.settings.Settings;
 import io.socket.client.IO;
 import io.socket.client.Manager;
@@ -151,6 +152,7 @@ public class OgsService {
         on("game/" + gameId + "/gamedata", objs -> {
             JSONObject gamedata = new JSONObject(objs[0].toString());
             game.parseData(gamedata);
+
             Platform.runLater(() -> {
                 window.onConnection(game);
             });
@@ -258,11 +260,12 @@ public class OgsService {
         info.playerBlack = OgsPlayer.parse(gameObj.getJSONObject("black"));
         info.gameId = gameObj.getInt("id");
         info.boardHeight = gameObj.getInt("height");
+
         if (gameObj.has("time_per_move"))
             info.timePerMove = gameObj.getInt("time_per_move");
 
         Platform.runLater(() -> {
-            client.getDashboardPane().addActiveGame(info);
+            client.getDashboardPane().updateActiveGame(info);
         });
     }
 

@@ -2,6 +2,7 @@ package io.nibby.qipan.ogs;
 
 import io.nibby.qipan.game.AbstractRules;
 import io.nibby.qipan.game.Game;
+import io.nibby.qipan.game.GameClock;
 import io.nibby.qipan.game.GameRules;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -41,7 +42,7 @@ public class OgsGameData {
     private long endTime;
     private boolean pauseOnWeekends;
     private boolean scoreTerritoryInSeki;
-    //TODO clock
+    //TODO clockSetting
     private boolean agaHandicapScoring;
     private boolean scoreHandicap;
     private boolean strictSekiMode;
@@ -53,6 +54,8 @@ public class OgsGameData {
     private boolean whiteMustPastLast;
     private int boardWidth;
     private boolean originalDisableAnalysis;
+    private GameClock defaultClock;
+    private GameClock[] playerClocks;
 
     public OgsGameData(int gameId) {
         this.id = gameId;
@@ -107,6 +110,8 @@ public class OgsGameData {
         whiteMustPastLast = gamedata.getBoolean("white_must_pass_last");
         boardWidth = gamedata.getInt("width");
         originalDisableAnalysis = gamedata.getBoolean("original_disable_analysis");
+        defaultClock = parseDefaultClock(gamedata);
+        playerClocks = parsePlayerClock(defaultClock, gamedata);
 
         String rulesRaw = gamedata.getString("rules");
         if (rulesRaw.equals("japanese"))
@@ -154,5 +159,59 @@ public class OgsGameData {
 
     public Game getGame() {
         return game;
+    }
+
+    /**
+     * Parses two playerClocks from game data, one for each player.
+     *
+     * @param defaultClock The default clock template
+     * @return An array of playerClocks, 0th index being black clock and 1st being white.
+     */
+    public static GameClock[] parsePlayerClock(GameClock defaultClock, JSONObject object) {
+        JSONObject clockObj = object.getJSONObject("clock");
+        JSONObject blackTime = clockObj.getJSONObject("black_time");
+        JSONObject whiteTime = clockObj.getJSONObject("white_time");
+        GameClock[] result = new GameClock[2];
+        if (defaultClock instanceof GameClock.ByoYomi) {
+            result[0] = new GameClock.ByoYomi();
+            ((GameClock.ByoYomi) result[0]).setMainTime(blackTime.getInt("thinking_time"));
+            ((GameClock.ByoYomi) result[0]).setPeriods(blackTime.getInt("periods"));
+            ((GameClock.ByoYomi) result[0]).setPeriodTime(blackTime.getInt("period_time"));
+
+            result[1] = new GameClock.ByoYomi();
+            ((GameClock.ByoYomi) result[1]).setMainTime(whiteTime.getInt("thinking_time"));
+            ((GameClock.ByoYomi) result[1]).setPeriods(whiteTime.getInt("periods"));
+            ((GameClock.ByoYomi) result[1]).setPeriodTime(whiteTime.getInt("period_time"));
+        } else {
+            throw new UnsupportedOperationException("Unsupported game clock: " + defaultClock.getClass().getSimpleName());
+        }
+        return result;
+    }
+
+    public static GameClock parseDefaultClock(JSONObject object) {
+        if (!object.has("time_control")) {
+            System.out.println("No time control specified: ");
+            System.out.println(object);
+            System.out.println("");
+            return null;
+        }
+
+        JSONObject timeControl = object.getJSONObject("time_control");
+        final String system = timeControl.getString("system");
+        GameClock clock = null;
+        switch (system) {
+            case "byoyomi":
+                GameClock.ByoYomi c = new GameClock.ByoYomi();
+                c.setPeriods(timeControl.getInt("periods"));
+                c.setMainTime(timeControl.getInt("main_time"));
+                c.setPausedOnWeekends(timeControl.getBoolean("pause_on_weekends"));
+                c.setPeriodTime(timeControl.getInt("period_time"));
+                c.setSpeed(timeControl.getString("speed"));
+                clock = c;
+                break;
+            default:
+                throw new UnsupportedOperationException("Clock system not implemented: " + system);
+        }
+        return clock;
     }
 }

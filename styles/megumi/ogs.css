@@ -46,8 +46,29 @@
     -fx-background-color: rgb(240, 240, 240);
 }
 
+.active-games-tabpane *.tab-header-area {
+    -fx-padding: 2 15 0 15;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-background-color: white;
+}
+
+.active-games-tabpane *.tab-header-background {
+    -fx-background-color: white;
+}
+
 .active-games-tabpane .tab {
     -fx-padding: 3 3 3 3;
-    -fx-background-color: yellow;
+    -fx-background-color: white;
     -fx-min-width: 75px;
+}
+
+.active-games-tabpane .tab:selected {
+    -fx-padding: 3 3 3 3;
+    -fx-background-color: white;
+    -fx-min-width: 75px;
+    -fx-focus-color: transparent;
+    -fx-border-color: rgb(224, 235, 255);
+    -fx-border-width: 0 0 3 0;
+
 }

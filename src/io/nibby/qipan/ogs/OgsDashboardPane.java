@@ -1,7 +1,7 @@
 package io.nibby.qipan.ogs;
 
+import io.nibby.qipan.game.GameClock;
 import io.nibby.qipan.settings.Settings;
-import io.nibby.qipan.ui.CanvasContainer;
 import io.nibby.qipan.ui.board.Stone;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -13,15 +13,13 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class OgsDashboardPane extends BorderPane implements OgsContentPane {
 
     private OgsClientWindow client;
     private ActiveGamePane activeGamePane;
-    private List<GameInfo> activeGames = new ArrayList<>();
+    private Map<Integer, GameInfo> activeGames = new HashMap<>();
     private Text activeGameHeader;
     private ResourceBundle bundle;
 
@@ -46,18 +44,26 @@ public class OgsDashboardPane extends BorderPane implements OgsContentPane {
     }
 
     public void addActiveGame(GameInfo info) {
-        activeGames.add(info);
-        activeGamePane.indexItems();
+        activeGames.put(info.gameId, info);
+        activeGamePane.addItem(info);
+    }
+
+    public void updateActiveGame(GameInfo info) {
+        if (activeGames.get(info.gameId) == null)
+            addActiveGame(info);
+        else {
+            activeGamePane.updateItem(info);
+        }
     }
 
     public class ActiveGamePane extends BorderPane {
 
         private VBox items;
+        private Map<Integer, ActiveGameItem> itemMap = new HashMap<>();
         private ScrollPane scrollpane;
 
         public ActiveGamePane() {
             setPadding(new Insets(20, 20, 20, 20));
-
 
             activeGameHeader = new Text(bundle.getString("client.dashboard.active-games"));
             activeGameHeader.getStyleClass().add("ogs-client-header");
@@ -76,23 +82,36 @@ public class OgsDashboardPane extends BorderPane implements OgsContentPane {
             setCenter(scrollpane);
         }
 
+        private void updateItem(GameInfo info) {
+            ActiveGameItem item = itemMap.get(info.gameId);
+            if (item != null)
+                item.update(info);
+            else
+                System.err.println("Cannot update active game: " + info.gameId);
+        }
+
+        private void addItem(GameInfo info) {
+            ActiveGameItem item = new ActiveGameItem(info, this);
+            items.getChildren().add(item);
+            itemMap.put(info.gameId, item);
+        }
+
         private void indexItems() {
             items.getChildren().removeAll(items.getChildren());
 
             List<GameInfo> theirTurn = new ArrayList<>();
-            for (GameInfo info : activeGames) {
+            for (Integer key : activeGames.keySet()) {
+                GameInfo info = activeGames.get(key);
                 if (info.gamePhase != OgsGameData.GAME_PHASE_PLAYING)
                     continue;
 
                 if (info.playerIdToMove == client.getOgsService().getSessionPlayer().getId()) {
-                    ActiveGameItem item = new ActiveGameItem(info, this);
-                    items.getChildren().add(item);
+                    addItem(info);
                 } else
                     theirTurn.add(info);
             }
             for (GameInfo info : theirTurn) {
-                ActiveGameItem item = new ActiveGameItem(info, this);
-                items.getChildren().add(item);
+                addItem(info);
             }
             activeGameHeader.setText(bundle.getString("client.dashboard.active-games") + " (" + items.getChildren().size() + ")");
         }
@@ -105,7 +124,10 @@ public class OgsDashboardPane extends BorderPane implements OgsContentPane {
         private ActiveGamePane parent;
 
         private Text lbGameName;
-
+        private BadgePane moveNumBadge;
+        private BadgePane boardSizeBadge;
+        private Text playerBlack;
+        private Text playerWhite;
 
         public ActiveGameItem(GameInfo info, ActiveGamePane parent) {
             this.parent = parent;
@@ -123,10 +145,10 @@ public class OgsDashboardPane extends BorderPane implements OgsContentPane {
             gameMetaPane.setFillHeight(false);
             gameMetaPane.setSpacing(5);
             gameMetaPane.setAlignment(Pos.CENTER_LEFT);
-            BadgePane moveNumBadge = new BadgePane(moveNumText, new Color(0.8d, 0.8d, 0.8d, 1.0d), Color.WHITE);
+            moveNumBadge = new BadgePane(moveNumText, new Color(0.8d, 0.8d, 0.8d, 1.0d), Color.WHITE);
             gameMetaPane.getChildren().add(moveNumBadge);
 
-            BadgePane boardSizeBadge = new BadgePane(boardSizeText, new Color(1.0d, 198d/255d, 39d/255d, 1.0d), new Color(1.0d, 249d/255d, 219d/255d, 1.0d));
+            boardSizeBadge = new BadgePane(boardSizeText, new Color(1.0d, 198d/255d, 39d/255d, 1.0d), new Color(1.0d, 249d/255d, 219d/255d, 1.0d));
             gameMetaPane.getChildren().add(boardSizeBadge);
 
             lbGameName = new Text(info.gameName);
@@ -144,19 +166,34 @@ public class OgsDashboardPane extends BorderPane implements OgsContentPane {
             StoneIcon blackStone = new StoneIcon(Stone.BLACK);
             playerMetaPane.getChildren().add(blackStone);
 
-            Text playerBlack = new Text(info.playerBlack.getUsername());
+            // TODO rank probably not accurate
+            playerBlack = new Text(info.playerBlack.getUsername() + " [" + OgsPlayer.getRankText(info.playerBlack) + "]");
             playerMetaPane.getChildren().add(playerBlack);
             HBox.setMargin(playerBlack, new Insets(0, 10, 0 , 0));
 
             StoneIcon whiteStone = new StoneIcon(Stone.WHITE);
             playerMetaPane.getChildren().add(whiteStone);
 
-            Text playerWhite = new Text(info.playerWhite.getUsername());
+            playerWhite = new Text(info.playerWhite.getUsername() + "[" + OgsPlayer.getRankText(info.playerWhite) + "]");
             playerMetaPane.getChildren().add(playerWhite);
 
             this.setOnMouseEntered(this::mouseHover);
             this.setOnMouseExited(this::mouseExit);
             this.setOnMouseClicked(this::mouseClick);
+        }
+
+        private void update(GameInfo info) {
+            this.info = info;
+            setMoveNumber(info.moveNumber);
+            myTurn = info.playerIdToMove == client.getOgsService().getSessionPlayer().getId();
+            Color color = myTurn ? COLOR_GAME_PLAYERTURN : COLOR_GAME_THEIRTURN;
+            Background bg = new Background(new BackgroundFill(color, new CornerRadii(5), new Insets(0, 0, 0, 0)));
+            setBackground(bg);
+        }
+
+        private void setMoveNumber(int move) {
+            String moveNumText = bundle.getString("client.game.move-num") + " " + info.moveNumber;
+            moveNumBadge.label.setText(moveNumText);
         }
 
         private void mouseClick(MouseEvent mouseEvent) {
@@ -165,7 +202,7 @@ public class OgsDashboardPane extends BorderPane implements OgsContentPane {
             // TODO adjust this temporary code
             if (!client.getOgsService().hasActiveGame(info.gameId)) {
                 OgsGamePane pane = client.getOgsService().openGame(info.gameId);
-                client.getActiveGamePane().addGame(info, pane);
+                client.getActiveGamePane().addGame(info, pane, true);
                 client.setContentView(OgsClientWindow.VIEW_ACTIVE_GAMES);
             } else {
                 client.setContentView(OgsClientWindow.VIEW_ACTIVE_GAMES);
@@ -251,5 +288,7 @@ public class OgsDashboardPane extends BorderPane implements OgsContentPane {
         public int timePerMove; //TODO potentially missing param
         public int moveNumber;
         public String gameName;
+        public GameClock clockSetting;
+        public GameClock[] playerClocks;
     }
 }

@@ -26,6 +26,21 @@ public class OgsPlayer {
         return player;
     }
 
+    public static String getRankText(OgsPlayer player) {
+        boolean isDan = player.rank > 30;
+        String postfix = "";
+        if (player.professional)
+            postfix = "p";
+        else if (isDan)
+            postfix = "d";
+        else
+            postfix = "k";
+
+        int value = isDan ? (player.rank - 30) + 1 : 30 - player.rank;
+        System.out.println("Parse as: " + value + postfix);
+        return value + postfix;
+    }
+
     public int getRank() {
         return rank;
     }
