@@ -182,6 +182,13 @@ public class OgsLoginWindow extends Stage {
                     // TODO an error has occurred
                     lbError.setVisible(true);
                     lbError.setManaged(true);
+                    indicator.stop();
+                    indicator.setVisible(false);
+                    indicator.setManaged(false);
+                    buttonLogin.setDisable(false);
+                    buttonLogin.setManaged(true);
+                    buttonLogin.setVisible(true);
+
                     System.out.println("Error: " + r.getHttpResponse());
                     System.out.println("Error Raw: " + r.getRawString());
                     return;
