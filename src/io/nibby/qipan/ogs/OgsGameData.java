@@ -194,6 +194,10 @@ public class OgsGameData {
         JSONObject blackTime = clockObj.getJSONObject("black_time");
         JSONObject whiteTime = clockObj.getJSONObject("white_time");
         GameClock[] result = new GameClock[2];
+
+        System.out.println(blackTime);
+        System.out.println("\n" + whiteTime);
+
         if (defaultClock instanceof GameClock.ByoYomi) {
             result[0] = new GameClock.ByoYomi();
             ((GameClock.ByoYomi) result[0]).setMainTime(blackTime.getInt("thinking_time"));
@@ -204,6 +208,16 @@ public class OgsGameData {
             ((GameClock.ByoYomi) result[1]).setMainTime(whiteTime.getInt("thinking_time"));
             ((GameClock.ByoYomi) result[1]).setPeriods(whiteTime.getInt("periods"));
             ((GameClock.ByoYomi) result[1]).setPeriodTime(whiteTime.getInt("period_time"));
+
+        } else if (defaultClock instanceof GameClock.Fischer) {
+            // TODO this segment ignored a json key "skip bonus"
+            // Its exact usage is unknown
+            result[0] = new GameClock.Fischer();
+            ((GameClock.Fischer) result[0]).setMainTime(blackTime.getLong("thinking_time"));
+
+            result[1] = new GameClock.Fischer();
+            ((GameClock.Fischer) result[1]).setMainTime(whiteTime.getLong("thinking_time"));
+
         } else {
             throw new UnsupportedOperationException("Unsupported game clock: " + defaultClock.getClass().getSimpleName());
         }
@@ -223,16 +237,33 @@ public class OgsGameData {
         GameClock clock = null;
         switch (system) {
             case "byoyomi":
-                GameClock.ByoYomi c = new GameClock.ByoYomi();
-                c.setPeriods(timeControl.getInt("periods"));
-                c.setMainTime(timeControl.getInt("main_time"));
-                c.setPausedOnWeekends(timeControl.getBoolean("pause_on_weekends"));
-                c.setPeriodTime(timeControl.getInt("period_time"));
-                c.setSpeed(timeControl.getString("speed"));
-                clock = c;
+                GameClock.ByoYomi byoyomi = new GameClock.ByoYomi();
+                byoyomi.setPeriods(timeControl.getInt("periods"));
+                byoyomi.setMainTime(timeControl.getInt("main_time"));
+                byoyomi.setPeriodTime(timeControl.getInt("period_time"));
+
+                byoyomi.setPausedOnWeekends(timeControl.getBoolean("pause_on_weekends"));
+                byoyomi.setSpeed(timeControl.getString("speed"));
+                clock = byoyomi;
                 break;
+            case "fischer":
+                GameClock.Fischer fischer = new GameClock.Fischer();
+                fischer.setMaxTime(timeControl.getLong("max_time"));
+                fischer.setTimeIncrement(timeControl.getLong("time_increment"));
+                fischer.setMainTime(timeControl.getLong("initial_time"));
+                fischer.setInitialTime(fischer.getMainTime());
+
+                fischer.setPausedOnWeekends(timeControl.getBoolean("pause_on_weekends"));
+                fischer.setSpeed(timeControl.getString("speed"));
+                clock = fischer;
+                break;
+
             default:
+                //TODO temporary dump
+                System.out.println("Unsupported clock system: " + system);
+                System.out.println(timeControl.toString());
                 throw new UnsupportedOperationException("Clock system not implemented: " + system);
+
         }
         return clock;
     }
