@@ -1,5 +1,6 @@
 package io.nibby.qipan.ogs;
 
+import javafx.scene.image.Image;
 import org.json.JSONObject;
 
 public class OgsPlayer {
@@ -8,13 +9,14 @@ public class OgsPlayer {
     private boolean ai = false;
     private boolean aiOwner = false;
     private boolean supporter = false;
+    private Image icon = null;
 
     private int rating;
     private int rank;
     private String username;
     private int id;
 
-    public static OgsPlayer parse(JSONObject playerData) {
+    public static OgsPlayer parseBriefly(JSONObject playerData) {
         OgsPlayer player = new OgsPlayer();
         JSONObject r = playerData.getJSONObject("ratings").getJSONObject("overall");
         player.rating = (int) Math.round(r.getDouble("rating"));
@@ -23,6 +25,21 @@ public class OgsPlayer {
         player.username = playerData.getString("username");
         player.professional = playerData.getBoolean("professional");
 
+        return player;
+    }
+
+    public static OgsPlayer parse(JSONObject playerData) {
+        System.out.println(playerData);
+        OgsPlayer player = new OgsPlayer();
+        player.id = playerData.getInt("id");
+        player.username = playerData.getString("username");
+        player.professional = playerData.getBoolean("professional");
+//        player.ai = playerData.getBoolean("bot_ai");
+        // TODO aiOwner
+        player.supporter = playerData.getBoolean("supporter");
+
+        String iconUrl = playerData.getString("icon");
+        player.icon = new Image(iconUrl, 64, 64, false, true, true);
         return player;
     }
 
@@ -71,5 +88,9 @@ public class OgsPlayer {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Image getIcon() {
+        return icon;
     }
 }

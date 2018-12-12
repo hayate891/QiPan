@@ -8,6 +8,8 @@ import io.nibby.qipan.ui.board.Stone;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
+
 public class OgsGameData {
 
     public static final int GAME_PHASE_PLAYING = 0;
@@ -114,6 +116,22 @@ public class OgsGameData {
         defaultClock = parseDefaultClock(gamedata);
         playerClocks = parsePlayerClock(defaultClock, gamedata);
 
+        // Fetch black and white player data via REST
+        try {
+            Rest.Response pbResponse = Rest.get("http://online-go.com/api/v1/players/" + playerBlackId +"/", true);
+            JSONObject pbData = pbResponse.getJson();
+            setPlayerBlack(OgsPlayer.parse(pbData));
+
+            Rest.Response pwResponse = Rest.get("http://online-go.com/api/v1/players/" + playerWhiteId +"/", true);
+            JSONObject pwData = pwResponse.getJson();
+            setPlayerWhite(OgsPlayer.parse(pwData));
+
+        } catch (IOException e) {
+            // TODO error handling
+            e.printStackTrace();
+        }
+
+        // TODO parseBriefly more game rules
         String rulesRaw = gamedata.getString("rules");
         if (rulesRaw.equals("japanese"))
             rules = GameRules.JAPANESE;

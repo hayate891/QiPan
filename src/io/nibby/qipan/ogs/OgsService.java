@@ -1,6 +1,5 @@
 package io.nibby.qipan.ogs;
 
-import io.nibby.qipan.game.GameClock;
 import io.nibby.qipan.settings.Settings;
 import io.socket.client.IO;
 import io.socket.client.Manager;
@@ -37,20 +36,13 @@ public class OgsService {
 
         try {
             socket = IO.socket(SERVER, options);
-            socket.io().on(Manager.EVENT_TRANSPORT, new Emitter.Listener() {
-                @Override
-                public void call(Object... objects) {
-                    Transport transport = (Transport) objects[0];
-                    transport.on(Transport.EVENT_REQUEST_HEADERS, new Emitter.Listener() {
-
-                        @Override
-                        public void call(Object... objects) {
-                            String auth = Settings.ogsAuth.getTokenType() + " " + Settings.ogsAuth.getAuthToken();
-                            Map<String, List<String>> mHeaders = (Map<String, List<String>>) objects[0];
-                            mHeaders.put("Authorization", Arrays.asList(auth));
-                        }
-                    });
-                }
+            socket.io().on(Manager.EVENT_TRANSPORT, objects -> {
+                Transport transport = (Transport) objects[0];
+                transport.on(Transport.EVENT_REQUEST_HEADERS, objects1 -> {
+                    String auth = Settings.ogsAuth.getTokenType() + " " + Settings.ogsAuth.getAuthToken();
+                    Map<String, List<String>> mHeaders = (Map<String, List<String>>) objects1[0];
+                    mHeaders.put("Authorization", Arrays.asList(auth));
+                });
             });
 
         } catch (URISyntaxException e) {
@@ -258,11 +250,11 @@ public class OgsService {
         info.paused = gameObj.getLong("paused");
         info.privateGame = gameObj.getBoolean("private");
         info.playerIdToMove = gameObj.getInt("player_to_move");
-        info.playerWhite = OgsPlayer.parse(gameObj.getJSONObject("white"));
+        info.playerWhite = OgsPlayer.parseBriefly(gameObj.getJSONObject("white"));
         info.moveNumber = gameObj.getInt("move_number");
         info.gameName = gameObj.getString("name");
         info.boardWidth = gameObj.getInt("width");
-        info.playerBlack = OgsPlayer.parse(gameObj.getJSONObject("black"));
+        info.playerBlack = OgsPlayer.parseBriefly(gameObj.getJSONObject("black"));
         info.gameId = gameObj.getInt("id");
         info.boardHeight = gameObj.getInt("height");
 

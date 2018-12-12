@@ -14,6 +14,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 /*
     This is the window that displays a single OGS game.
@@ -28,6 +29,8 @@ public class OgsGamePane extends BorderPane {
     private BorderPane contentRoot;
     private BorderPane sidebar;
     private BackgroundCanvas background;
+
+    private PlayerInfoWidget pInfoBlack, pInfoWhite;
 
     public OgsGamePane() {
         stackPane = new StackPane();
@@ -51,19 +54,19 @@ public class OgsGamePane extends BorderPane {
 
         sidebar = new BorderPane();
         sidebar.getStyleClass().add("ogs-gamepane-sidebar");
-        sidebar.setPrefWidth(220);
+        sidebar.setPrefWidth(260);
         {
             VBox playerInfos = new VBox();
             playerInfos.setSpacing(5);
             playerInfos.setFillWidth(true);
 
-            PlayerInfoWidget playerBlack = new PlayerInfoWidget(Stone.BLACK, ogsGame);
-            PlayerInfoWidget playerWhite = new PlayerInfoWidget(Stone.WHITE, ogsGame);
+            pInfoBlack = new PlayerInfoWidget(Stone.BLACK);
+            pInfoWhite = new PlayerInfoWidget(Stone.WHITE);
 
-            CanvasContainer c1 = new CanvasContainer(playerBlack);
+            CanvasContainer c1 = new CanvasContainer(pInfoBlack);
             c1.setPrefHeight(PlayerInfoWidget.WIDGET_HEIGHT);
             VBox.setMargin(c1, new Insets(17.5d, 0d, 0d, 0d));
-            CanvasContainer c2 = new CanvasContainer(playerWhite);
+            CanvasContainer c2 = new CanvasContainer(pInfoWhite);
             c2.setPrefHeight(PlayerInfoWidget.WIDGET_HEIGHT);
             playerInfos.getChildren().addAll(c1, c2);
             sidebar.setTop(playerInfos);
@@ -82,6 +85,9 @@ public class OgsGamePane extends BorderPane {
             });
         }
         contentRoot.setRight(sidebar);
+        contentRoot.widthProperty().addListener(l -> {
+            sidebar.setPrefWidth(260d);
+        });
     }
 
     /**
@@ -94,6 +100,8 @@ public class OgsGamePane extends BorderPane {
         controller = new OgsGameController();
         goban = new BoardUI(ogsGame.getGame(), controller);
         contentRoot.setCenter(goban);
+        pInfoBlack.update(ogsGame);
+        pInfoWhite.update(ogsGame);
     }
 
     /**
@@ -123,23 +131,48 @@ public class OgsGamePane extends BorderPane {
 
         private int playerColor;
         private Color bgColor;
+        private Color headerColor;
+        private Color titleColor;
         private GraphicsContext g;
+        private OgsGameData gameData;
+        private OgsPlayer player;
 
-        public PlayerInfoWidget(int color, OgsGameData gameData) {
+        public PlayerInfoWidget(int color) {
             g = getGraphicsContext2D();
             this.playerColor = color;
             bgColor = playerColor == Stone.BLACK ? new Color(0d, 0d, 0d, 0.4d)
                                                  : new Color(1d, 1d, 1d, 0.45d);
+            titleColor = playerColor == Stone.BLACK ? Color.WHITE : Color.BLACK;
+            headerColor = playerColor == Stone.BLACK ? Color.BLACK : Color.BLACK;
+        }
+
+        public void update(OgsGameData data) {
+            this.gameData = data;
+            this.player = playerColor == Stone.BLACK ? gameData.getPlayerBlack() : gameData.getPlayerWhite();
+
+            System.out.println(player == null);
             render();
         }
 
         @Override
         public void render() {
+            g.clearRect(0, 0, getWidth(), getHeight());
             g.setFill(bgColor);
             g.fillRect(15 + MARGIN, 15 + MARGIN, getWidth() - 2 * MARGIN, getHeight() - 2 * MARGIN);
 
+            if (player != null) {
+                Text name = new Text(player.getUsername());
+                name.applyCss();
+                double nameWidth = name.getLayoutBounds().getWidth();
+                System.out.println(nameWidth);
+                g.setFill(headerColor);
+                g.fillRect(15 + MARGIN, 15 + MARGIN, nameWidth + 10, name.getLayoutBounds().getHeight());
+            }
+
             StoneStyle style = Settings.gui.getGameStoneStyle();
             style.render(g, 0, 0, 48, new Stone(playerColor, -1, -1));
+            if (player != null && player.getIcon() != null)
+                g.drawImage(player.getIcon(), 0, 0, 48, 48);
         }
     }
 
