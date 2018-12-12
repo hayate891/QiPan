@@ -52,10 +52,42 @@ public abstract class GameClock {
 
     public static class Fischer extends GameClock {
 
-        private int maxTime;
-        private int mainTime;
-        private int timeIncrement;
+        private long maxTime;
+        private long mainTime;
+        private long timeIncrement;
+        private long initialTime;
 
+        public long getMaxTime() {
+            return maxTime;
+        }
+
+        public void setMaxTime(long maxTime) {
+            this.maxTime = maxTime;
+        }
+
+        public long getMainTime() {
+            return mainTime;
+        }
+
+        public void setMainTime(long mainTime) {
+            this.mainTime = mainTime;
+        }
+
+        public long getTimeIncrement() {
+            return timeIncrement;
+        }
+
+        public void setTimeIncrement(long timeIncrement) {
+            this.timeIncrement = timeIncrement;
+        }
+
+        public long getInitialTime() {
+            return initialTime;
+        }
+
+        public void setInitialTime(long initialTime) {
+            this.initialTime = initialTime;
+        }
     }
 
     public static class Canadian extends GameClock {
