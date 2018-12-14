@@ -8,12 +8,19 @@ import io.nibby.qipan.ui.board.BoardBackgroundStyle;
 import io.nibby.qipan.ui.board.BoardUI;
 import io.nibby.qipan.ui.board.Stone;
 import io.nibby.qipan.ui.board.StoneStyle;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
 /*
@@ -143,14 +150,19 @@ public class OgsGamePane extends BorderPane {
             bgColor = playerColor == Stone.BLACK ? new Color(0d, 0d, 0d, 0.4d)
                                                  : new Color(1d, 1d, 1d, 0.45d);
             titleColor = playerColor == Stone.BLACK ? Color.WHITE : Color.BLACK;
-            headerColor = playerColor == Stone.BLACK ? Color.BLACK : Color.BLACK;
+            headerColor = playerColor == Stone.BLACK ? Color.BLACK : Color.WHITE;
         }
 
         public void update(OgsGameData data) {
             this.gameData = data;
             this.player = playerColor == Stone.BLACK ? gameData.getPlayerBlack() : gameData.getPlayerWhite();
-
-            System.out.println(player == null);
+            this.player.getIcon().progressProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                    if (newValue.intValue() == 1)
+                        render();
+                }
+            });
             render();
         }
 
@@ -158,21 +170,34 @@ public class OgsGamePane extends BorderPane {
         public void render() {
             g.clearRect(0, 0, getWidth(), getHeight());
             g.setFill(bgColor);
-            g.fillRect(15 + MARGIN, 15 + MARGIN, getWidth() - 2 * MARGIN, getHeight() - 2 * MARGIN);
+            g.fillRect(10 + MARGIN, 5 + MARGIN, getWidth() - 2 * MARGIN, getHeight() - 2 * MARGIN);
 
             if (player != null) {
                 Text name = new Text(player.getUsername());
                 name.applyCss();
                 double nameWidth = name.getLayoutBounds().getWidth();
-                System.out.println(nameWidth);
-                g.setFill(headerColor);
-                g.fillRect(15 + MARGIN, 15 + MARGIN, nameWidth + 10, name.getLayoutBounds().getHeight());
+                g.setFill(bgColor);
+                g.fillRect(10 + MARGIN, 5 + MARGIN, getWidth(), 30);
+                g.setFill(titleColor);
+                g.fillText(player.getUsername(), 60, 23 + MARGIN);
             }
 
-            StoneStyle style = Settings.gui.getGameStoneStyle();
-            style.render(g, 0, 0, 48, new Stone(playerColor, -1, -1));
-            if (player != null && player.getIcon() != null)
-                g.drawImage(player.getIcon(), 0, 0, 48, 48);
+            g.setFill(headerColor);
+            g.fillOval(0, 0, 50, 50);
+//            StoneStyle style = Settings.gui.getGameStoneStyle();
+//            style.render(g, 0, 0, 48, new Stone(playerColor, -1, -1));
+
+            if (player != null && player.getIcon() != null) {
+                ImageView imgView = new ImageView(player.getIcon());
+                imgView.setClip(new Circle(player.getIcon().getWidth() / 2, player.getIcon().getHeight() / 2,
+                        player.getIcon().getWidth() / 2));
+                SnapshotParameters params = new SnapshotParameters();
+                params.setFill(Color.TRANSPARENT);
+                WritableImage img = imgView.snapshot(params, null);
+                imgView.setClip(null);
+                imgView.setImage(img);
+                g.drawImage(imgView.getImage(), 1, 1, 48, 48);
+            }
         }
     }
 

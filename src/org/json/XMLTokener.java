@@ -161,7 +161,7 @@ public class XMLTokener extends JSONTokener {
         if (e == null || e.isEmpty()) {
             return "";
         }
-        // if our entity is an encoded unicode point, parse it.
+        // if our entity is an encoded unicode point, parseBriefly it.
         if (e.charAt(0) == '#') {
             int cp;
             if (e.charAt(1) == 'x') {

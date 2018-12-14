@@ -40,6 +40,11 @@ public class OgsPlayer {
 
         String iconUrl = playerData.getString("icon");
         player.icon = new Image(iconUrl, 64, 64, false, true, true);
+        // TODO parse player rating + rank
+        JSONObject ratings = playerData.getJSONObject("ratings");
+        JSONObject ratingsOverall = ratings.getJSONObject("overall");
+        player.rating = (int) Math.round(ratingsOverall.getDouble("rating"));
+
         return player;
     }
 

@@ -2103,7 +2103,7 @@ public class JSONObject {
                 }
                 final Double d = Double.valueOf(val);
                 if (d.isInfinite() || d.isNaN()) {
-                    // if we can't parse it as a double, go up to BigDecimal
+                    // if we can't parseBriefly it as a double, go up to BigDecimal
                     // this is probably due to underflow like 4.32e-678
                     // or overflow like 4.65e5324. The size of the string is small
                     // but can't be held in a Double.

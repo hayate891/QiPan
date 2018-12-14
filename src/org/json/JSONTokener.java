@@ -33,7 +33,7 @@ SOFTWARE.
 
 /**
  * A JSONTokener takes a source string and extracts characters and tokens from
- * it. It is used by the JSONObject and JSONArray constructors to parse
+ * it. It is used by the JSONObject and JSONArray constructors to parseBriefly
  * JSON source strings.
  * @author JSON.org
  * @version 2014-05-03
@@ -97,7 +97,7 @@ public class JSONTokener {
 
     /**
      * Back up one character. This provides a sort of lookahead capability,
-     * so that you can test for a digit or letter before attempting to parse
+     * so that you can test for a digit or letter before attempting to parseBriefly
      * the next number or identifier.
      * @throws JSONException Thrown if trying to step back more than 1 step
      *  or if already at the start of the string

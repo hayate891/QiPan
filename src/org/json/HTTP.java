@@ -61,7 +61,7 @@ public class HTTP {
      *    Cookie: "Q=q2=PPEAsg--; B=677gi6ouf29bn&b=2&f=s",
      *    "Cache-Control": "no-cache",
      * ...}</pre>
-     * It does no further checking or conversion. It does not parse dates.
+     * It does no further checking or conversion. It does not parseBriefly dates.
      * It does not do '%' transforms on URLs.
      * @param string An HTTP header string.
      * @return A JSONObject containing the elements and attributes
