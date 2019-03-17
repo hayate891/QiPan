@@ -47,7 +47,7 @@ public class GameTreeNode {
         // TODO temporary
         if (node.equals(treeUI.getCurrentMove())) {
             g.setFill(Color.LIGHTBLUE);
-            g.fillRect(getX() + ox, getY() + oy, getWidth(), getHeight());
+            g.fillOval(getX() + ox, getY() + oy, getWidth(), getHeight());
         }
         if (parent != null) {
             g.setStroke(Color.LIGHTGRAY);
@@ -88,11 +88,12 @@ public class GameTreeNode {
                 g.setStroke(Color.WHITE);
                 g.strokeRect(x, y, iconSize, iconSize);
                 break;
+            // TODO Use a more reliable method to identify move color
             case MoveNode.STATE_MOVE_BLACK:
             case MoveNode.STATE_MOVE_WHITE:
                 g.setFill(STONE_COLORS[node.getMoveNumber() % 2]);
                 g.fillOval(x, y, iconSize, iconSize);
-                g.setStroke(STONE_COLORS[(node.getMoveNumber() + 1) % 2]);
+                g.setStroke(Color.BLACK);
                 g.strokeOval(x, y, iconSize, iconSize);
                 break;
         }

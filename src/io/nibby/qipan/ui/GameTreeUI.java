@@ -114,6 +114,43 @@ public class GameTreeUI extends BorderPane implements GameListener {
         render();
     }
 
+    private void updateNodeView() {
+        // Keeping currently highlighted tree node within view
+        double nodeX = currentTreeNode.getX();
+        double nodeY = currentTreeNode.getY();
+        double nodeWidth = GameTreeNode.DISPLAY_WIDTH;
+        double nodeHeight = GameTreeNode.DISPLAY_HEIGHT;
+        double offsetX = hScroll.getValue();
+        double offsetY = vScroll.getValue();
+        double width = getWidth();
+        double height = getHeight();
+
+        if (nodeY + nodeHeight > offsetY + height) {
+            double value = nodeY - GameTreeNode.DISPLAY_HEIGHT;
+            if (value > vScroll.getMax())
+                value = vScroll.getMax();
+            vScroll.setValue(value);
+        }
+        if (nodeY < offsetY) {
+            double value = nodeY - height + GameTreeNode.DISPLAY_HEIGHT;
+            if (value < vScroll.getMin())
+                value = vScroll.getMin();
+            vScroll.setValue(value);
+        }
+        if (nodeX + nodeWidth > offsetX + width) {
+            double value = nodeX - GameTreeNode.DISPLAY_WIDTH;
+            if (value > hScroll.getMax())
+                value = hScroll.getMax();
+            hScroll.setValue(value);
+        }
+        if (nodeX < offsetX) {
+            double value = nodeX - DRAW_X_MARGIN;
+            if (value < hScroll.getMin())
+                value = hScroll.getMin();
+            hScroll.setValue(value);
+        }
+    }
+
     private void updateComponents() {
         // Calculate sizing
         double tWidth = 2 * DRAW_X_MARGIN + maxColumns * GameTreeNode.DISPLAY_WIDTH;
@@ -226,11 +263,24 @@ public class GameTreeUI extends BorderPane implements GameListener {
     @Override
     public void movePlayed(Stone[] board, int x, int y, int color) {
         reloadTree();
+        updateNodeView();
     }
 
     @Override
     public void currentMoveChanged(MoveNode currentMove) {
         this.currentMove = currentMove;
+        // Find the current tree node
+        int moveNum = currentMove.getMoveNumber();
+        List<GameTreeNode> nodes = nodeData.get(moveNum);
+        if (nodes != null) {
+            for (GameTreeNode node : nodes) {
+                if (node.getNode().equals(currentMove)) {
+                    currentTreeNode = node;
+                    break;
+                }
+            }
+            updateNodeView();
+        }
         render();
     }
 

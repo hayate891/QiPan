@@ -1,5 +1,8 @@
 package io.nibby.qipan;
 
+import io.nibby.qipan.editor.SgfEditorWindow;
+import io.nibby.qipan.game.Game;
+import io.nibby.qipan.game.GameRules;
 import io.nibby.qipan.ogs.OgsClientWindow;
 import io.nibby.qipan.ogs.OgsLoginWindow;
 import io.nibby.qipan.settings.Settings;
@@ -18,12 +21,12 @@ public class QiPan extends Application {
     @Override
     public void start(Stage primaryStage) {
         System.setProperty("file.encoding", "UTF-8");
-//        Game game = new Game(19, 19, GameRules.JAPANESE);
-//        SgfEditorWindow sgfEditorWindow = new SgfEditorWindow(game);
-//        sgfEditorWindow.show();
+        Game game = new Game(19, 19, GameRules.JAPANESE);
+        SgfEditorWindow sgfEditorWindow = new SgfEditorWindow(game);
+        sgfEditorWindow.show();
 
-        OgsLoginWindow ogs = new OgsLoginWindow();
-        ogs.show();
+//        OgsLoginWindow ogs = new OgsLoginWindow();
+//        ogs.show();
 
 //        //TODO TEMPORARY FOR NOW
 //        if (Settings.ogsAuth.tokenExists() && !Settings.ogsAuth.isTokenExpired()) {

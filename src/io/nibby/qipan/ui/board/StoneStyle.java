@@ -92,7 +92,7 @@ public enum StoneStyle {
 
         @Override
         public double wobbleMargin() {
-            return 2d;
+            return 3d;
         }
 
         @Override
